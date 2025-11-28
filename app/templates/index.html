@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="hero-container">
+        <div class="hero-content">
+            <p class="hero-greeting">Hello, I'm</p>
+            <h1 class="hero-name">{{ data.name }}</h1>
+            <h2 class="hero-title">{{ data.title }}</h2>
+            <p class="hero-tagline">{{ data.tagline }}</p>
+            <div class="hero-cta">
+                <a href="#projects" class="btn btn-primary">View Work</a>
+                <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+            </div>
+        </div>
+        <!-- Added profile picture section -->
+        <div class="hero-profile">
+            <div class="profile-image-wrapper">
+                <img src="/static/images/profile.jpg" alt="Alexander Chen - Head of Artificial Intelligence" class="profile-image">
+            </div>
+        </div>
+        <div class="hero-decoration">
+            <div class="decoration-grid">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about" id="about">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-number">01</span>
+            <h2 class="section-title">About</h2>
+        </div>
+        <div class="about-content">
+            <div class="about-text">
+                {% for paragraph in data.about.paragraphs %}
+                <p>{{ paragraph }}</p>
+                {% endfor %}
+            </div>
+            <aside class="about-stats">
+                <div class="stat">
+                    <span class="stat-number">12+</span>
+                    <span class="stat-label">Years in ML/AI</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">25+</span>
+                    <span class="stat-label">Team Members Led</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">50M+</span>
+                    <span class="stat-label">Daily Predictions</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">8</span>
+                    <span class="stat-label">Production Systems</span>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<!-- Expertise Section -->
+<section class="expertise" id="expertise">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-number">02</span>
+            <h2 class="section-title">Expertise</h2>
+        </div>
+        <div class="expertise-grid">
+            {% for item in data.expertise %}
+            <article class="expertise-card">
+                <span class="expertise-icon">{{ item.icon }}</span>
+                <h3 class="expertise-domain">{{ item.domain }}</h3>
+                <p class="expertise-description">{{ item.description }}</p>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Projects Section -->
+<section class="projects" id="projects">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-number">03</span>
+            <h2 class="section-title">Selected Projects</h2>
+        </div>
+        <div class="projects-list">
+            {% for project in data.projects %}
+            <article class="project-card">
+                <header class="project-header">
+                    <h3 class="project-title">{{ project.title }}</h3>
+                </header>
+                <div class="project-body">
+                    <div class="project-section">
+                        <h4>Problem</h4>
+                        <p>{{ project.problem }}</p>
+                    </div>
+                    <div class="project-section">
+                        <h4>Solution</h4>
+                        <p>{{ project.solution }}</p>
+                    </div>
+                    <div class="project-section">
+                        <h4>Impact</h4>
+                        <p>{{ project.impact }}</p>
+                    </div>
+                </div>
+                <footer class="project-footer">
+                    <div class="project-stack">
+                        {% for tech in project.stack %}
+                        <span class="tech-tag">{{ tech }}</span>
+                        {% endfor %}
+                    </div>
+                </footer>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Writing Section -->
+<section class="writing" id="writing">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-number">04</span>
+            <h2 class="section-title">Writing & Insights</h2>
+        </div>
+        <div class="articles-grid">
+            {% for article in data.articles %}
+            <article class="article-card">
+                <span class="article-category">{{ article.category }}</span>
+                <h3 class="article-title">{{ article.title }}</h3>
+                <p class="article-description">{{ article.description }}</p>
+                <span class="article-link">Read more →</span>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact" id="contact">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-number">05</span>
+            <h2 class="section-title">Get in Touch</h2>
+        </div>
+        <div class="contact-content">
+            <p class="contact-intro">
+                Interested in discussing AI strategy, system architecture, or potential collaboration?
+                I'm always open to conversations about building production ML systems at scale.
+            </p>
+            <div class="contact-links">
+                <a href="mailto:{{ data.email }}" class="contact-item">
+                    <span class="contact-label">Email</span>
+                    <span class="contact-value">{{ data.email }}</span>
+                </a>
+                <a href="{{ data.github }}" target="_blank" rel="noopener" class="contact-item">
+                    <span class="contact-label">GitHub</span>
+                    <span class="contact-value">github.com/alexchen-ai</span>
+                </a>
+                <a href="{{ data.linkedin }}" target="_blank" rel="noopener" class="contact-item">
+                    <span class="contact-label">LinkedIn</span>
+                    <span class="contact-value">linkedin.com/in/alexchen-ai</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
