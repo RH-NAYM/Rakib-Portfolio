@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ description }}">
+    <meta name="keywords" content="AI Engineer, Machine Learning, ML Systems, Production AI, Infrastructure">
+    <meta name="author" content="Principal AI Engineer">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>{{ title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <canvas id="neural-bg"></canvas>
+
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar"></div>
+    </div>
+
+    <!-- Fixed Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo">
+                <span class="logo-bracket">[</span>
+                <span class="logo-text">AE</span>
+                <span class="logo-bracket">]</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#hero" class="nav-link active" data-section="hero">Home</a></li>
+                <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+                <li><a href="#projects" class="nav-link" data-section="projects">Projects</a></li>
+                <li><a href="#blogs" class="nav-link" data-section="blogs">Writing</a></li>
+                <li><a href="#contact" class="nav-link" data-section="contact">Contact</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Section Navigation Dots -->
+    <div class="section-dots">
+        <a href="#hero" class="section-dot active" data-section="hero" title="Home"></a>
+        <a href="#about" class="section-dot" data-section="about" title="About"></a>
+        <a href="#projects" class="section-dot" data-section="projects" title="Projects"></a>
+        <a href="#blogs" class="section-dot" data-section="blogs" title="Writing"></a>
+        <a href="#contact" class="section-dot" data-section="contact" title="Contact"></a>
+    </div>
+
+    <main class="main-content">
+        <!-- Hero Section -->
+        <!-- Restructured hero: text on left, rectangle image on right with AI scanner -->
+        <section id="hero" class="section hero-section">
+            <div class="hero-content">
+                <!-- Left side: Text content -->
+                <div class="hero-text" data-parallax="0.08">
+                    <div class="hero-label">
+                        <span class="label-icon"></span>
+                        Principal AI Engineer
+                    </div>
+                    <h1 class="hero-title">
+                        <span class="title-line">Building AI Systems</span>
+                        <span class="title-line highlight">That Run in Production</span>
+                    </h1>
+                    <p class="hero-description">
+                        Architecting mission-critical ML infrastructure at scale.
+                        From distributed inference engines to real-time feature platforms—systems
+                        designed for reliability, performance, and operational excellence.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-value" data-count="50">50M+</span>
+                            <span class="stat-label">Daily Predictions</span>
+                            <div class="stat-bar"></div>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">99.99%</span>
+                            <span class="stat-label">System Uptime</span>
+                            <div class="stat-bar"></div>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">&lt;45ms</span>
+                            <span class="stat-label">P99 Latency</span>
+                            <div class="stat-bar"></div>
+                        </div>
+                    </div>
+                    <div class="hero-actions">
+                        <a href="#projects" class="btn btn-primary">
+                            <span>View Systems</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        <a href="#about" class="btn btn-secondary">
+                            <span>Background</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right side: Rectangle profile with AI scanner -->
+                <div class="hero-image-container" data-parallax="0.15">
+                    <div class="hero-image-frame">
+                        <!-- Corner brackets -->
+                        <div class="frame-corner top-left"></div>
+                        <div class="frame-corner top-right"></div>
+                        <div class="frame-corner bottom-left"></div>
+                        <div class="frame-corner bottom-right"></div>
+
+                        <!-- Scanning line -->
+                        <div class="scanner-line"></div>
+                        <div class="scanner-glow"></div>
+
+                        <!-- Grid overlay -->
+                        <div class="scanner-grid"></div>
+
+                        <!-- Image -->
+                        <div class="hero-image">
+                            <img src="/static/images/profile.jpg" alt="Principal AI Engineer" loading="eager">
+                        </div>
+
+                        <!-- Data overlay -->
+                        <div class="image-data-overlay">
+                            <div class="data-line"><span>IDENTITY</span> VERIFIED</div>
+                            <div class="data-line"><span>CLEARANCE</span> LEVEL-5</div>
+                            <div class="data-line"><span>NEURAL</span> SYNC ACTIVE</div>
+                        </div>
+                    </div>
+
+                    <!-- Status indicator below image -->
+                    <div class="hero-status">
+                        <span class="status-dot"></span>
+                        <span class="status-text">STATUS: ACTIVE</span>
+                    </div>
+
+                    <!-- Side data stream -->
+                    <div class="image-side-data">
+                        <div class="side-data-item">
+                            <span class="data-label">SYS</span>
+                            <span class="data-value">ONLINE</span>
+                        </div>
+                        <div class="side-data-item">
+                            <span class="data-label">NET</span>
+                            <span class="data-value">SECURED</span>
+                        </div>
+                        <div class="side-data-item">
+                            <span class="data-label">AI</span>
+                            <span class="data-value">READY</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <div class="scroll-mouse">
+                    <div class="scroll-wheel"></div>
+                </div>
+                <span>Scroll to explore</span>
+            </div>
+        </section>
+
+        <!-- Expertise Marquee -->
+        <div class="expertise-marquee">
+            <div class="marquee-track">
+                <span>DISTRIBUTED SYSTEMS</span>
+                <span class="separator">◆</span>
+                <span>REAL-TIME INFERENCE</span>
+                <span class="separator">◆</span>
+                <span>DATA INFRASTRUCTURE</span>
+                <span class="separator">◆</span>
+                <span>RELIABILITY ENGINEERING</span>
+                <span class="separator">◆</span>
+                <span>ML OPERATIONS</span>
+                <span class="separator">◆</span>
+                <span>DISTRIBUTED SYSTEMS</span>
+                <span class="separator">◆</span>
+                <span>REAL-TIME INFERENCE</span>
+                <span class="separator">◆</span>
+                <span>DATA INFRASTRUCTURE</span>
+                <span class="separator">◆</span>
+                <span>RELIABILITY ENGINEERING</span>
+                <span class="separator">◆</span>
+                <span>ML OPERATIONS</span>
+                <span class="separator">◆</span>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <section id="about" class="section about-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-number">01</span>
+                    <h2 class="section-title">About</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="about-grid">
+                    <div class="about-main">
+                        <div class="about-intro">
+                            <h3>Engineering Philosophy</h3>
+                            <p>
+                                I build AI systems that operate in production—not experiments, not proofs of concept,
+                                but infrastructure that organizations depend on. My work sits at the intersection of
+                                machine learning, distributed systems, and reliability engineering.
+                            </p>
+                        </div>
+
+                        <div class="about-block">
+                            <h3>Technical Background</h3>
+                            <p>
+                                Over a decade of experience building systems that process millions of requests,
+                                manage petabytes of data, and maintain uptime requirements that don't forgive
+                                shortcuts. Deep expertise in Python, Rust, and C++ for performance-critical components.
+                            </p>
+                        </div>
+
+                        <div class="about-block">
+                            <h3>Current Focus</h3>
+                            <p>
+                                The emergence of large language models has created new challenges in serving
+                                infrastructure. Current work focuses on efficient LLM deployment: continuous
+                                batching, KV-cache management, speculative decoding, and cost optimization.
+                            </p>
+                        </div>
+                    </div>
+
+                    <aside class="about-sidebar">
+                        <div class="sidebar-card">
+                            <h4>Core Competencies</h4>
+                            <ul class="competency-list">
+                                <li><span class="bullet"></span>ML System Architecture</li>
+                                <li><span class="bullet"></span>Distributed Computing</li>
+                                <li><span class="bullet"></span>High-Performance Inference</li>
+                                <li><span class="bullet"></span>Data Infrastructure</li>
+                                <li><span class="bullet"></span>Reliability Engineering</li>
+                                <li><span class="bullet"></span>Performance Optimization</li>
+                            </ul>
+                        </div>
+
+                        <div class="sidebar-card">
+                            <h4>Technical Stack</h4>
+                            <div class="tech-cloud">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Rust</span>
+                                <span class="tech-tag">C++</span>
+                                <span class="tech-tag">CUDA</span>
+                                <span class="tech-tag">PyTorch</span>
+                                <span class="tech-tag">TensorRT</span>
+                                <span class="tech-tag">Ray</span>
+                                <span class="tech-tag">Kubernetes</span>
+                                <span class="tech-tag">Kafka</span>
+                                <span class="tech-tag">PostgreSQL</span>
+                                <span class="tech-tag">Redis</span>
+                                <span class="tech-tag">gRPC</span>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="section projects-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-number">02</span>
+                    <h2 class="section-title">Projects</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <p class="section-subtitle">Production systems designed for scale and reliability</p>
+
+                <div class="projects-grid">
+                    {% for project in projects %}
+                    <article class="project-card" data-index="{{ loop.index }}">
+                        <div class="project-glow"></div>
+                        <div class="project-header">
+                            <span class="project-domain">{{ project.domain }}</span>
+                            <h3 class="project-title">{{ project.title }}</h3>
+                        </div>
+                        <p class="project-description">{{ project.description }}</p>
+                        <div class="project-tech">
+                            {% for tech in project.tech %}
+                            <span class="tech-pill">{{ tech }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="project-metrics">
+                            <div class="metrics-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                            </div>
+                            <div class="metrics-content">
+                                <span class="metrics-label">Key Metrics</span>
+                                <span class="metrics-value">{{ project.metrics }}</span>
+                            </div>
+                        </div>
+                        <a href="/project/{{ project.slug }}" class="project-link">
+                            <span>View Details</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Blogs Section -->
+        <section id="blogs" class="section blogs-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-number">03</span>
+                    <h2 class="section-title">Technical Writing</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <p class="section-subtitle">Deep dives into AI systems, infrastructure, and production engineering</p>
+
+                <div class="blogs-list">
+                    {% for post in posts %}
+                    <article class="blog-card" data-index="{{ loop.index }}">
+                        <div class="blog-index">{{ "%02d"|format(loop.index) }}</div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-category">{{ post.category }}</span>
+                                <span class="blog-date">{{ post.date }}</span>
+                                <span class="blog-read-time">{{ post.read_time }}</span>
+                            </div>
+                            <h3 class="blog-title">
+                                <a href="/blog/{{ post.slug }}">{{ post.title }}</a>
+                            </h3>
+                            <p class="blog-excerpt">{{ post.excerpt }}</p>
+                        </div>
+                        <a href="/blog/{{ post.slug }}" class="blog-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section contact-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-number">04</span>
+                    <h2 class="section-title">Contact</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <h3>Let's Connect</h3>
+                        <p>
+                            Available for consulting on ML infrastructure, system architecture reviews,
+                            and technical advisory roles. Particularly interested in projects involving
+                            distributed inference, real-time ML systems, and production AI infrastructure.
+                        </p>
+
+                        <div class="contact-links">
+                            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="contact-link">
+                                <div class="contact-link-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-link-text">
+                                    <span class="link-label">GitHub</span>
+                                    <span class="link-value">Code & Open Source</span>
+                                </div>
+                            </a>
+
+                            <a href="https://huggingface.co" target="_blank" rel="noopener noreferrer" class="contact-link">
+                                <div class="contact-link-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1.5 15.5c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5 1.5.672 1.5 1.5-.672 1.5-1.5 1.5zm3 0c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5 1.5.672 1.5 1.5-.672 1.5-1.5 1.5zM8.5 11c-.828 0-1.5-.672-1.5-1.5S7.672 8 8.5 8s1.5.672 1.5 1.5S9.328 11 8.5 11zm7 0c-.828 0-1.5-.672-1.5-1.5S14.672 8 15.5 8s1.5.672 1.5 1.5-.672 1.5-1.5 1.5z"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-link-text">
+                                    <span class="link-label">Hugging Face</span>
+                                    <span class="link-value">Models & Datasets</span>
+                                </div>
+                            </a>
+
+                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="contact-link">
+                                <div class="contact-link-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-link-text">
+                                    <span class="link-label">LinkedIn</span>
+                                    <span class="link-value">Professional Network</span>
+                                </div>
+                            </a>
+
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="contact-link">
+                                <div class="contact-link-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-link-text">
+                                    <span class="link-label">Facebook</span>
+                                    <span class="link-value">Social Updates</span>
+                                </div>
+                            </a>
+
+                            <a href="mailto:engineer@example.com" class="contact-link">
+                                <div class="contact-link-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-link-text">
+                                    <span class="link-label">Email</span>
+                                    <span class="link-value">Direct Contact</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-container">
+                        <form class="contact-form" action="#" method="POST">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">Subject</label>
+                                <input type="text" id="subject" name="subject" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Message</label>
+                                <textarea id="message" name="message" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <span>Send Message</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-bracket">[</span>
+                    <span class="logo-text">AE</span>
+                    <span class="logo-bracket">]</span>
+                </div>
+                <p class="footer-text">Building production AI systems that scale.</p>
+                <p class="footer-copyright">© 2025 Principal AI Engineer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
