@@ -1,7 +1,6 @@
 /**
  * Principal AI Engineer Portfolio
- * Dynamic Three.js Neural Visualization with Scroll-Reactive Effects
- * Updated particles to be smaller glowing dots
+ * Dynamic Three.js Neural Visualization - Clean & Professional
  */
 
 ;(() => {
@@ -9,44 +8,32 @@
   if (!THREE) return
 
   const CONFIG = {
-    // Neural network
-    nodeCount: 120,
-    connectionDistance: 100,
-    signalCount: 50,
-
-    particleCount: 600,
-    particleFieldSize: 900,
-    particleMinSize: 0.3,
-    particleMaxSize: 1.5,
-
-    // Data streams
-    streamCount: 6,
-    streamParticles: 40,
-
-    // Energy waves
-    waveCount: 3,
-
-    // Camera
-    cameraDistance: 500,
-    cameraDriftSpeed: 0.0003,
-    cameraDriftRadius: 100,
-
-    // Scroll reactivity
-    scrollMultiplier: 2.5,
+    nodeCount: 100,
+    connectionDistance: 90,
+    signalCount: 40,
+    particleCount: 800,
+    particleFieldSize: 1000,
+    particleMinSize: 0.2,
+    particleMaxSize: 0.8,
+    streamCount: 5,
+    streamParticles: 35,
+    waveCount: 2,
+    cameraDistance: 450,
+    cameraDriftSpeed: 0.0002,
+    cameraDriftRadius: 80,
+    scrollMultiplier: 2,
   }
 
-  // Colors
   const COLORS = {
     primary: 0x00d4ff,
-    secondary: 0x00ffaa,
+    secondary: 0x00ff88,
     tertiary: 0x0066ff,
-    background: 0x050508,
+    background: 0x030306,
     node: 0x00d4ff,
-    connection: 0x1a2a3a,
+    connection: 0x1a2535,
     particle: 0x00d4ff,
   }
 
-  // State
   let scene, camera, renderer
   const nodes = [],
     connections = [],
@@ -63,148 +50,104 @@
 
   // Shaders
   const nodeVertexShader = `
-    varying vec3 vNormal;
-    varying vec3 vPosition;
-    uniform float time;
-    uniform float scroll;
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        uniform float time;
 
-    void main() {
-      vNormal = normalize(normalMatrix * normal);
-      vPosition = position;
-
-      vec3 pos = position;
-      pos.y += sin(time * 2.0 + position.x * 0.5) * 2.0;
-      pos.x += cos(time * 1.5 + position.z * 0.3) * 1.5;
-
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    }
-  `
+        void main() {
+            vNormal = normalize(normalMatrix * normal);
+            vPosition = position;
+            vec3 pos = position;
+            pos.y += sin(time * 1.5 + position.x * 0.4) * 1.5;
+            pos.x += cos(time * 1.2 + position.z * 0.3) * 1.0;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+        }
+    `
 
   const nodeFragmentShader = `
-    uniform vec3 glowColor;
-    uniform float intensity;
-    uniform float time;
-    uniform float scroll;
+        uniform vec3 glowColor;
+        uniform float intensity;
+        uniform float time;
 
-    varying vec3 vNormal;
-    varying vec3 vPosition;
+        varying vec3 vNormal;
+        varying vec3 vPosition;
 
-    void main() {
-      float pulse = 0.7 + 0.3 * sin(time * 3.0 + vPosition.x * 0.1 + scroll * 0.5);
-      float rim = pow(1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.0);
-      float core = 0.3 + rim * 0.7;
-
-      vec3 color = glowColor * intensity * pulse * core;
-      float alpha = core * 0.9;
-
-      gl_FragColor = vec4(color, alpha);
-    }
-  `
-
-  const signalFragmentShader = `
-    uniform vec3 color;
-    uniform float time;
-
-    void main() {
-      float dist = length(gl_PointCoord - vec2(0.5));
-      if (dist > 0.5) discard;
-
-      float glow = 1.0 - dist * 2.0;
-      glow = pow(glow, 1.5);
-
-      float pulse = 0.8 + 0.2 * sin(time * 5.0);
-      vec3 finalColor = color * glow * pulse;
-
-      gl_FragColor = vec4(finalColor, glow * 0.95);
-    }
-  `
+        void main() {
+            float pulse = 0.75 + 0.25 * sin(time * 2.5 + vPosition.x * 0.08);
+            float rim = pow(1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.0);
+            float core = 0.35 + rim * 0.65;
+            vec3 color = glowColor * intensity * pulse * core;
+            gl_FragColor = vec4(color, core * 0.85);
+        }
+    `
 
   const particleVertexShader = `
-    attribute float size;
-    attribute float alpha;
-    attribute float twinkle;
-    varying float vAlpha;
-    varying float vTwinkle;
-    uniform float time;
+        attribute float size;
+        attribute float alpha;
+        attribute float twinkle;
+        varying float vAlpha;
+        varying float vTwinkle;
+        uniform float time;
 
-    void main() {
-      vAlpha = alpha;
-      vTwinkle = twinkle;
-      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-      gl_PointSize = size * (300.0 / -mvPosition.z);
-      gl_Position = projectionMatrix * mvPosition;
-    }
-  `
+        void main() {
+            vAlpha = alpha;
+            vTwinkle = twinkle;
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+            gl_PointSize = size * (250.0 / -mvPosition.z);
+            gl_Position = projectionMatrix * mvPosition;
+        }
+    `
 
   const particleFragmentShader = `
-    uniform vec3 color;
-    uniform float time;
-    varying float vAlpha;
-    varying float vTwinkle;
+        uniform vec3 color;
+        uniform float time;
+        varying float vAlpha;
+        varying float vTwinkle;
 
-    void main() {
-      float dist = length(gl_PointCoord - vec2(0.5));
-      if (dist > 0.5) discard;
+        void main() {
+            float dist = length(gl_PointCoord - vec2(0.5));
+            if (dist > 0.5) discard;
 
-      // Sharp glowing dot effect
-      float glow = 1.0 - dist * 2.0;
-      glow = pow(glow, 2.5);
+            float glow = 1.0 - dist * 2.0;
+            glow = pow(glow, 3.0);
 
-      // Twinkle effect
-      float twinkleEffect = 0.6 + 0.4 * sin(time * 3.0 + vTwinkle * 10.0);
+            float twinkleEffect = 0.5 + 0.5 * sin(time * 2.5 + vTwinkle * 8.0);
+            vec3 finalColor = color * glow * 1.8;
+            float finalAlpha = glow * vAlpha * twinkleEffect * 0.9;
 
-      vec3 finalColor = color * glow * 1.5;
-      float finalAlpha = glow * vAlpha * twinkleEffect;
+            gl_FragColor = vec4(finalColor, finalAlpha);
+        }
+    `
 
-      gl_FragColor = vec4(finalColor, finalAlpha);
-    }
-  `
+  const signalFragmentShader = `
+        uniform vec3 color;
+        uniform float time;
 
-  const streamVertexShader = `
-    attribute float size;
-    attribute float alpha;
-    varying float vAlpha;
-    uniform float time;
+        void main() {
+            float dist = length(gl_PointCoord - vec2(0.5));
+            if (dist > 0.5) discard;
 
-    void main() {
-      vAlpha = alpha;
-      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-      gl_PointSize = size * (400.0 / -mvPosition.z);
-      gl_Position = projectionMatrix * mvPosition;
-    }
-  `
+            float glow = 1.0 - dist * 2.0;
+            glow = pow(glow, 1.8);
 
-  const streamFragmentShader = `
-    uniform vec3 color;
-    uniform float time;
-    varying float vAlpha;
+            float pulse = 0.85 + 0.15 * sin(time * 4.0);
+            vec3 finalColor = color * glow * pulse;
 
-    void main() {
-      float dist = length(gl_PointCoord - vec2(0.5));
-      if (dist > 0.5) discard;
+            gl_FragColor = vec4(finalColor, glow * 0.9);
+        }
+    `
 
-      float glow = 1.0 - dist * 2.0;
-      glow = pow(glow, 1.5);
-
-      gl_FragColor = vec4(color * glow, glow * vAlpha);
-    }
-  `
-
-  // Initialize
   function init() {
     const canvas = document.getElementById("neural-bg")
     if (!canvas) return
 
-    // Scene
     scene = new THREE.Scene()
     scene.background = new THREE.Color(COLORS.background)
-    scene.fog = new THREE.FogExp2(COLORS.background, 0.0008)
+    scene.fog = new THREE.FogExp2(COLORS.background, 0.0006)
 
-    // Camera
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000)
+    camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 2000)
     camera.position.z = CONFIG.cameraDistance
 
-    // Renderer
     renderer = new THREE.WebGLRenderer({
       canvas,
       antialias: true,
@@ -214,7 +157,6 @@
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-    // Create elements
     createNodes()
     createConnections()
     createSignals()
@@ -222,32 +164,27 @@
     createDataStreams()
     createEnergyWaves()
 
-    // Events
     window.addEventListener("resize", onResize)
     window.addEventListener("scroll", onScroll)
     window.addEventListener("mousemove", onMouseMove)
 
-    // Start
     animate()
   }
 
-  // Create neural nodes
   function createNodes() {
-    const geometry = new THREE.SphereGeometry(2, 12, 12)
+    const geometry = new THREE.SphereGeometry(1.8, 10, 10)
 
     for (let i = 0; i < CONFIG.nodeCount; i++) {
       const layer = Math.floor(i / (CONFIG.nodeCount / 5))
-
-      const x = (Math.random() - 0.5) * 600
-      const y = (Math.random() - 0.5) * 450
-      const z = (layer - 2) * 70 + (Math.random() - 0.5) * 50
+      const x = (Math.random() - 0.5) * 550
+      const y = (Math.random() - 0.5) * 400
+      const z = (layer - 2) * 60 + (Math.random() - 0.5) * 40
 
       const material = new THREE.ShaderMaterial({
         uniforms: {
           glowColor: { value: new THREE.Color(COLORS.node) },
-          intensity: { value: 0.4 + Math.random() * 0.4 },
+          intensity: { value: 0.35 + Math.random() * 0.35 },
           time: { value: 0 },
-          scroll: { value: 0 },
         },
         vertexShader: nodeVertexShader,
         fragmentShader: nodeFragmentShader,
@@ -261,8 +198,8 @@
       node.userData = {
         originalPos: new THREE.Vector3(x, y, z),
         phase: Math.random() * Math.PI * 2,
-        speed: 0.2 + Math.random() * 0.3,
-        amplitude: 8 + Math.random() * 15,
+        speed: 0.15 + Math.random() * 0.25,
+        amplitude: 6 + Math.random() * 12,
       }
 
       scene.add(node)
@@ -270,14 +207,13 @@
     }
   }
 
-  // Create connections
   function createConnections() {
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const dist = nodes[i].position.distanceTo(nodes[j].position)
 
         if (dist < CONFIG.connectionDistance) {
-          const opacity = 0.06 + (1 - dist / CONFIG.connectionDistance) * 0.1
+          const opacity = 0.04 + (1 - dist / CONFIG.connectionDistance) * 0.08
 
           const material = new THREE.LineBasicMaterial({
             color: COLORS.connection,
@@ -298,7 +234,6 @@
     }
   }
 
-  // Create traveling signals
   function createSignals() {
     if (connections.length === 0) return
 
@@ -306,7 +241,7 @@
     const sizes = new Float32Array(CONFIG.signalCount)
 
     for (let i = 0; i < CONFIG.signalCount; i++) {
-      sizes[i] = 2 + Math.random() * 4
+      sizes[i] = 1.5 + Math.random() * 3
     }
 
     const geometry = new THREE.BufferGeometry()
@@ -319,13 +254,13 @@
         time: { value: 0 },
       },
       vertexShader: `
-        attribute float size;
-        void main() {
-          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = size * (300.0 / -mvPosition.z);
-          gl_Position = projectionMatrix * mvPosition;
-        }
-      `,
+                attribute float size;
+                void main() {
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    gl_PointSize = size * (250.0 / -mvPosition.z);
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
       fragmentShader: signalFragmentShader,
       transparent: true,
       blending: THREE.AdditiveBlending,
@@ -341,7 +276,7 @@
         index: i,
         connection: Math.floor(Math.random() * connections.length),
         progress: Math.random(),
-        speed: 0.003 + Math.random() * 0.006,
+        speed: 0.002 + Math.random() * 0.004,
         direction: Math.random() > 0.5 ? 1 : -1,
       })
     }
@@ -355,13 +290,12 @@
     const twinkles = new Float32Array(CONFIG.particleCount)
 
     for (let i = 0; i < CONFIG.particleCount; i++) {
-      // Distribute particles in a larger volume
       positions[i * 3] = (Math.random() - 0.5) * CONFIG.particleFieldSize
       positions[i * 3 + 1] = (Math.random() - 0.5) * CONFIG.particleFieldSize
-      positions[i * 3 + 2] = (Math.random() - 0.5) * CONFIG.particleFieldSize * 0.6
+      positions[i * 3 + 2] = (Math.random() - 0.5) * CONFIG.particleFieldSize * 0.5
 
       sizes[i] = CONFIG.particleMinSize + Math.random() * (CONFIG.particleMaxSize - CONFIG.particleMinSize)
-      alphas[i] = 0.3 + Math.random() * 0.7
+      alphas[i] = 0.2 + Math.random() * 0.6
       twinkles[i] = Math.random() * Math.PI * 2
     }
 
@@ -386,7 +320,6 @@
     scene.add(particles)
   }
 
-  // Create data streams
   function createDataStreams() {
     for (let s = 0; s < CONFIG.streamCount; s++) {
       const positions = new Float32Array(CONFIG.streamParticles * 3)
@@ -394,15 +327,15 @@
       const alphas = new Float32Array(CONFIG.streamParticles)
 
       const angle = (s / CONFIG.streamCount) * Math.PI * 2
-      const radius = 180 + Math.random() * 80
+      const radius = 160 + Math.random() * 60
 
       for (let i = 0; i < CONFIG.streamParticles; i++) {
         const t = i / CONFIG.streamParticles
         positions[i * 3] = Math.cos(angle + t * 2) * radius * (1 - t * 0.3)
-        positions[i * 3 + 1] = (t - 0.5) * 450
+        positions[i * 3 + 1] = (t - 0.5) * 400
         positions[i * 3 + 2] = Math.sin(angle + t * 2) * radius * (1 - t * 0.3)
-        sizes[i] = 1 + (1 - t) * 3
-        alphas[i] = (1 - t) * 0.7
+        sizes[i] = 0.8 + (1 - t) * 2
+        alphas[i] = (1 - t) * 0.6
       }
 
       const geometry = new THREE.BufferGeometry()
@@ -411,15 +344,36 @@
       geometry.setAttribute("alpha", new THREE.BufferAttribute(alphas, 1))
 
       const hue = s / CONFIG.streamCount
-      const color = new THREE.Color().setHSL(0.5 + hue * 0.12, 1, 0.5)
+      const color = new THREE.Color().setHSL(0.5 + hue * 0.1, 0.9, 0.55)
 
       const material = new THREE.ShaderMaterial({
         uniforms: {
           color: { value: color },
           time: { value: 0 },
         },
-        vertexShader: streamVertexShader,
-        fragmentShader: streamFragmentShader,
+        vertexShader: `
+                    attribute float size;
+                    attribute float alpha;
+                    varying float vAlpha;
+                    void main() {
+                        vAlpha = alpha;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        gl_PointSize = size * (350.0 / -mvPosition.z);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+        fragmentShader: `
+                    uniform vec3 color;
+                    uniform float time;
+                    varying float vAlpha;
+                    void main() {
+                        float dist = length(gl_PointCoord - vec2(0.5));
+                        if (dist > 0.5) discard;
+                        float glow = 1.0 - dist * 2.0;
+                        glow = pow(glow, 1.8);
+                        gl_FragColor = vec4(color * glow, glow * vAlpha);
+                    }
+                `,
         transparent: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
@@ -429,7 +383,7 @@
       stream.userData = {
         angle,
         radius,
-        speed: 0.25 + Math.random() * 0.25,
+        speed: 0.2 + Math.random() * 0.2,
         offset: Math.random() * Math.PI * 2,
       }
 
@@ -438,25 +392,24 @@
     }
   }
 
-  // Create energy waves
   function createEnergyWaves() {
     for (let w = 0; w < CONFIG.waveCount; w++) {
-      const geometry = new THREE.RingGeometry(40 + w * 60, 44 + w * 60, 64)
+      const geometry = new THREE.RingGeometry(35 + w * 50, 38 + w * 50, 64)
       const material = new THREE.MeshBasicMaterial({
         color: COLORS.primary,
         transparent: true,
-        opacity: 0.08 - w * 0.015,
+        opacity: 0.06 - w * 0.015,
         side: THREE.DoubleSide,
         blending: THREE.AdditiveBlending,
       })
 
       const wave = new THREE.Mesh(geometry, material)
       wave.rotation.x = Math.PI / 2
-      wave.position.z = -100
+      wave.position.z = -80
       wave.userData = {
         baseScale: 1,
-        speed: 0.4 + w * 0.15,
-        phase: w * 0.5,
+        speed: 0.35 + w * 0.12,
+        phase: w * 0.4,
       }
 
       scene.add(wave)
@@ -464,39 +417,34 @@
     }
   }
 
-  // Animation loop
   function animate() {
     animationId = requestAnimationFrame(animate)
     time += 0.016
 
-    // Smooth scroll interpolation
-    scrollY += (targetScrollY - scrollY) * 0.08
+    scrollY += (targetScrollY - scrollY) * 0.06
     const scrollNorm = Math.min(scrollY / (document.body.scrollHeight - window.innerHeight), 1)
 
     const driftX = Math.sin(time * CONFIG.cameraDriftSpeed * 1000) * CONFIG.cameraDriftRadius
-    const driftY = Math.cos(time * CONFIG.cameraDriftSpeed * 800) * CONFIG.cameraDriftRadius * 0.7
-    const driftZ = Math.sin(time * CONFIG.cameraDriftSpeed * 600) * 30
+    const driftY = Math.cos(time * CONFIG.cameraDriftSpeed * 800) * CONFIG.cameraDriftRadius * 0.6
+    const driftZ = Math.sin(time * CONFIG.cameraDriftSpeed * 500) * 25
 
-    camera.position.x += (driftX + mouseX * 50 - camera.position.x) * 0.02
-    camera.position.y += (driftY - mouseY * 30 - camera.position.y) * 0.02
-    camera.position.z = CONFIG.cameraDistance - scrollNorm * 200 + driftZ
+    camera.position.x += (driftX + mouseX * 40 - camera.position.x) * 0.015
+    camera.position.y += (driftY - mouseY * 25 - camera.position.y) * 0.015
+    camera.position.z = CONFIG.cameraDistance - scrollNorm * 180 + driftZ
     camera.lookAt(0, 0, 0)
 
-    // Update nodes with more movement
-    nodes.forEach((node, i) => {
+    nodes.forEach((node) => {
       const ud = node.userData
-      const scrollEffect = Math.sin(scrollNorm * Math.PI * 3 + ud.phase) * 25
+      const scrollEffect = Math.sin(scrollNorm * Math.PI * 2.5 + ud.phase) * 20
 
       node.position.x = ud.originalPos.x + Math.sin(time * ud.speed + ud.phase) * ud.amplitude
       node.position.y =
-        ud.originalPos.y + Math.cos(time * ud.speed * 0.7 + ud.phase) * ud.amplitude * 0.8 + scrollEffect
-      node.position.z = ud.originalPos.z + Math.sin(time * ud.speed * 0.4 + ud.phase) * 8
+        ud.originalPos.y + Math.cos(time * ud.speed * 0.7 + ud.phase) * ud.amplitude * 0.7 + scrollEffect
+      node.position.z = ud.originalPos.z + Math.sin(time * ud.speed * 0.35 + ud.phase) * 6
 
       node.material.uniforms.time.value = time
-      node.material.uniforms.scroll.value = scrollNorm
     })
 
-    // Update connections
     connections.forEach((conn) => {
       const start = nodes[conn.userData.startIdx]
       const end = nodes[conn.userData.endIdx]
@@ -510,12 +458,10 @@
       positions[5] = end.position.z
       conn.geometry.attributes.position.needsUpdate = true
 
-      // Pulse connections based on scroll
-      const pulse = 0.7 + 0.3 * Math.sin(time * 2.5 + conn.userData.startIdx * 0.1)
-      conn.material.opacity = conn.userData.baseOpacity * pulse * (1 + scrollNorm * 0.8)
+      const pulse = 0.7 + 0.3 * Math.sin(time * 2 + conn.userData.startIdx * 0.08)
+      conn.material.opacity = conn.userData.baseOpacity * pulse * (1 + scrollNorm * 0.6)
     })
 
-    // Update signals with scroll speed boost
     if (signals.length > 0 && connections.length > 0) {
       const positions = signals[0].points.geometry.attributes.position.array
 
@@ -544,48 +490,43 @@
     }
 
     if (particles) {
-      particles.rotation.y = time * 0.03 + scrollNorm * 0.8
-      particles.rotation.x = Math.sin(time * 0.02) * 0.1
-
+      particles.rotation.y = time * 0.02 + scrollNorm * 0.6
+      particles.rotation.x = Math.sin(time * 0.015) * 0.08
       particles.material.uniforms.time.value = time
 
       const positions = particles.geometry.attributes.position.array
       for (let i = 0; i < CONFIG.particleCount; i++) {
-        // Gentle floating motion
-        positions[i * 3 + 1] += Math.sin(time * 0.5 + i * 0.05) * 0.15
-        positions[i * 3] += Math.cos(time * 0.3 + i * 0.03) * 0.08
+        positions[i * 3 + 1] += Math.sin(time * 0.4 + i * 0.04) * 0.1
+        positions[i * 3] += Math.cos(time * 0.25 + i * 0.025) * 0.06
       }
       particles.geometry.attributes.position.needsUpdate = true
     }
 
-    // Update data streams with more reactivity
-    dataStreams.forEach((stream, i) => {
+    dataStreams.forEach((stream) => {
       const ud = stream.userData
-      stream.rotation.y = time * ud.speed + ud.offset + scrollNorm * 3
+      stream.rotation.y = time * ud.speed + ud.offset + scrollNorm * 2.5
 
       const positions = stream.geometry.attributes.position.array
       for (let j = 0; j < CONFIG.streamParticles; j++) {
         const t = j / CONFIG.streamParticles
-        const yOffset = Math.sin(time * 2.5 + j * 0.25 + ud.offset) * 12
-        positions[j * 3 + 1] = (t - 0.5) * 450 + yOffset + scrollNorm * 120
+        const yOffset = Math.sin(time * 2 + j * 0.2 + ud.offset) * 10
+        positions[j * 3 + 1] = (t - 0.5) * 400 + yOffset + scrollNorm * 100
       }
       stream.geometry.attributes.position.needsUpdate = true
       stream.material.uniforms.time.value = time
     })
 
-    // Update energy waves
     energyWaves.forEach((wave, i) => {
       const ud = wave.userData
-      const scale = ud.baseScale + Math.sin(time * ud.speed + ud.phase) * 0.4 + scrollNorm * 0.6
+      const scale = ud.baseScale + Math.sin(time * ud.speed + ud.phase) * 0.35 + scrollNorm * 0.5
       wave.scale.set(scale, scale, 1)
-      wave.rotation.z = time * 0.12 * (i % 2 === 0 ? 1 : -1)
-      wave.material.opacity = (0.06 - i * 0.015) * (1 + Math.sin(time * 2.5) * 0.4)
+      wave.rotation.z = time * 0.1 * (i % 2 === 0 ? 1 : -1)
+      wave.material.opacity = (0.05 - i * 0.012) * (1 + Math.sin(time * 2) * 0.35)
     })
 
     renderer.render(scene, camera)
   }
 
-  // Event handlers
   function onResize() {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
@@ -603,7 +544,6 @@
     mouseY = (e.clientY / window.innerHeight) * 2 - 1
   }
 
-  // UI Functions
   function updateScrollProgress() {
     const scrollHeight = document.body.scrollHeight - window.innerHeight
     const progress = (window.scrollY / scrollHeight) * 100
@@ -646,64 +586,38 @@
 
     if (toggle && links) {
       toggle.addEventListener("click", () => {
-        links.classList.toggle("active")
-        toggle.classList.toggle("active")
-      })
-
-      // Close menu on link click
-      links.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          links.classList.remove("active")
-          toggle.classList.remove("active")
-        })
+        links.classList.toggle("open")
+        toggle.classList.toggle("open")
       })
     }
 
-    // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
       anchor.addEventListener("click", function (e) {
         e.preventDefault()
         const target = document.querySelector(this.getAttribute("href"))
         if (target) {
           target.scrollIntoView({ behavior: "smooth" })
+          if (links) links.classList.remove("open")
+          if (toggle) toggle.classList.remove("open")
         }
       })
     })
   }
 
-  function initScrollReveal() {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible")
-          }
-        })
-      },
-      { threshold: 0.1 },
-    )
-
-    document.querySelectorAll(".project-card, .blog-card, .sidebar-card").forEach((el) => {
-      observer.observe(el)
-    })
-  }
-
-  // Initialize
+  // Initialize when DOM is ready
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       init()
       initNavigation()
-      initScrollReveal()
-      updateActiveSection()
     })
   } else {
     init()
     initNavigation()
-    initScrollReveal()
-    updateActiveSection()
   }
 
+  // Cleanup on page unload
   window.addEventListener("beforeunload", () => {
     if (animationId) cancelAnimationFrame(animationId)
+    if (renderer) renderer.dispose()
   })
 })()
