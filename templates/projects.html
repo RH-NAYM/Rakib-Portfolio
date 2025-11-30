@@ -11,6 +11,7 @@
 <body>
     <canvas id="neural-bg"></canvas>
 
+    <!-- Navigation -->
     <nav class="nav">
         <div class="nav-container">
             <a href="/" class="nav-logo">
@@ -33,14 +34,18 @@
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <main class="page-content">
         <section class="projects-hero">
             <div class="container">
                 <h1 class="page-title">Projects</h1>
-                <p class="page-subtitle">Production systems designed for scale and reliability</p>
+                <p class="page-subtitle">
+                    Production AI systems engineered for scale, reliability, and measurable impact.
+                </p>
             </div>
         </section>
 
+        <!-- Projects Grid -->
         <section class="projects-grid-section">
             <div class="container">
                 <div class="projects-grid">
@@ -57,8 +62,7 @@
                             {% endfor %}
                         </div>
                         <div class="project-metrics">
-                            <span class="metrics-label">Key Metrics:</span>
-                            <span class="metrics-value">{{ project.metrics }}</span>
+                            <strong>Key Metrics:</strong> {{ project.metrics }}
                         </div>
                         <a href="/project/{{ project.slug }}" class="project-link">
                             View Details
@@ -73,10 +77,13 @@
         </section>
     </main>
 
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <p class="footer-text">&copy; 2025 Principal AI Engineer. Systems built for production.</p>
+                <p class="footer-text">
+                    &copy; 2025 Principal AI Engineer. Systems built for production-grade AI.
+                </p>
                 <div class="footer-links">
                     <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
                     <a href="https://huggingface.co" target="_blank" rel="noopener noreferrer">Hugging Face</a>
