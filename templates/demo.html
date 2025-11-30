@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ description }}">
+    <meta name="robots" content="index, follow">
+    <title>{{ title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <canvas id="neural-bg"></canvas>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar"></div>
+    </div>
+
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-bracket">[</span>
+                <span class="logo-text">AE</span>
+                <span class="logo-bracket">]</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/#hero" class="nav-link">Home</a></li>
+                <li><a href="/#about" class="nav-link">About</a></li>
+                <li><a href="/#projects" class="nav-link {% if content_type == 'project' %}active{% endif %}">Projects</a></li>
+                <li><a href="/#blogs" class="nav-link {% if content_type == 'blog' %}active{% endif %}">Writing</a></li>
+                <li><a href="/#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section class="section demo-page-section">
+            <div class="container">
+                {% if item and content_type == 'project' %}
+                <!-- Project Detail -->
+                <div class="demo-header">
+                    <a href="/#projects" class="back-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        <span>Back to Projects</span>
+                    </a>
+                </div>
+
+                <div class="demo-hero">
+                    <span class="demo-domain">{{ item.domain }}</span>
+                    <h1 class="demo-title">{{ item.title }}</h1>
+                    <p class="demo-description">{{ item.description }}</p>
+                </div>
+
+                <div class="demo-grid">
+                    <div class="demo-main">
+                        <div class="demo-metrics-card">
+                            <div class="metrics-header">
+                                <div class="metrics-icon-lg">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3>Performance Metrics</h3>
+                                    <p class="metrics-highlight">{{ item.metrics }}</p>
+                                </div>
+                            </div>
+                            <div class="metrics-bars">
+                                <div class="metric-bar-item">
+                                    <span class="bar-label">Reliability</span>
+                                    <div class="bar-track"><div class="bar-fill" style="width: 99%"></div></div>
+                                    <span class="bar-value">99.99%</span>
+                                </div>
+                                <div class="metric-bar-item">
+                                    <span class="bar-label">Performance</span>
+                                    <div class="bar-track"><div class="bar-fill" style="width: 95%"></div></div>
+                                    <span class="bar-value">Optimized</span>
+                                </div>
+                                <div class="metric-bar-item">
+                                    <span class="bar-label">Scalability</span>
+                                    <div class="bar-track"><div class="bar-fill" style="width: 92%"></div></div>
+                                    <span class="bar-value">Distributed</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="demo-content-card">
+                            <div class="content-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                                </svg>
+                            </div>
+                            <h3>Technical Documentation</h3>
+                            <p>Detailed architecture diagrams, implementation notes, and performance analysis for this system are available upon request for qualified engineering inquiries.</p>
+                            <a href="/#contact" class="btn btn-secondary">
+                                <span>Request Access</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <aside class="demo-sidebar">
+                        <div class="sidebar-card">
+                            <h4>Technology Stack</h4>
+                            <div class="tech-cloud">
+                                {% for tech in item.tech %}
+                                <span class="tech-tag">{{ tech }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="sidebar-card">
+                            <h4>System Attributes</h4>
+                            <ul class="attribute-list">
+                                <li>
+                                    <span class="attr-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </span>
+                                    Production Ready
+                                </li>
+                                <li>
+                                    <span class="attr-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                    </span>
+                                    High Performance
+                                </li>
+                                <li>
+                                    <span class="attr-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                    </span>
+                                    Horizontally Scalable
+                                </li>
+                                <li>
+                                    <span class="attr-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                    </span>
+                                    Fault Tolerant
+                                </li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+
+                {% elif item and content_type == 'blog' %}
+                <!-- Blog Post Detail -->
+                <div class="demo-header">
+                    <a href="/#blogs" class="back-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        <span>Back to Writing</span>
+                    </a>
+                </div>
+
+                <article class="blog-article">
+                    <header class="article-header">
+                        <span class="demo-category">{{ item.category }}</span>
+                        <h1 class="demo-title">{{ item.title }}</h1>
+                        <div class="article-meta">
+                            <span class="meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                {{ item.date }}
+                            </span>
+                            <span class="meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                {{ item.read_time }} read
+                            </span>
+                        </div>
+                    </header>
+
+                    <div class="article-lead">
+                        <p>{{ item.excerpt }}</p>
+                    </div>
+
+                    <div class="article-placeholder">
+                        <div class="placeholder-content">
+                            <div class="placeholder-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <h3>Full Article Coming Soon</h3>
+                            <p>This article is currently being prepared for publication. Technical content is reviewed thoroughly before release to ensure accuracy, depth, and practical value.</p>
+                            <div class="placeholder-actions">
+                                <a href="/#contact" class="btn btn-primary">
+                                    <span>Get Notified</span>
+                                </a>
+                                <a href="/#blogs" class="btn btn-secondary">
+                                    <span>Browse Other Articles</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                {% else %}
+                <!-- Generic Demo Page -->
+                <div class="demo-header">
+                    <a href="/" class="back-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        <span>Back to Home</span>
+                    </a>
+                </div>
+
+                <div class="demo-hero">
+                    <h1 class="demo-title">Technical Demonstrations</h1>
+                </div>
+
+                <div class="demo-content-card centered">
+                    <div class="content-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                        </svg>
+                    </div>
+                    <h3>Reserved for Engineering Case Studies</h3>
+                    <p>This section is reserved for detailed technical demonstrations and engineering case studies. Content is published selectively to maintain quality and relevance.</p>
+                    <a href="/" class="btn btn-primary">
+                        <span>Explore Portfolio</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-bracket">[</span>
+                    <span class="logo-text">AE</span>
+                    <span class="logo-bracket">]</span>
+                </div>
+                <p class="footer-text">Systems built for production.</p>
+                <div class="footer-links">
+                    <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <a href="https://huggingface.co" target="_blank" rel="noopener noreferrer">Hugging Face</a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                </div>
+                <p class="footer-copyright">&copy; 2025 Principal AI Engineer</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

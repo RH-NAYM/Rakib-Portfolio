@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ description }}">
+    <meta name="robots" content="index, follow">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <canvas id="neural-bg"></canvas>
+
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-bracket">[</span>
+                <span class="logo-text">AE</span>
+                <span class="logo-bracket">]</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/about" class="nav-link">About</a></li>
+                <li><a href="/projects" class="nav-link">Projects</a></li>
+                <li><a href="/blogs" class="nav-link active">Writing</a></li>
+                <li><a href="/contact" class="nav-link">Contact</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <section class="blogs-hero">
+            <div class="container">
+                <h1 class="page-title">Technical Writing</h1>
+                <p class="page-subtitle">Deep dives into AI systems, infrastructure, and production engineering</p>
+            </div>
+        </section>
+
+        <section class="blogs-list-section">
+            <div class="container">
+                <div class="blogs-list">
+                    {% for post in posts %}
+                    <article class="blog-card">
+                        <div class="blog-meta">
+                            <span class="blog-category">{{ post.category }}</span>
+                            <span class="blog-date">{{ post.date }}</span>
+                            <span class="blog-read-time">{{ post.read_time }}</span>
+                        </div>
+                        <h2 class="blog-title">
+                            <a href="/blog/{{ post.slug }}">{{ post.title }}</a>
+                        </h2>
+                        <p class="blog-excerpt">{{ post.excerpt }}</p>
+                        <a href="/blog/{{ post.slug }}" class="blog-link">
+                            Read Article
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 Principal AI Engineer. Systems built for production.</p>
+                <div class="footer-links">
+                    <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <a href="https://huggingface.co" target="_blank" rel="noopener noreferrer">Hugging Face</a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
