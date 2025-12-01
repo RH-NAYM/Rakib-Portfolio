@@ -375,7 +375,7 @@
             <h2 class="section-title">Writing & Insights</h2>
             <div class="section-line"></div>
         </div>
-        <div class="articles-grid">
+        <!-- <div class="articles-grid">
             {% for article in data.articles %}
             <article class="article-card">
                 <div class="article-header">
@@ -386,6 +386,21 @@
                 <p class="article-description">{{ article.description }}</p>
                 <span class="article-link">Read article <span class="arrow">→</span></span>
             </article>
+            {% endfor %}
+        </div> -->
+        <div class="articles-grid">
+            {% for article in data.articles %}
+                <a href="{{ url_for('static', path='articles/' ~ article.url) }}" target="_blank" class="article-link-wrapper">
+                    <article class="article-card">
+                        <div class="article-header">
+                            <span class="article-category">{{ article.category }}</span>
+                            <span class="article-time">{{ article.read_time }}</span>
+                        </div>
+                        <h3 class="article-title">{{ article.title }}</h3>
+                        <p class="article-description">{{ article.description }}</p>
+                        <span class="article-link">Read article <span class="arrow">→</span></span>
+                    </article>
+                </a>
             {% endfor %}
         </div>
     </div>

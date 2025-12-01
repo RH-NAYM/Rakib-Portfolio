@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-# from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse
+import markdown
 from tools import MyTools
 from pathlib import Path
 
@@ -15,7 +16,7 @@ app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 
-PORTFOLIO_DATA = __tools__.load_data("./utils").get("merge_data", None)
+PORTFOLIO_DATA = __tools__.load_data("static/utils").get("merge_data", None)
 
 
 @app.get("/")
@@ -31,6 +32,11 @@ async def health():
     return {"status": "healthy"}
 
 
-# @app.get("/favicon.ico")
-# async def favicon():
-#     return FileResponse(BASE_DIR / "static" / "favicon.ico")
+@app.get("/articles/{filename}", response_class=HTMLResponse)
+async def read_article(filename: str):
+    path = BASE_DIR / "static" / "articles" / filename
+    if not path.exists():
+        return HTMLResponse(content="Article not found", status_code=404)
+    content = path.read_text()
+    html_content = markdown.markdown(content)
+    return f"<html><body>{html_content}</body></html>"

@@ -242,37 +242,43 @@
             "title": "Accuracy Doesn't Matter If Your System Crashes",
             "description": "Why production stability matters more than benchmark scores.",
             "category": "Production AI",
-            "read_time": "9 min"
+            "read_time": "9 min",
+            "url": "accuracy_crash.md"
         },
         {
             "title": "Why Most YOLO Deployments Fail in Production",
             "description": "And how to build ones that actually survive.",
             "category": "Computer Vision",
-            "read_time": "11 min"
+            "read_time": "11 min",
+            "url": "yolo_deployments.md"
         },
         {
             "title": "Async Python Is Not Optional Anymore",
             "description": "Scalability lessons learned the hard way.",
             "category": "Systems",
-            "read_time": "8 min"
+            "read_time": "8 min",
+            "url": "async_python.md"
         },
         {
             "title": "From Notebook to Production: The Missing Skills",
             "description": "What separates ML engineers from AI professionals.",
             "category": "Career",
-            "read_time": "10 min"
+            "read_time": "10 min",
+            "url": "notebook_to_production.md"
         },
         {
             "title": "GPU Optimization Is a Business Skill",
             "description": "Every wasted millisecond costs money.",
             "category": "Optimization",
-            "read_time": "7 min"
+            "read_time": "7 min",
+            "url": "gpu_optimization.md"
         },
         {
             "title": "Retail AI Is the Hardest CV Problem Nobody Talks About",
             "description": "Messy shelves, bad lighting, zero excuses.",
             "category": "Industry",
-            "read_time": "12 min"
+            "read_time": "12 min",
+            "url": "retail_cv_issue.md"
         }
     ],
     "skills": [
