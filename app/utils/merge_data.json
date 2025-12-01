@@ -29,7 +29,9 @@
         "email": {
             "url": "mailto:naym.mj@gmail.com",
             "label": "Email",
-            "username": "naym.mj@gmail.com"
+            "username": "naym.mj@gmail.com",
+            "personal": "naym.mj@gmail.com",
+            "office": "rakibul@hedigital.tech"
         },
         "whatsapp": {
             "url": "https://wa.me/8801638830165",
