@@ -1,0 +1,356 @@
+{
+    "name": "MD Rakibul Hasan Naym",
+    "title": "Head of Artificial Intelligence",
+    "tagline": "I build AI systems that survive production, scale under pressure, and create measurable business impact.",
+    "email": "naym.mj@gmail.com",
+    "phone": "+8801638830165",
+    "location": "Dhaka, Bangladesh",
+    "social": {
+        "github": {
+            "url": "https://github.com/RH-NAYM",
+            "label": "GitHub",
+            "username": "@RH-NAYM"
+        },
+        "linkedin": {
+            "url": "https://www.linkedin.com/in/md-rakibul-hasan-naym-625263229?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+            "label": "LinkedIn",
+            "username": "in/Rakib"
+        },
+        "huggingface": {
+            "url": "https://huggingface.co/rakib72642",
+            "label": "Hugging Face",
+            "username": "@rakib72642"
+        },
+        "huggingface_org": {
+            "url": "https://huggingface.co/HawkEyesAI",
+            "label": "HF Organization",
+            "username": "HawkEyesAI"
+        },
+        "email": {
+            "url": "mailto:naym.mj@gmail.com",
+            "label": "Email",
+            "username": "naym.mj@gmail.com",
+            "personal": "naym.mj@gmail.com",
+            "office": "rakibul@hedigital.tech"
+        },
+        "whatsapp": {
+            "url": "https://wa.me/8801638830165",
+            "label": "WhatsApp",
+            "username": "+880 1638 830165"
+        },
+        "kaggle": {
+            "url": "https://kaggle.com/rakibulhasan",
+            "label": "Kaggle",
+            "username": "@rakibulhasan"
+        },
+        "scholar": {
+            "url": "https://scholar.google.com/citations?user=rakibulhasan",
+            "label": "Google Scholar",
+            "username": "Publications"
+        }
+    },
+    "about": {
+        "paragraphs": [
+            "I design, build, and take full ownership of production AI systems. My work is not limited to models or accuracy charts—I focus on systems that continue working when data is messy, lighting is poor, traffic spikes, and business expectations are unforgiving.",
+            "I have spent years working at the sharp edge of computer vision, retail analytics, and real-time inference, where theory meets reality. From YOLO-based detection pipelines to GPU-optimized inference servers, I've learned that if an AI system can't scale, self-heal, and justify its cost, it's not finished.",
+            "As Head of AI at HawkEyes Digital Monitoring Ltd, I lead technical direction while staying hands-on—writing code, reviewing architectures, optimizing performance, and mentoring engineers. My goal is simple: build AI that earns trust, delivers value, and survives long after deployment."
+        ]
+    },
+    "stats": [
+        {
+            "number": "6+",
+            "label": "Years in AI & ML"
+        },
+        {
+            "number": "1.5M+",
+            "label": "Retail Outlets Monitored"
+        },
+        {
+            "number": "500K+",
+            "label": "Images Processed Daily"
+        },
+        {
+            "number": "99%",
+            "label": "CV System Accuracy"
+        },
+        {
+            "number": "10+",
+            "label": "Live Production AI Systems"
+        }
+    ],
+    "expertise": [
+        {
+            "domain": "Production Computer Vision",
+            "description": "End-to-end ownership of detection, segmentation, OCR, re-identification, and tracking systems that operate reliably in uncontrolled real-world environments with messy data and constant drift."
+        },
+        {
+            "domain": "Retail Intelligence AI",
+            "description": "Deep expertise in planogram compliance, POSM validation, SKU detection, share-of-shelf analytics, pricing intelligence, and outlet-level decision engines deployed across millions of retail locations."
+        },
+        {
+            "domain": "GPU & Model Optimization",
+            "description": "Turning research-grade models into production-grade systems using TensorRT, ONNX, quantization, mixed precision, batching, and multi-model GPU scheduling to squeeze maximum throughput from hardware."
+        },
+        {
+            "domain": "Asynchronous & Distributed Systems",
+            "description": "Designing async-first, fault-tolerant architectures using event-driven patterns that handle massive throughput without collapsing under load."
+        },
+        {
+            "domain": "Real-Time Inference Pipelines",
+            "description": "High-performance video and image pipelines with sub-second latency using WebSockets, async IO, GPU acceleration, and edge-cloud hybrid deployments."
+        },
+        {
+            "domain": "MLOps & AI Platform Engineering",
+            "description": "Building internal AI platforms with automated training, model versioning, deployment, monitoring, rollback, and data validation to let teams ship models safely and repeatedly."
+        },
+        {
+            "domain": "Data-Centric AI & Annotation Strategy",
+            "description": "Improving model performance through smarter data pipelines, active learning, label quality control, and feedback loops rather than blindly increasing model size."
+        },
+        {
+            "domain": "Large-Scale Inference Infrastructure",
+            "description": "Designing systems that serve millions of predictions daily with predictable latency, observability, cost control, and hardware-aware scheduling."
+        },
+        {
+            "domain": "AR-Integrated Vision",
+            "description": "Marker-based and vision-driven AR overlays that transform raw model outputs into instantly actionable visual intelligence for field teams and decision-makers."
+        },
+        {
+            "domain": "Linux & Systems Engineering",
+            "description": "Deep hands-on experience with Linux (Arch, Ubuntu, server environments), Bash scripting, process management, GPU drivers, deployment automation, and low-level debugging."
+        },
+        {
+            "domain": "AI Reliability & Monitoring",
+            "description": "Detecting silent failures through latency tracking, data drift detection, confidence monitoring, and real-world feedback before business damage happens."
+        },
+        {
+            "domain": "Security & Compliance-Aware AI",
+            "description": "Designing AI systems that respect data privacy, access control, auditability, and enterprise compliance without slowing down delivery."
+        },
+        {
+            "domain": "AI Cost & Performance Engineering",
+            "description": "Balancing accuracy, latency, and infrastructure spend by making hard engineering trade-offs that deliver measurable business ROI."
+        },
+        {
+            "domain": "AI Product Thinking",
+            "description": "Shaping AI systems around real user value—defining success metrics, aligning with product goals, and ensuring models solve actual business problems."
+        },
+        {
+            "domain": "Technical Leadership",
+            "description": "Mentoring engineers, setting long-term AI strategy, reviewing architectures, and translating vague business pain points into deployable, revenue-impacting AI systems."
+        }
+    ],
+    "projects": [
+        {
+            "title": "AI-Powered Retail POSM Monitoring System",
+            "problem": "Manual verification of promotional materials across massive retail networks was slow, inconsistent, and unreliable.",
+            "solution": "Built a YOLO-based multi-class detection pipeline with OCR integration, async processing, and GPU-optimized inference.",
+            "impact": "Achieved ~99% accuracy across 1.5M+ outlets and reduced manual audits by over 85%.",
+            "stack": [
+                "YOLOv8",
+                "PyTorch",
+                "OpenCV",
+                "FastAPI",
+                "Redis",
+                "CUDA",
+                "PostgreSQL"
+            ],
+            "year": "2024-2025"
+        },
+        {
+            "title": "Retail Planogram & Shelf Compliance AI",
+            "problem": "Revenue loss due to misplaced products and non-compliant shelf layouts.",
+            "solution": "Developed a CV-driven planogram validation engine combining object detection, spatial analysis, and business rules.",
+            "impact": "Improved shelf compliance to ~98% and significantly reduced revenue leakage.",
+            "stack": [
+                "YOLO",
+                "OpenCV",
+                "FastAPI",
+                "Python"
+            ],
+            "year": "2024"
+        },
+        {
+            "title": "High-Throughput GPU Inference Server",
+            "problem": "Multiple AI models fighting for GPU resources caused latency spikes and instability.",
+            "solution": "Designed an async inference server with batching, prioritization, dynamic model loading, and GPU optimization.",
+            "impact": "4.7× throughput improvement and stable performance under peak load.",
+            "stack": [
+                "FastAPI",
+                "AsyncIO",
+                "CUDA",
+                "TensorRT",
+                "Redis"
+            ],
+            "year": "2024"
+        },
+        {
+            "title": "Face & National ID Verification System",
+            "problem": "Large-scale identity verification required high accuracy and fast processing.",
+            "solution": "Built CNN-based face recognition combined with OCR-driven NID extraction and similarity scoring.",
+            "impact": "Reduced verification errors by over 95% across large populations.",
+            "stack": [
+                "PyTorch",
+                "OpenCV",
+                "OCR",
+                "FastAPI",
+                "CUDA"
+            ],
+            "year": "2023-2024"
+        },
+        {
+            "title": "WebSocket-Based Live AI Streaming Engine",
+            "problem": "HTTP-based frame uploads caused unacceptable latency for real-time AI feedback.",
+            "solution": "Implemented WebSocket-based streaming with server-side async processing.",
+            "impact": "Achieved sub-120ms round-trip latency for live AI inference.",
+            "stack": [
+                "FastAPI",
+                "WebSockets",
+                "OpenCV",
+                "AsyncIO"
+            ],
+            "year": "2024"
+        },
+        {
+            "title": "Satellite Methane Leak Detection System",
+            "problem": "Traditional monitoring failed to detect methane leaks early.",
+            "solution": "Built spectral image processing and anomaly detection pipelines with GIS integration.",
+            "impact": "Enabled early detection across hundreds of monitored sites.",
+            "stack": [
+                "Python",
+                "PyTorch",
+                "OpenCV",
+                "GIS"
+            ],
+            "year": "2023"
+        },
+        {
+            "title": "AR-Based Visual AI Validation Tool",
+            "problem": "Non-technical teams struggled to trust raw AI outputs.",
+            "solution": "Created a marker-based AR system overlaying AI predictions directly onto live camera views.",
+            "impact": "Dramatically improved validation speed and stakeholder trust.",
+            "stack": [
+                "OpenCV",
+                "AR Markers",
+                "Python"
+            ],
+            "year": "2024"
+        }
+    ],
+    "articles": [
+        {
+            "title": "Accuracy Doesn't Matter If Your System Crashes",
+            "description": "Why production stability matters more than benchmark scores.",
+            "category": "Production AI",
+            "read_time": "9 min",
+            "url": "accuracy_crash.md"
+        },
+        {
+            "title": "Why Most YOLO Deployments Fail in Production",
+            "description": "And how to build ones that actually survive.",
+            "category": "Computer Vision",
+            "read_time": "11 min",
+            "url": "yolo_deployments.md"
+        },
+        {
+            "title": "Async Python Is Not Optional Anymore",
+            "description": "Scalability lessons learned the hard way.",
+            "category": "Systems",
+            "read_time": "8 min",
+            "url": "async_python.md"
+        },
+        {
+            "title": "From Notebook to Production: The Missing Skills",
+            "description": "What separates ML engineers from AI professionals.",
+            "category": "Career",
+            "read_time": "10 min",
+            "url": "notebook_to_production.md"
+        },
+        {
+            "title": "GPU Optimization Is a Business Skill",
+            "description": "Every wasted millisecond costs money.",
+            "category": "Optimization",
+            "read_time": "7 min",
+            "url": "gpu_optimization.md"
+        },
+        {
+            "title": "Retail AI Is the Hardest CV Problem Nobody Talks About",
+            "description": "Messy shelves, bad lighting, zero excuses.",
+            "category": "Industry",
+            "read_time": "12 min",
+            "url": "retail_cv_issue.md"
+        }
+    ],
+    "skills": [
+        {
+            "name": "Python",
+            "level": 98
+        },
+        {
+            "name": "Async & Concurrent Systems (AsyncIO, WebSockets)",
+            "level": 96
+        },
+        {
+            "name": "Deep Learning (PyTorch, ONNX)",
+            "level": 95
+        },
+        {
+            "name": "Computer Vision (Detection, Segmentation, OCR)",
+            "level": 97
+        },
+        {
+            "name": "YOLO Production Deployment",
+            "level": 95
+        },
+        {
+            "name": "NLP & Transformer Architectures",
+            "level": 92
+        },
+        {
+            "name": "FastAPI & Django (Production APIs)",
+            "level": 95
+        },
+        {
+            "name": "GPU Acceleration (CUDA, TensorRT)",
+            "level": 92
+        },
+        {
+            "name": "Model Optimization & Inference Scaling",
+            "level": 95
+        },
+        {
+            "name": "MLOps & Model Lifecycle Management",
+            "level": 93
+        },
+        {
+            "name": "Real-Time Analytics Systems",
+            "level": 92
+        },
+        {
+            "name": "Distributed Systems & Messaging (Redis, Kafka)",
+            "level": 90
+        },
+        {
+            "name": "Linux Systems (Arch, Ubuntu, Server Environments)",
+            "level": 94
+        },
+        {
+            "name": "Bash & Shell Scripting",
+            "level": 92
+        },
+        {
+            "name": "Containers & Orchestration (Docker, Kubernetes)",
+            "level": 88
+        },
+        {
+            "name": "Databases (SQL, PostgreSQL)",
+            "level": 88
+        }
+    ],
+    "education": {
+        "degree": "BSc in Electrical & Electronic Engineering (EEE)",
+        "cgpa": "3.75",
+        "institution": "Bangladesh University of Business & Technology (BUBT)"
+    },
+    "closing_statement": "I don't chase trends or benchmarks. I build AI systems that earn trust in production, justify their cost, and continue working when conditions are imperfect. If an AI solution can't scale, self-heal, and deliver real business value, I'm not done yet."
+}
