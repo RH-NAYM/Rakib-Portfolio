@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import FileResponse
 from tools import MyTools
 from pathlib import Path
 
@@ -28,3 +29,8 @@ async def home(request: Request):
 @app.get("/health")
 async def health():
     return {"status": "healthy"}
+
+
+@app.get("/favicon.ico")
+async def favicon():
+    return FileResponse(BASE_DIR / "static" / "favicon.ico")
