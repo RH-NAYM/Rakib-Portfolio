@@ -14,7 +14,7 @@ __tools__ = MyTools()
 # Setup paths
 BASE_DIR = Path(__file__).resolve().parent
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
-templates = Jinja2Templates(directory=BASE_DIR / "static/templates")
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 
 PORTFOLIO_DATA = __tools__.load_data("static/utils").get("merge_data", None)
