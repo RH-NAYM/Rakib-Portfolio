@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="AI Engineer, Machine Learning, ML Systems, Production AI, Infrastructure">
+    <meta name="author" content="Principal AI Engineer">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio of {{ data.name }} - {{ data.title }}">
+    <meta name="theme-color" content="#0a0a0a">
+    <title> Rakibul Hasan | Articles </title>
+    <!-- <link rel="icon" href="{{ url_for('static', path='images/favicon.ico') }}"> -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='icons/logo.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='icons/favicon-32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', path='icons/favicon-16.png') }}">
+
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <canvas id="neural-bg"></canvas>
+
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar"></div>
+    </div>
+
+    <header class="site-header">
+        <nav class="nav-container">
+            <!-- Updated logo with futuristic styling -->
+            <a href="#" class="nav-logo">
+                <span class="logo-bracket">[</span>
+                Rakib
+                <!-- {{ data.name.split()[1] }} -->
+                <span class="accent">.</span>
+                <span class="logo-bracket">]</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#about"><span class="nav-num">01.</span>About</a></li>
+                <li><a href="#expertise"><span class="nav-num">02.</span>Expertise</a></li>
+                <li><a href="#projects"><span class="nav-num">03.</span>Projects</a></li>
+                <li><a href="#writing"><span class="nav-num">04.</span>Writing</a></li>
+                <li><a href="#contact"><span class="nav-num">05.</span>Contact</a></li>
+            </ul>
+            <!-- Added mobile menu button -->
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Article Section - Blended with Futuristic Design -->
+
+
+
+
+        <section class="writing" id="article">
+            <div class="hero-bg-effects">
+                <div class="grid-overlay"></div>
+                <div class="glow-orb orb-1"></div>
+                <div class="glow-orb orb-2"></div>
+                <div class="scan-line"></div>
+            </div>
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-number">01</span>
+                    <h2 class="section-title">Async Python Is Not Optional Anymore</h2>
+                    <div class="section-line"></div>
+                </div>
+                <article class="article-content">
+                    <p class="article-meta">
+                        <span class="article-category">Systems</span>
+                        <span class="article-time">8 min read</span>
+                    </p>
+
+                    <h3>Introduction</h3>
+                    <p>Python has long been celebrated for its simplicity and readability. However, when building
+                        <strong>high-throughput systems</strong>, the old synchronous approach can become a bottleneck.
+                        Applications that process thousands of requests per second, handle real-time data streams, or
+                        integrate multiple services cannot rely on blocking I/O without serious consequences.
+                    </p>
+                    <p>This article explains why <strong>asynchronous Python is no longer optional</strong> for modern
+                        system design and shares lessons from real-world scalability challenges.</p>
+                    <blockquote>
+                        <p>“Blocking code kills scalability. Async Python saves your system from itself.” — <em>Senior
+                                Backend Engineer</em></p>
+                    </blockquote>
+
+                    <h3>1. The Cost of Synchronous I/O</h3>
+                    <p>Synchronous code executes one operation at a time. When one request waits for I/O, all others are
+                        blocked:</p>
+                    <ul>
+                        <li>Network requests</li>
+                        <li>Database queries</li>
+                        <li>File read/write operations</li>
+                        <li>External API calls</li>
+                    </ul>
+                    <p><strong>Example:</strong> A REST API handling 1,000 concurrent requests with blocking calls can
+                        easily overwhelm the server, resulting in high latency or crashes.</p>
+                    <p><strong>Proven Insight:</strong> Systems using traditional synchronous Python often require
+                        <strong>10x more hardware</strong> to achieve the same throughput as asynchronous alternatives.
+                    </p>
+
+                    <h3>2. Event Loops & Concurrency</h3>
+                    <p>Asynchronous Python, using <strong>asyncio</strong>, allows code to <strong>pause during
+                            I/O</strong> and resume later. This enables:</p>
+                    <ul>
+                        <li>High concurrency without spawning threads</li>
+                        <li>Efficient CPU utilization</li>
+                        <li>Non-blocking network and disk operations</li>
+                    </ul>
+                    <p><strong>Example:</strong> A FastAPI app using async endpoints can serve thousands of simultaneous
+                        users with minimal resources.</p>
+                    <p><strong>Reference:</strong> <a href="https://www.python.org/dev/peps/pep-0492/"
+                            target="_blank">PEP 492 — async/await syntax</a> defines Python's async capabilities,
+                        forming the backbone of modern scalable Python systems.</p>
+
+                    <h3>3. Real-World Pitfalls</h3>
+                    <ul>
+                        <li><strong>Mixing sync and async calls</strong> can block the event loop</li>
+                        <li><strong>Database drivers</strong> may not support async natively</li>
+                        <li><strong>Legacy libraries</strong> may not be async-friendly</li>
+                        <li>Improper exception handling can silently fail tasks</li>
+                    </ul>
+                    <p><strong>Case Study:</strong> A video-processing pipeline using synchronous Python crashed under
+                        50 simultaneous uploads. Rewriting key tasks using async reduced latency by <strong>70%</strong>
+                        and prevented crashes entirely.</p>
+
+                    <h3>4. Integrating Async Across the Stack</h3>
+                    <ul>
+                        <li><strong>Web frameworks:</strong> FastAPI, Starlette, Aiohttp</li>
+                        <li><strong>Databases:</strong> Asyncpg for PostgreSQL, Motor for MongoDB</li>
+                        <li><strong>Queues & Workers:</strong> RabbitMQ with aio-pika, Celery with asyncio</li>
+                        <li><strong>External APIs:</strong> Use <code>httpx</code> or <code>aiohttp</code> for
+                            non-blocking calls</li>
+                    </ul>
+                    <p><strong>Proven Approach:</strong> Scaling microservices in production often requires
+                        <strong>end-to-end async pipelines</strong>, not just async endpoints.</p>
+
+                    <h3>5. Observability & Reliability</h3>
+                    <ul>
+                        <li>Track task duration and latency</li>
+                        <li>Detect blocked event loops</li>
+                        <li>Monitor concurrency limits</li>
+                        <li>Log unhandled exceptions in async tasks</li>
+                    </ul>
+                    <p><strong>Proven Insight:</strong> Proper observability ensures async pipelines remain robust even
+                        under high load.</p>
+
+                    <h3>Conclusion</h3>
+                    <p>Synchronous Python is increasingly a liability in modern scalable systems. <strong>Async Python
+                            is no longer optional</strong> — it’s essential for handling high throughput, real-time
+                        pipelines, and microservices reliably.</p>
+                    <blockquote>
+                        <p>Embrace async to make your Python applications scalable, resilient, and future-proof.</p>
+                    </blockquote>
+
+                    <h3>References</h3>
+                    <ol>
+                        <li><a href="https://www.python.org/dev/peps/pep-0492/" target="_blank">PEP 492 — async/await
+                                syntax</a></li>
+                        <li><a href="https://realpython.com/async-io-python/" target="_blank">Real Python: Async IO in
+                                Python</a></li>
+                        <li><a href="https://fastapi.tiangolo.com/async/" target="_blank">FastAPI Async Best
+                                Practices</a></li>
+                        <li><a href="https://medium.com/@hbnybghk/scaling-python-async-lessons" target="_blank">Medium:
+                                Lessons Learned Scaling Python Systems</a></li>
+                        <li><a href="https://docs.python.org/3/library/asyncio.html" target="_blank">Async Python
+                                Patterns</a></li>
+                    </ol>
+                </article>
+            </div>
+        </section>
+
+
+
+
+
+
+        <!-- Enhanced footer with all social links -->
+        <footer class="site-footer">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <!-- <span class="footer-logo">[{{ data.name.split()[1] }}<span class="accent">.</span>]</span> -->
+                    <span class="footer-logo">[Rakib<span class="accent">.</span>]</span>
+                    <p class="footer-text">Building production AI systems at scale.</p>
+                </div>
+                <div class="footer-links-grid">
+                    <div class="footer-col">
+                        <h4>Connect</h4>
+                        <a href="{{ data.social.email.url }}">Email</a>
+                        <a href="{{ data.social.whatsapp.url }}" target="_blank" rel="noopener">WhatsApp</a>
+                        <a href="{{ data.social.linkedin.url }}" target="_blank" rel="noopener">LinkedIn</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Code</h4>
+                        <a href="{{ data.social.github.url }}" target="_blank" rel="noopener">GitHub</a>
+                        <a href="{{ data.social.huggingface.url }}" target="_blank" rel="noopener">Hugging Face</a>
+                        <a href="{{ data.social.kaggle.url }}" target="_blank" rel="noopener">Kaggle</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Research</h4>
+                        <a href="{{ data.social.scholar.url }}" target="_blank" rel="noopener">Google Scholar</a>
+                        <a href="{{ data.social.huggingface_org.url }}" target="_blank" rel="noopener">AI Lab</a>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2025 MD Rakibul Hasan Naym. All rights reserved.</p>
+                    <div class="footer-status">
+                        <span class="status-indicator"></span>
+                        <span>System Online</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="/static/js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="AI Engineer, Machine Learning, ML Systems, Production AI, Infrastructure">
+    <meta name="author" content="Principal AI Engineer">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio of {{ data.name }} - {{ data.title }}">
+    <meta name="theme-color" content="#0a0a0a">
+    <title> Rakibul Hasan | Articles </title>
+    <!-- <link rel="icon" href="{{ url_for('static', path='images/favicon.ico') }}"> -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='icons/logo.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='icons/favicon-32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', path='icons/favicon-16.png') }}">
+
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <canvas id="neural-bg"></canvas>
+
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar"></div>
+    </div>
+
+    <header class="site-header">
+        <nav class="nav-container">
+            <!-- Updated logo with futuristic styling -->
+            <a href="#" class="nav-logo">
+                <span class="logo-bracket">[</span>
+                Rakib
+                <!-- {{ data.name.split()[1] }} -->
+                <span class="accent">.</span>
+                <span class="logo-bracket">]</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#about"><span class="nav-num">01.</span>About</a></li>
+                <li><a href="#expertise"><span class="nav-num">02.</span>Expertise</a></li>
+                <li><a href="#projects"><span class="nav-num">03.</span>Projects</a></li>
+                <li><a href="#writing"><span class="nav-num">04.</span>Writing</a></li>
+                <li><a href="#contact"><span class="nav-num">05.</span>Contact</a></li>
+            </ul>
+            <!-- Added mobile menu button -->
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Article Section - Blended with Futuristic Design -->
+
+
+
+
+
+
+        <section class="writing" id="article">
+            <div class="hero-bg-effects">
+                <div class="grid-overlay"></div>
+                <div class="glow-orb orb-1"></div>
+                <div class="glow-orb orb-2"></div>
+                <div class="scan-line"></div>
+            </div>
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-number">03</span>
+                    <h2 class="section-title">From Notebook to Production: The Missing Skills</h2>
+                    <div class="section-line"></div>
+                </div>
+                <article class="article-content">
+                    <p class="article-meta">
+                        <span class="article-category">Career</span>
+                        <span class="article-time">10 min read</span>
+                    </p>
+
+                    <h3>Introduction</h3>
+                    <p>Many aspiring ML engineers excel at building models in notebooks but struggle when it comes to
+                        deploying them in real-world systems. <strong>The gap between experimentation and
+                            production</strong> is where most careers plateau.</p>
+                    <p>This article explores the skills required to transition from a model-builder to a
+                        production-ready AI professional and highlights the practices that distinguish top-tier
+                        engineers.</p>
+                    <blockquote>
+                        <p>“Notebooks teach theory. Production teaches craft.” — <em>Senior AI Engineer</em></p>
+                    </blockquote>
+
+                    <h3>1. Understanding Production Constraints</h3>
+                    <p>Deploying ML in production requires awareness of:</p>
+                    <ul>
+                        <li><strong>Latency & throughput requirements</strong> — models must respond in milliseconds in
+                            real-time systems.</li>
+                        <li><strong>Memory and compute limitations</strong> — efficient resource usage is critical.</li>
+                        <li><strong>Scalability</strong> — systems must handle thousands to millions of requests
+                            concurrently.</li>
+                        <li><strong>Reliability</strong> — fallback mechanisms for failures, retries, and monitoring.
+                        </li>
+                    </ul>
+                    <p>Many engineers underestimate these constraints, focusing solely on model performance metrics.</p>
+
+                    <h3>2. Data Engineering & Pipeline Skills</h3>
+                    <p>Models rely on clean, structured data in production:</p>
+                    <ul>
+                        <li>Automated <strong>ETL pipelines</strong> to preprocess incoming data</li>
+                        <li>Handling <strong>missing, malformed, or streaming data</strong></li>
+                        <li>Monitoring <strong>data drift</strong> and ensuring feature consistency</li>
+                        <li>Integration with <strong>databases, message queues, and APIs</strong></li>
+                    </ul>
+                    <p>Without strong pipeline skills, even the best models fail silently in production.</p>
+
+                    <h3>3. Model Optimization & Deployment</h3>
+                    <p>Transitioning to production involves:</p>
+                    <ul>
+                        <li><strong>Quantization, pruning, and batching</strong> to optimize models</li>
+                        <li>Packaging models with <strong>Docker or containers</strong></li>
+                        <li>Serving models using <strong>FastAPI, TorchServe, or TensorFlow Serving</strong></li>
+                        <li>Implementing <strong>A/B testing and canary deployments</strong></li>
+                    </ul>
+                    <p>Production-ready AI professionals prioritize <strong>robustness over raw accuracy</strong>.</p>
+
+                    <h3>4. Observability & MLOps Practices</h3>
+                    <p>Monitoring deployed models is critical:</p>
+                    <ul>
+                        <li>Track <strong>latency, throughput, and error rates</strong></li>
+                        <li>Monitor <strong>model performance and drift</strong></li>
+                        <li>Implement <strong>alerts and automated retraining pipelines</strong></li>
+                        <li>Use <strong>CI/CD for ML</strong> to automate testing and deployment</li>
+                    </ul>
+                    <p>These practices ensure models remain reliable and effective over time.</p>
+
+                    <h3>5. Soft Skills & Collaboration</h3>
+                    <ul>
+                        <li>Clear <strong>documentation</strong> and knowledge sharing</li>
+                        <li>Collaboration with <strong>backend engineers, DevOps, and product teams</strong></li>
+                        <li>Understanding <strong>business requirements</strong> to align model outputs with real impact
+                        </li>
+                        <li>Problem-solving and adaptability in <strong>fast-changing production environments</strong>
+                        </li>
+                    </ul>
+
+                    <h3>Conclusion</h3>
+                    <p>Being able to train models in notebooks is no longer enough. <strong>Production-ready
+                            skills</strong> in data pipelines, optimization, deployment, monitoring, and collaboration
+                        are what separate ML engineers from true AI professionals.</p>
+                    <blockquote>
+                        <p>The missing skills are the ones that ensure your models survive and deliver value in the real
+                            world.</p>
+                    </blockquote>
+
+                    <h3>References</h3>
+                    <ol>
+                        <li><a href="https://ml-ops.org" target="_blank">MLOps Guide: From Model to Production</a></li>
+                        <li><a href="https://realpython.com/deploy-machine-learning-model/" target="_blank">Real Python:
+                                Deploying ML Models</a></li>
+                        <li><a href="https://medium.com/@hbnybghk/production-ml-lessons" target="_blank">Medium: Lessons
+                                from Production ML</a></li>
+                        <li><a href="https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning"
+                                target="_blank">Google AI: MLOps Best Practices</a></li>
+                    </ol>
+                </article>
+            </div>
+        </section>
+
+
+
+
+
+
+
+
+
+        <!-- Enhanced footer with all social links -->
+        <footer class="site-footer">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <!-- <span class="footer-logo">[{{ data.name.split()[1] }}<span class="accent">.</span>]</span> -->
+                    <span class="footer-logo">[Rakib<span class="accent">.</span>]</span>
+                    <p class="footer-text">Building production AI systems at scale.</p>
+                </div>
+                <div class="footer-links-grid">
+                    <div class="footer-col">
+                        <h4>Connect</h4>
+                        <a href="{{ data.social.email.url }}">Email</a>
+                        <a href="{{ data.social.whatsapp.url }}" target="_blank" rel="noopener">WhatsApp</a>
+                        <a href="{{ data.social.linkedin.url }}" target="_blank" rel="noopener">LinkedIn</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Code</h4>
+                        <a href="{{ data.social.github.url }}" target="_blank" rel="noopener">GitHub</a>
+                        <a href="{{ data.social.huggingface.url }}" target="_blank" rel="noopener">Hugging Face</a>
+                        <a href="{{ data.social.kaggle.url }}" target="_blank" rel="noopener">Kaggle</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Research</h4>
+                        <a href="{{ data.social.scholar.url }}" target="_blank" rel="noopener">Google Scholar</a>
+                        <a href="{{ data.social.huggingface_org.url }}" target="_blank" rel="noopener">AI Lab</a>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2025 MD Rakibul Hasan Naym. All rights reserved.</p>
+                    <div class="footer-status">
+                        <span class="status-indicator"></span>
+                        <span>System Online</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="/static/js/main.js"></script>
+</body>
+
+</html>

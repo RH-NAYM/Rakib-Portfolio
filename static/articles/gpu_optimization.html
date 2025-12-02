@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="AI Engineer, Machine Learning, ML Systems, Production AI, Infrastructure">
+    <meta name="author" content="Principal AI Engineer">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio of {{ data.name }} - {{ data.title }}">
+    <meta name="theme-color" content="#0a0a0a">
+    <title> Rakibul Hasan | Articles </title>
+    <!-- <link rel="icon" href="{{ url_for('static', path='images/favicon.ico') }}"> -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='icons/logo.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='icons/favicon-32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', path='icons/favicon-16.png') }}">
+
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <canvas id="neural-bg"></canvas>
+
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar"></div>
+    </div>
+
+    <header class="site-header">
+        <nav class="nav-container">
+            <!-- Updated logo with futuristic styling -->
+            <a href="#" class="nav-logo">
+                <span class="logo-bracket">[</span>
+                Rakib
+                <!-- {{ data.name.split()[1] }} -->
+                <span class="accent">.</span>
+                <span class="logo-bracket">]</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#about"><span class="nav-num">01.</span>About</a></li>
+                <li><a href="#expertise"><span class="nav-num">02.</span>Expertise</a></li>
+                <li><a href="#projects"><span class="nav-num">03.</span>Projects</a></li>
+                <li><a href="#writing"><span class="nav-num">04.</span>Writing</a></li>
+                <li><a href="#contact"><span class="nav-num">05.</span>Contact</a></li>
+            </ul>
+            <!-- Added mobile menu button -->
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Article Section - Blended with Futuristic Design -->
+        <section class="writing" id="article">
+            <div class="hero-bg-effects">
+                <div class="grid-overlay"></div>
+                <div class="glow-orb orb-1"></div>
+                <div class="glow-orb orb-2"></div>
+                <div class="scan-line"></div>
+            </div>
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-number">02</span>
+                    <h2 class="section-title">GPU Optimization Is a Business Skill</h2>
+                    <div class="section-line"></div>
+                </div>
+                <article class="article-content">
+                    <p class="article-meta">
+                        <span class="article-category">Optimization</span>
+                        <span class="article-time">7 min read</span>
+                    </p>
+
+                    <h3>Introduction</h3>
+                    <p>In AI and high-performance computing, <strong>every millisecond of GPU time translates to
+                            real-world cost</strong>. Optimizing models for speed and efficiency is no longer just a
+                        technical concern—it's a business imperative.</p>
+                    <p>This article explores how GPU optimization impacts cost, performance, and scalability, and why it
+                        should be considered a core skill for AI professionals.</p>
+                    <blockquote>
+                        <p>“Time on the GPU is money. Optimize or pay.” — <em>AI Infrastructure Expert</em></p>
+                    </blockquote>
+
+                    <h3>1. The Cost of Inefficiency</h3>
+                    <p>Inefficient GPU usage leads to:</p>
+                    <ul>
+                        <li>Higher <strong>cloud compute bills</strong></li>
+                        <li>Longer <strong>inference times</strong>, impacting user experience</li>
+                        <li>Increased <strong>energy consumption</strong> and carbon footprint</li>
+                        <li>Bottlenecks in <strong>production pipelines</strong></li>
+                    </ul>
+                    <p>Even a small inefficiency in a widely deployed model can scale into significant expenses.</p>
+
+                    <h3>2. Profiling and Benchmarking</h3>
+                    <p>Understanding where GPU time is spent is the first step:</p>
+                    <ul>
+                        <li>Use <strong>profilers</strong> like NVIDIA Nsight, PyTorch Profiler, or TensorBoard</li>
+                        <li>Identify <strong>bottlenecks</strong> in computation, memory transfer, or I/O</li>
+                        <li>Measure <strong>throughput, latency, and utilization</strong> under realistic loads</li>
+                        <li>Compare <strong>different batch sizes and precision modes</strong></li>
+                    </ul>
+                    <p>Profiling ensures optimization efforts target the most impactful areas.</p>
+
+                    <h3>3. Optimization Techniques</h3>
+                    <p>Key GPU optimization strategies include:</p>
+                    <ul>
+                        <li><strong>Mixed precision & FP16 computation</strong> to reduce memory and increase throughput
+                        </li>
+                        <li><strong>Kernel fusion</strong> and <strong>graph-level optimization</strong> in frameworks
+                            like PyTorch and TensorFlow</li>
+                        <li><strong>Memory management:</strong> pre-allocate tensors, minimize transfers between CPU and
+                            GPU</li>
+                        <li><strong>Batching & asynchronous execution</strong> for better utilization</li>
+                    </ul>
+                    <p>These methods reduce inference time and maximize hardware ROI.</p>
+
+                    <h3>4. Impact on Business</h3>
+                    <ul>
+                        <li><strong>Cost efficiency:</strong> reduce cloud spend per inference</li>
+                        <li><strong>User experience:</strong> faster predictions improve product value</li>
+                        <li><strong>Scalability:</strong> handle more requests with the same hardware</li>
+                        <li><strong>Sustainability:</strong> lower energy consumption per task</li>
+                    </ul>
+                    <p>Investing time in GPU optimization is an investment in business performance.</p>
+
+                    <h3>5. Building a GPU-Aware Culture</h3>
+                    <ul>
+                        <li>Educate teams on <strong>hardware constraints</strong></li>
+                        <li>Incorporate <strong>profiling and optimization</strong> in the development lifecycle</li>
+                        <li>Prioritize <strong>efficient model architectures</strong> from the start</li>
+                        <li>Align <strong>technical goals with business KPIs</strong></li>
+                    </ul>
+                    <p>Optimization is both a technical and strategic skill.</p>
+
+                    <h3>Conclusion</h3>
+                    <p>GPU optimization is no longer optional—it's a <strong>business-critical skill</strong>. Reducing
+                        wasted GPU cycles saves money, improves scalability, and enhances overall system performance.
+                    </p>
+                    <blockquote>
+                        <p>Efficiency on the GPU is efficiency in business. Every millisecond counts.</p>
+                    </blockquote>
+
+                    <h3>References</h3>
+                    <ol>
+                        <li><a href="https://developer.nvidia.com/gpu-optimization" target="_blank">NVIDIA Developer:
+                                GPU Optimization</a></li>
+                        <li><a href="https://pytorch.org/docs/stable/profiler.html" target="_blank">PyTorch Profiler
+                                Documentation</a></li>
+                        <li><a href="https://medium.com/@hbnybghk/optimizing-ai-infrastructure-costs"
+                                target="_blank">Medium: AI Infrastructure Costs</a></li>
+                        <li><a href="https://www.tensorflow.org/guide/performance/overview" target="_blank">TensorFlow
+                                Performance Guide</a></li>
+                    </ol>
+                </article>
+            </div>
+        </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- Enhanced footer with all social links -->
+        <footer class="site-footer">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <!-- <span class="footer-logo">[{{ data.name.split()[1] }}<span class="accent">.</span>]</span> -->
+                    <span class="footer-logo">[Rakib<span class="accent">.</span>]</span>
+                    <p class="footer-text">Building production AI systems at scale.</p>
+                </div>
+                <div class="footer-links-grid">
+                    <div class="footer-col">
+                        <h4>Connect</h4>
+                        <a href="{{ data.social.email.url }}">Email</a>
+                        <a href="{{ data.social.whatsapp.url }}" target="_blank" rel="noopener">WhatsApp</a>
+                        <a href="{{ data.social.linkedin.url }}" target="_blank" rel="noopener">LinkedIn</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Code</h4>
+                        <a href="{{ data.social.github.url }}" target="_blank" rel="noopener">GitHub</a>
+                        <a href="{{ data.social.huggingface.url }}" target="_blank" rel="noopener">Hugging Face</a>
+                        <a href="{{ data.social.kaggle.url }}" target="_blank" rel="noopener">Kaggle</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Research</h4>
+                        <a href="{{ data.social.scholar.url }}" target="_blank" rel="noopener">Google Scholar</a>
+                        <a href="{{ data.social.huggingface_org.url }}" target="_blank" rel="noopener">AI Lab</a>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2025 MD Rakibul Hasan Naym. All rights reserved.</p>
+                    <div class="footer-status">
+                        <span class="status-indicator"></span>
+                        <span>System Online</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="/static/js/main.js"></script>
+</body>
+
+</html>

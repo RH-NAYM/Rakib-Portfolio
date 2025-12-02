@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="AI Engineer, Machine Learning, ML Systems, Production AI, Infrastructure">
+    <meta name="author" content="Principal AI Engineer">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio of {{ data.name }} - {{ data.title }}">
+    <meta name="theme-color" content="#0a0a0a">
+    <title> Rakibul Hasan | Articles </title>
+    <!-- <link rel="icon" href="{{ url_for('static', path='images/favicon.ico') }}"> -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='icons/logo.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='icons/favicon-32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', path='icons/favicon-16.png') }}">
+
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <canvas id="neural-bg"></canvas>
+
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar"></div>
+    </div>
+
+    <header class="site-header">
+        <nav class="nav-container">
+            <!-- Updated logo with futuristic styling -->
+            <a href="#" class="nav-logo">
+                <span class="logo-bracket">[</span>
+                Rakib
+                <!-- {{ data.name.split()[1] }} -->
+                <span class="accent">.</span>
+                <span class="logo-bracket">]</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#about"><span class="nav-num">01.</span>About</a></li>
+                <li><a href="#expertise"><span class="nav-num">02.</span>Expertise</a></li>
+                <li><a href="#projects"><span class="nav-num">03.</span>Projects</a></li>
+                <li><a href="#writing"><span class="nav-num">04.</span>Writing</a></li>
+                <li><a href="#contact"><span class="nav-num">05.</span>Contact</a></li>
+            </ul>
+            <!-- Added mobile menu button -->
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Article Section - Blended with Futuristic Design -->
+
+
+
+
+
+        <section class="writing" id="article">
+            <div class="hero-bg-effects">
+                <div class="grid-overlay"></div>
+                <div class="glow-orb orb-1"></div>
+                <div class="glow-orb orb-2"></div>
+                <div class="scan-line"></div>
+            </div>
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-number">05</span>
+                    <h2 class="section-title">Why Most YOLO Deployments Fail in Production</h2>
+                    <div class="section-line"></div>
+                </div>
+                <article class="article-content">
+                    <p class="article-meta">
+                        <span class="article-category">Computer Vision</span>
+                        <span class="article-time">11 min read</span>
+                    </p>
+
+                    <h3>Introduction</h3>
+                    <p>YOLO (You Only Look Once) models are widely popular for real-time object detection due to their
+                        speed and accuracy. However, deploying YOLO models in production environments is <strong>far
+                            from trivial</strong>. Many organizations experience failures shortly after deployment,
+                        despite achieving impressive metrics during testing.</p>
+                    <blockquote>
+                        <p>“Deploying a YOLO model is easy; deploying it reliably at scale is an entirely different
+                            challenge.” — <em>Industry Practitioner</em></p>
+                    </blockquote>
+                    <p>This article explores why most YOLO deployments fail in production and outlines strategies to
+                        build <strong>robust, reliable systems</strong>.</p>
+
+                    <h3>1. The Training-Testing Gap</h3>
+                    <p>YOLO models are usually trained on clean, annotated datasets such as COCO or VOC. Production
+                        environments, however, are rarely this ideal:</p>
+                    <ul>
+                        <li>Variable lighting and weather conditions</li>
+                        <li>Motion blur or occlusion</li>
+                        <li>Camera angle variations</li>
+                        <li>Unseen objects or backgrounds</li>
+                    </ul>
+                    <p>Even a YOLO model with <strong>95% mAP</strong> on a test dataset can fail to detect objects
+                        correctly in real-world conditions.</p>
+                    <p><strong>Proven Insight:</strong> A study by <a href="https://roboflow.com/blog"
+                            target="_blank">Roboflow</a> shows that over <strong>60% of computer vision deployments fail
+                            due to dataset mismatch</strong>, not model performance.</p>
+
+                    <h3>2. Data Drift & Domain Shift</h3>
+                    <p>In production, camera feeds and environments change constantly. Models trained on static datasets
+                        often <strong>fail silently</strong>:</p>
+                    <ul>
+                        <li>New object classes appear</li>
+                        <li>Old objects change in appearance</li>
+                        <li>Backgrounds shift over time</li>
+                    </ul>
+                    <p><strong>Example:</strong> A retail shelf-monitoring YOLO model works well during initial testing
+                        but fails to detect new POSM layouts or seasonal products.</p>
+                    <p><strong>Reference:</strong> <a href="https://arxiv.org/abs/2105.04535" target="_blank">Arxiv
+                            2021: Domain Adaptation for Object Detection</a> emphasizes the importance of continuous
+                        adaptation in real-world detection systems.</p>
+
+                    <h3>3. Resource & Latency Constraints</h3>
+                    <p>YOLO models, especially large variants like YOLOv8 or YOLOX, are <strong>computationally
+                            demanding</strong>. Issues include:</p>
+                    <ul>
+                        <li>GPU memory limitations</li>
+                        <li>CPU/GPU load under high concurrency</li>
+                        <li>Network latency for cloud inference</li>
+                        <li>High-resolution image processing bottlenecks</li>
+                    </ul>
+                    <p><strong>Case Study:</strong> A surveillance system using YOLOv5 crashed during peak hours because
+                        batch inference exceeded GPU memory limits, even though detection accuracy was 98% offline.</p>
+
+                    <h3>4. Pipeline Complexity</h3>
+                    <p>Deployment isn’t just about the model. Real-world pipelines often include:</p>
+                    <ul>
+                        <li>Video capture</li>
+                        <li>Preprocessing and resizing</li>
+                        <li>Model inference</li>
+                        <li>Post-processing and tracking</li>
+                        <li>Alerting or dashboard updates</li>
+                    </ul>
+                    <p>Even minor mismatches (e.g., wrong input resolution, unnormalized frames) can <strong>cause
+                            catastrophic failures</strong>.</p>
+                    <p><strong>Proven Insight:</strong> According to <a href="https://mlperf.org"
+                            target="_blank">MLPerf</a>, most production failures in computer vision stem from pipeline
+                        issues rather than the model itself.</p>
+
+                    <h3>5. Underspecification & Model Sensitivity</h3>
+                    <p>Two YOLO models trained with the same dataset and hyperparameters can behave differently in
+                        production due to:</p>
+                    <ul>
+                        <li>Random initialization</li>
+                        <li>Training order</li>
+                        <li>Minor data augmentation differences</li>
+                    </ul>
+                    <p>This <strong>underspecification</strong> problem means that metrics alone cannot guarantee
+                        reliability.</p>
+                    <p><strong>Reference:</strong> <a href="https://arxiv.org/abs/2011.03395" target="_blank">Arxiv
+                            2020: Underspecification in ML</a></p>
+
+                    <h3>6. Building YOLO Deployments That Survive</h3>
+                    <p>To deploy YOLO successfully, focus on <strong>engineering reliability</strong>:</p>
+                    <ul>
+                        <li><strong>Continuous Monitoring:</strong> Track detection accuracy, false positives, and
+                            latency in production.</li>
+                        <li><strong>CI/CD for ML Pipelines:</strong> Automate preprocessing, inference validation, and
+                            deployment.</li>
+                        <li><strong>Data Augmentation & Retraining:</strong> Use real production images for retraining
+                            to handle new scenarios.</li>
+                        <li><strong>Graceful Failures:</strong> Implement fallback logic when detections fail or latency
+                            spikes.</li>
+                        <li><strong>Model Optimization:</strong> Use TensorRT, ONNX, or lightweight YOLO variants for
+                            high throughput.</li>
+                    </ul>
+                    <p><strong>Proven Approach:</strong> Large-scale retail AI systems like M-Lens monitor thousands of
+                        camera feeds in real-time, achieving <strong>&gt;99% uptime</strong> by combining optimized YOLO
+                        models with robust inference pipelines.</p>
+
+                    <h3>Conclusion</h3>
+                    <p>YOLO models are powerful, but <strong>real-world deployment requires more than accuracy</strong>.
+                        Production failures usually arise from environmental variability, resource constraints, and
+                        pipeline complexity.</p>
+                    <blockquote>
+                        <p>Focus on building resilient, observant, and adaptive pipelines. Only then can YOLO models
+                            truly succeed in production.</p>
+                    </blockquote>
+
+                    <h3>References</h3>
+                    <ol>
+                        <li><a href="https://roboflow.com/blog" target="_blank">Roboflow: Why CV Projects Fail</a></li>
+                        <li><a href="https://arxiv.org/abs/2105.04535" target="_blank">Arxiv 2021: Domain Adaptation for
+                                Object Detection</a></li>
+                        <li><a href="https://mlperf.org" target="_blank">MLPerf: Lessons Learned from Production CV</a>
+                        </li>
+                        <li><a href="https://arxiv.org/abs/2011.03395" target="_blank">Arxiv 2020: Underspecification in
+                                ML</a></li>
+                        <li><a href="https://medium.com/@hbnybghk/real-world-yolo-deployments-lessons-learned"
+                                target="_blank">Medium: Real-World YOLO Deployments</a></li>
+                    </ol>
+                </article>
+            </div>
+        </section>
+
+
+
+
+
+
+
+
+
+        <!-- Enhanced footer with all social links -->
+        <footer class="site-footer">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <!-- <span class="footer-logo">[{{ data.name.split()[1] }}<span class="accent">.</span>]</span> -->
+                    <span class="footer-logo">[Rakib<span class="accent">.</span>]</span>
+                    <p class="footer-text">Building production AI systems at scale.</p>
+                </div>
+                <div class="footer-links-grid">
+                    <div class="footer-col">
+                        <h4>Connect</h4>
+                        <a href="{{ data.social.email.url }}">Email</a>
+                        <a href="{{ data.social.whatsapp.url }}" target="_blank" rel="noopener">WhatsApp</a>
+                        <a href="{{ data.social.linkedin.url }}" target="_blank" rel="noopener">LinkedIn</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Code</h4>
+                        <a href="{{ data.social.github.url }}" target="_blank" rel="noopener">GitHub</a>
+                        <a href="{{ data.social.huggingface.url }}" target="_blank" rel="noopener">Hugging Face</a>
+                        <a href="{{ data.social.kaggle.url }}" target="_blank" rel="noopener">Kaggle</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Research</h4>
+                        <a href="{{ data.social.scholar.url }}" target="_blank" rel="noopener">Google Scholar</a>
+                        <a href="{{ data.social.huggingface_org.url }}" target="_blank" rel="noopener">AI Lab</a>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2025 MD Rakibul Hasan Naym. All rights reserved.</p>
+                    <div class="footer-status">
+                        <span class="status-indicator"></span>
+                        <span>System Online</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="/static/js/main.js"></script>
+</body>
+
+</html>
