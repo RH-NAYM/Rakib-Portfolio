@@ -137,3 +137,17 @@ async def get_blog_posts():
 ## License
 
 MIT License - Built for production use.
+
+
+
+# Convert svg to png
+inkscape static/icons/head-circuit.svg \
+    --export-type=png \
+    --export-filename=static/icons/favicon-16.png \
+    -w 16 -h 16
+
+
+inkscape static/icons/head-circuit.svg \
+    --export-type=png \
+    --export-filename=static/icons/favicon-32.png \
+    -w 32 -h 32
