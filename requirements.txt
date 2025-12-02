@@ -3,3 +3,4 @@ jinja2
 uvicorn
 markdown
 aiofiles
+commentjson
