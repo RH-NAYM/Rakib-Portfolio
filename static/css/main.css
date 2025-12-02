@@ -469,13 +469,7 @@ a {
   z-index: 2;
 }
 
-/* .profile-frame {
-  position: relative;
-  width: 320px;
-  height: 320px;
-} */
 
-/* Parent MUST define the shape */
 .profile-frame {
   position: relative;
   width: 300px;      /* control size here */
@@ -516,16 +510,6 @@ a {
   border-top: none;
 }
 
-/* .profile-image-wrapper {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: transparent;
-} */
 
 /* Inner image container */
 .profile-image-wrapper {
@@ -537,19 +521,6 @@ a {
   isolation: isolate;
 }
 
-
-
-/* .profile-frame,
-.profile-image-wrapper {
-  isolation: isolate;
-} */
-
-
-/* .profile-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-} */
 
 /* Image itself */
 .profile-image {
@@ -1013,20 +984,29 @@ a {
 /* ============================================
    Writing Section
    ============================================ */
+
 .articles-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-lg);
+  grid-auto-rows: 1fr; /* all rows equal height */
 }
 
+
 .article-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* ensures link sticks to bottom */
   padding: var(--space-xl);
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   transition: all var(--transition-base);
   cursor: pointer;
+  min-height: 200px; /* adjust as needed */
+  max-height: 200px; /* adjust as needed */
 }
+
 
 .article-card:hover {
   border-color: var(--color-accent);
@@ -1134,8 +1114,8 @@ a {
 
 .contact-card.contact-primary {
   grid-column: span 1;
-  background: linear-gradient(135deg, var(--color-bg-card), rgba(0, 212, 255, 0.05));
-  border-color: rgba(0, 212, 255, 0.3);
+  /* background: linear-gradient(135deg, var(--color-bg-card), rgba(0, 212, 255, 0.05)); */
+  /* border-color: rgba(0, 212, 255, 0.3); */
 }
 
 .contact-icon {
@@ -1203,11 +1183,6 @@ a {
   text-align: center;
 }
 
-/* .platforms-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: var(--space-md);
-} */
 
 .platforms-grid {
   display: grid;
@@ -1224,9 +1199,6 @@ a {
   /* ✅ CENTER leftover space */
   justify-content: center;
 }
-
-
-
 
 
 .platform-card {
@@ -1486,11 +1458,6 @@ a {
     display: flex;
   }
 
-  /* .profile-frame {
-    width: 200px;
-    height: 200px;
-  } */
-
   .profile-frame {
     position: relative;
     width: 200px;      /* control size here */
@@ -1560,11 +1527,6 @@ a {
     --section-padding: var(--space-2xl);
   }
 
-  /* .profile-frame {
-    width: 160px;
-    height: 160px;
-  } */
-
 
   .profile-frame {
     position: relative;
@@ -1609,20 +1571,10 @@ a {
     max-width: 360px;
   }
 }
+/* ============================================
+   Additional Features :: Canvas Background
+   ============================================ */
 
-
-
-
-
-
-
-
-
-
-
-
-
-/* Canvas Background */
 #neural-bg {
   position: fixed;
   inset: 0;
