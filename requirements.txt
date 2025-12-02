@@ -4,3 +4,4 @@ uvicorn
 markdown
 aiofiles
 commentjson
+aiohttp
