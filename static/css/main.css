@@ -472,8 +472,8 @@ a {
 
 .profile-frame {
   position: relative;
-  width: 300px;      /* control size here */
-  aspect-ratio: 3 / 4; /* ✅ portrait */
+  width: 450px;      /* control size here */
+  aspect-ratio: 3 / 4;
 }
 
 
@@ -1387,7 +1387,7 @@ a {
   } */
   .profile-frame {
     position: relative;
-    width: 250px;      /* control size here */
+    width: 375px;      /* control size here */
     aspect-ratio: 3 / 4; /* ✅ portrait */
   }
 
@@ -1460,7 +1460,7 @@ a {
 
   .profile-frame {
     position: relative;
-    width: 200px;      /* control size here */
+    width: 300px;      /* control size here */
     aspect-ratio: 3 / 4; /* ✅ portrait */
   }
 
@@ -1530,7 +1530,7 @@ a {
 
   .profile-frame {
     position: relative;
-    width: 160px;      /* control size here */
+    width: 240px;      /* control size here */
     aspect-ratio: 3 / 4; /* ✅ portrait */
   }
   .section-container {
