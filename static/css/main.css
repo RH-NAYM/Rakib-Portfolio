@@ -1409,9 +1409,14 @@ a {
     margin-bottom: var(--space-xl);
   }
 
-  .profile-frame {
+  /* .profile-frame {
     width: 250px;
     height: 250px;
+  } */
+  .profile-frame {
+    position: relative;
+    width: 250px;      /* control size here */
+    aspect-ratio: 3 / 4; /* ✅ portrait */
   }
 
   .hero-content {
@@ -1481,9 +1486,15 @@ a {
     display: flex;
   }
 
-  .profile-frame {
+  /* .profile-frame {
     width: 200px;
     height: 200px;
+  } */
+
+  .profile-frame {
+    position: relative;
+    width: 200px;      /* control size here */
+    aspect-ratio: 3 / 4; /* ✅ portrait */
   }
 
   .hero-tagline {
@@ -1549,11 +1560,17 @@ a {
     --section-padding: var(--space-2xl);
   }
 
-  .profile-frame {
+  /* .profile-frame {
     width: 160px;
     height: 160px;
-  }
+  } */
 
+
+  .profile-frame {
+    position: relative;
+    width: 160px;      /* control size here */
+    aspect-ratio: 3 / 4; /* ✅ portrait */
+  }
   .section-container {
     padding-left: var(--space-md);
     padding-right: var(--space-md);
