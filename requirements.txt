@@ -1,8 +1,64 @@
+# Core
 fastapi
+uvicorn[standard]
 jinja2
-uvicorn
-markdown
 aiofiles
+python-multipart
+markdown
 commentjson
 aiohttp
 pillow
+
+# AI Providers
+groq
+
+# Config
+python-dotenv
+
+# Optional: Rate limiting
+# slowapi
+
+# Optional: Redis sessions
+# redis
+# aioredis
+
+# Optional: LangChain extensions
+# langchain
+# langchain-groq
+# langgraph
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# fastapi
+# jinja2
+# uvicorn
+# markdown
+# aiofiles
+# commentjson
+# aiohttp
+# pillow

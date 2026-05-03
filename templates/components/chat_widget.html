@@ -1,0 +1,60 @@
+{# ================================================================
+   templates/components/chat_widget.html
+
+   Rakibul AI Chat Widget — Jinja2 Component
+
+   HOW TO INCLUDE in index.html (or base.html):
+
+     1. In <head>:
+        {% include 'components/chat_widget.html' %}
+        OR just add the CSS/JS links below manually.
+
+     2. OR include at bottom of <body>:
+        {% include 'components/chat_widget.html' %}
+
+   The widget is fully self-contained. Just include it once.
+   ================================================================ #}
+
+{# ── Styles (in <head>) ── #}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', path='css/chat.css') }}"
+  media="all"
+/>
+
+{# ── Script (before </body>) ── #}
+<script
+  src="{{ url_for('static', path='js/chat.js') }}"
+  defer
+></script>
+
+{#
+  NOTE: The widget is purely JavaScript-rendered (no server-side HTML).
+  The JS file creates all DOM elements dynamically and mounts them to <body>.
+  No additional HTML markup is needed here.
+
+  OPTIONAL: Add a noscript fallback
+#}
+<noscript>
+  <style>
+    .rai-noscript {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0d1117;
+      border: 1px solid rgba(0,245,255,0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #e8edf5;
+      font-size: 13px;
+      font-family: sans-serif;
+      z-index: 9998;
+    }
+    .rai-noscript a {
+      color: #00f5ff;
+    }
+  </style>
+  <div class="rai-noscript">
+    💬 <a href="/contact">Contact Rakibul directly</a> — AI chat requires JavaScript.
+  </div>
+</noscript>
