@@ -1,0 +1,54 @@
+---
+title: "How to add a blog post (starter guide)"
+date: "2026-07-04"
+summary: "A placeholder post that doubles as the authoring guide — copy this file, change the frontmatter, write Markdown. Delete it once you have real posts."
+tags: ["meta", "guide"]
+draft: true
+---
+
+This post is a **placeholder / authoring guide**. It's marked `draft: true`, so it only shows up
+in local development — visitors on the live site won't see it until you set `draft: false`.
+
+## Adding a new post
+
+1. Create a new file in `content/blog/`, e.g. `content/blog/why-yolo-deployments-fail.mdx`.
+2. Add frontmatter at the top (between the `---` lines):
+
+```yaml
+---
+title: "Why Most YOLO Deployments Fail in Production"
+date: "2026-07-10"
+summary: "And how to build ones that actually survive."
+tags: ["Computer Vision", "Production AI"]
+draft: false
+---
+```
+
+3. Write the body in Markdown. Headings, **bold**, `inline code`, lists, links, and code blocks all render.
+
+## What you can use
+
+- `## Headings` and `### Subheadings`
+- **Bold**, *italic*, and `inline code`
+- Bullet and numbered lists
+- > Blockquotes for callouts
+- Fenced code blocks with triple backticks
+- [Links](https://github.com/RH-NAYM)
+
+```python
+# code blocks are styled automatically
+async def infer(image_url: str) -> dict:
+    result = await model.predict(image_url)
+    return result
+```
+
+## Post ideas from your old site (write these when ready)
+
+- Accuracy Doesn't Matter If Your System Crashes
+- Why Most YOLO Deployments Fail in Production
+- Async Python Is Not Optional Anymore
+- From Notebook to Production: The Missing Skills
+- GPU Optimization Is a Business Skill
+- Retail AI Is the Hardest CV Problem Nobody Talks About
+
+When you're ready to go live, set `draft: false` and delete this guide.

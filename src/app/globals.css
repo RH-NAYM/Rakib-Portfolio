@@ -1,0 +1,282 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   Design tokens — restrained dark "engineered" theme.
+   One primary accent (electric cyan-blue), one secondary (violet),
+   subtle glow, no neon walls, WCAG-AA text contrast.
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  --color-bg: #06070a;
+  --color-bg-elevated: #0b0d12;
+  --color-surface: #0f1218;
+  --color-surface-2: #141821;
+  --color-border: #1c2230;
+  --color-border-strong: #2a3344;
+
+  --color-text: #e8ecf3;
+  --color-text-muted: #9aa4b6;
+  --color-text-faint: #5f6b80;
+
+  --color-accent: #38bdf8;
+  --color-accent-strong: #0ea5e9;
+  --color-accent-soft: rgba(56, 189, 248, 0.12);
+  --color-secondary: #a78bfa;
+  --color-success: #34d399;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
+
+  --radius: 0.9rem;
+}
+
+/* Guarantee every color variable is emitted to :root.
+   Tailwind v4 tree-shakes theme vars that are only referenced through
+   arbitrary utilities like bg-[--color-x], which left some backgrounds
+   (chat panel, primary button) resolving to transparent. This fixes that. */
+:root {
+  --color-bg: #06070a;
+  --color-bg-elevated: #0b0d12;
+  --color-surface: #0f1218;
+  --color-surface-2: #141821;
+  --color-border: #1c2230;
+  --color-border-strong: #2a3344;
+
+  --color-text: #e8ecf3;
+  --color-text-muted: #9aa4b6;
+  --color-text-faint: #5f6b80;
+
+  --color-accent: #38bdf8;
+  --color-accent-strong: #0ea5e9;
+  --color-accent-soft: rgba(56, 189, 248, 0.12);
+  --color-secondary: #a78bfa;
+  --color-success: #34d399;
+}
+
+/* ─── base ─── */
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.28);
+  color: #fff;
+}
+
+/* thin custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #384357;
+}
+
+/* ─── reusable utilities ─── */
+.container-page {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+.text-gradient {
+  background: linear-gradient(120deg, var(--color-text) 30%, var(--color-accent) 75%, var(--color-secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.grid-backdrop {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease;
+}
+.card:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-2);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.glow-accent {
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.25), 0 8px 40px -12px rgba(56, 189, 248, 0.45);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+}
+
+.prose-post {
+  color: var(--color-text-muted);
+  line-height: 1.75;
+}
+.prose-post h2 {
+  color: var(--color-text);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+}
+.prose-post h3 {
+  color: var(--color-text);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.prose-post p {
+  margin-bottom: 1.1rem;
+}
+.prose-post a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-post ul {
+  list-style: disc;
+  padding-left: 1.4rem;
+  margin-bottom: 1.1rem;
+}
+.prose-post li {
+  margin-bottom: 0.4rem;
+}
+.prose-post code {
+  font-family: var(--font-mono);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.35rem;
+  font-size: 0.85em;
+  color: var(--color-accent);
+}
+.prose-post pre {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  overflow-x: auto;
+  margin-bottom: 1.25rem;
+}
+.prose-post pre code {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  padding: 0;
+}
+.prose-post blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-bottom: 1.1rem;
+}
+
+/* ── Tailwind v4 compat: [--color-x] compiles to an invalid literal
+   (`background-color: --color-x`) instead of `var(--color-x)`. These
+   unlayered overrides supply the correct value and win the cascade over
+   Tailwind's layered utilities. ── */
+.text-\[--color-bg\]{color:var(--color-bg)}
+.bg-\[--color-bg\]{background-color:var(--color-bg)}
+.border-\[--color-bg\]{border-color:var(--color-bg)}
+.text-\[--color-bg-elevated\]{color:var(--color-bg-elevated)}
+.bg-\[--color-bg-elevated\]{background-color:var(--color-bg-elevated)}
+.border-\[--color-bg-elevated\]{border-color:var(--color-bg-elevated)}
+.text-\[--color-surface\]{color:var(--color-surface)}
+.bg-\[--color-surface\]{background-color:var(--color-surface)}
+.border-\[--color-surface\]{border-color:var(--color-surface)}
+.text-\[--color-surface-2\]{color:var(--color-surface-2)}
+.bg-\[--color-surface-2\]{background-color:var(--color-surface-2)}
+.border-\[--color-surface-2\]{border-color:var(--color-surface-2)}
+.text-\[--color-border\]{color:var(--color-border)}
+.bg-\[--color-border\]{background-color:var(--color-border)}
+.border-\[--color-border\]{border-color:var(--color-border)}
+.text-\[--color-border-strong\]{color:var(--color-border-strong)}
+.bg-\[--color-border-strong\]{background-color:var(--color-border-strong)}
+.border-\[--color-border-strong\]{border-color:var(--color-border-strong)}
+.text-\[--color-text\]{color:var(--color-text)}
+.bg-\[--color-text\]{background-color:var(--color-text)}
+.border-\[--color-text\]{border-color:var(--color-text)}
+.text-\[--color-text-muted\]{color:var(--color-text-muted)}
+.bg-\[--color-text-muted\]{background-color:var(--color-text-muted)}
+.border-\[--color-text-muted\]{border-color:var(--color-text-muted)}
+.text-\[--color-text-faint\]{color:var(--color-text-faint)}
+.bg-\[--color-text-faint\]{background-color:var(--color-text-faint)}
+.border-\[--color-text-faint\]{border-color:var(--color-text-faint)}
+.text-\[--color-accent\]{color:var(--color-accent)}
+.bg-\[--color-accent\]{background-color:var(--color-accent)}
+.border-\[--color-accent\]{border-color:var(--color-accent)}
+.text-\[--color-accent-strong\]{color:var(--color-accent-strong)}
+.bg-\[--color-accent-strong\]{background-color:var(--color-accent-strong)}
+.border-\[--color-accent-strong\]{border-color:var(--color-accent-strong)}
+.text-\[--color-accent-soft\]{color:var(--color-accent-soft)}
+.bg-\[--color-accent-soft\]{background-color:var(--color-accent-soft)}
+.border-\[--color-accent-soft\]{border-color:var(--color-accent-soft)}
+.text-\[--color-secondary\]{color:var(--color-secondary)}
+.bg-\[--color-secondary\]{background-color:var(--color-secondary)}
+.border-\[--color-secondary\]{border-color:var(--color-secondary)}
+.text-\[--color-success\]{color:var(--color-success)}
+.bg-\[--color-success\]{background-color:var(--color-success)}
+.border-\[--color-success\]{border-color:var(--color-success)}
+.from-\[--color-bg\]{--tw-gradient-from:var(--color-bg);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,transparent)}
+.via-\[--color-bg\]{--tw-gradient-via:var(--color-bg);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-via),var(--tw-gradient-to,transparent)}
+.from-\[--color-accent\]{--tw-gradient-from:var(--color-accent);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,transparent)}
+.via-\[--color-accent\]{--tw-gradient-via:var(--color-accent);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-via),var(--tw-gradient-to,transparent)}
+.from-\[--color-border-strong\]{--tw-gradient-from:var(--color-border-strong);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,transparent)}
+.via-\[--color-border-strong\]{--tw-gradient-via:var(--color-border-strong);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-via),var(--tw-gradient-to,transparent)}
+.from-\[--color-secondary\]{--tw-gradient-from:var(--color-secondary);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,transparent)}
+.via-\[--color-secondary\]{--tw-gradient-via:var(--color-secondary);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-via),var(--tw-gradient-to,transparent)}
+.from-\[--color-accent\]\/60{--tw-gradient-from:color-mix(in oklab,var(--color-accent) 60%,transparent);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,transparent)}
