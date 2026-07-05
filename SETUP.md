@@ -28,7 +28,7 @@ npm run dev        # http://localhost:3000
    | Variable | Value |
    |---|---|
    | `RESEND_API_KEY` | your Resend key |
-   | `CONTACT_TO_EMAIL` | `rakib.hedigital@gmail.com` (where messages land) |
+   | `CONTACT_TO_EMAIL` | `naym.mj@gmail.com` (where messages land) |
    | `CONTACT_FROM_EMAIL` | `Portfolio <onboarding@resend.dev>` → later `Rakib <hello@yourdomain.com>` |
 
 ---
@@ -92,7 +92,7 @@ You already have the service account (`service_account.json`, project **`calm-sy
 
 ```
 RESEND_API_KEY=
-CONTACT_TO_EMAIL=rakib.hedigital@gmail.com
+CONTACT_TO_EMAIL=naym.mj@gmail.com
 CONTACT_FROM_EMAIL=Portfolio <onboarding@resend.dev>
 GOOGLE_SERVICE_ACCOUNT_B64=
 # or GOOGLE_APPLICATION_CREDENTIALS=./service_account.json   (local)

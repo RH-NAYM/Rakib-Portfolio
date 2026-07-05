@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         error:
-          "The AI assistant isn't configured yet. Please reach out via the contact form or email rakib.hedigital@gmail.com.",
+          "The AI assistant isn't configured yet. Please reach out via the contact form or email naym.mj@gmail.com.",
       },
       { status: 503 }
     );

@@ -3,7 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { ChatWidget } from "@/components/chat-widget";
+import { ChatWidget } from "@/components/chat-widget-loader";
 import { HashScroll } from "@/components/hash-scroll";
 import { profile, siteUrl, socials } from "@/content/site";
 

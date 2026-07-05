@@ -33,13 +33,13 @@ export async function POST(req: Request) {
   }
 
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO_EMAIL || "rakib.hedigital@gmail.com";
+  const to = process.env.CONTACT_TO_EMAIL || "naym.mj@gmail.com";
   const from = process.env.CONTACT_FROM_EMAIL || "Portfolio <onboarding@resend.dev>";
 
   if (!apiKey) {
     console.warn("[contact] RESEND_API_KEY not set — message not delivered:", { name, email, subject });
     return NextResponse.json(
-      { error: "Email delivery isn't configured yet. Please email rakib.hedigital@gmail.com directly." },
+      { error: "Email delivery isn't configured yet. Please email naym.mj@gmail.com directly." },
       { status: 503 }
     );
   }
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("[contact] send failed:", err);
     return NextResponse.json(
-      { error: "Could not send right now. Please email rakib.hedigital@gmail.com directly." },
+      { error: "Could not send right now. Please email naym.mj@gmail.com directly." },
       { status: 502 }
     );
   }

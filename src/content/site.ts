@@ -16,7 +16,7 @@ export const profile = {
   positioning:
     "I design, build, and own production AI at national scale — computer-vision systems serving 2M+ retail outlets, plus current-generation RAG, multi-agent, and real-time voice systems, all on GPU-optimized, self-hosted infrastructure.",
   location: "Dhaka, Bangladesh",
-  email: "rakib.hedigital@gmail.com",
+  email: "naym.mj@gmail.com",
   phone: "+880 163 883 0165",
   company: "HawkEyes Digital Monitoring Ltd.",
   availability: "Open to BD & international / remote AI roles",
@@ -46,8 +46,8 @@ export const socials = {
   },
   email: {
     label: "Email",
-    handle: "rakib.hedigital@gmail.com",
-    url: "mailto:rakib.hedigital@gmail.com",
+    handle: "naym.mj@gmail.com",
+    url: "mailto:naym.mj@gmail.com",
   },
 } as const;
 
