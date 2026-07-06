@@ -260,3 +260,14 @@ export const aboutPillars: AboutPillar[] = [
 ];
 
 export const siteUrl = "https://rakib-portfolio-lilac.vercel.app";
+
+// Rotating About-section profile photos — shuffled client-side every few
+// seconds (see ProfileShuffle). Add/remove files in public/profile-photos/
+// and update this list to change the rotation set.
+export const profileImages = [
+  "/profile-photos/photo-1.jpg",
+  "/profile-photos/photo-2.jpg",
+  "/profile-photos/photo-3.jpg",
+  "/profile-photos/photo-4.jpg",
+  "/profile-photos/photo-5.jpg",
+] as const;

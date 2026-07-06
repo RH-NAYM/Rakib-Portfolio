@@ -1,8 +1,16 @@
-import Image from "next/image";
 import { Eye, Sparkles, Server } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import { Reveal } from "@/components/reveal";
-import { about, aboutPillars, education, languages, recognition, profile } from "@/content/site";
+import { ProfileShuffle } from "@/components/profile-shuffle";
+import {
+  about,
+  aboutPillars,
+  education,
+  languages,
+  recognition,
+  profile,
+  profileImages,
+} from "@/content/site";
 
 const pillarIcons = { cv: Eye, genai: Sparkles, infra: Server } as const;
 
@@ -37,14 +45,7 @@ export function About() {
         <Reveal delay={100}>
           <div className="group card overflow-hidden p-0 transition-transform duration-300 hover:-translate-y-1">
             <div className="relative aspect-[4/4.6] w-full overflow-hidden">
-              <Image
-                src="/profile.webp"
-                alt={`${profile.name}, ${profile.title}`}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 340px"
-                className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-105"
-              />
+              <ProfileShuffle images={[...profileImages]} alt={`${profile.name}, ${profile.title}`} />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[--color-bg] to-transparent p-4">
                 <p className="font-mono text-xs text-[--color-accent]">{profile.location}</p>
                 <p className="text-sm font-medium text-[--color-text]">{profile.company}</p>
