@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Github, Linkedin, Mail, MessageCircle } from "lucide-react";
+import { Github, Linkedin, Mail, MessageCircle, Briefcase } from "lucide-react";
 import { profile, socials } from "@/content/site";
+import { HFIcon } from "@/components/hf-icon";
 
 export function SiteFooter() {
   return (
@@ -25,10 +26,10 @@ export function SiteFooter() {
             Navigate
           </h4>
           <ul className="space-y-2 text-sm text-[--color-text-muted]">
-            <li><Link href="/work" className="hover:text-[--color-accent]">Featured Work</Link></li>
-            <li><Link href="/projects" className="hover:text-[--color-accent]">All Projects</Link></li>
-            <li><Link href="/blog" className="hover:text-[--color-accent]">Blog</Link></li>
-            <li><Link href="/#contact" className="hover:text-[--color-accent]">Contact</Link></li>
+            <li><Link href="/work" className="inline-block transition-transform duration-200 hover:translate-x-1 hover:text-[--color-accent]">Featured Work</Link></li>
+            <li><Link href="/projects" className="inline-block transition-transform duration-200 hover:translate-x-1 hover:text-[--color-accent]">All Projects</Link></li>
+            <li><Link href="/blog" className="inline-block transition-transform duration-200 hover:translate-x-1 hover:text-[--color-accent]">Blog</Link></li>
+            <li><Link href="/#contact" className="inline-block transition-transform duration-200 hover:translate-x-1 hover:text-[--color-accent]">Contact</Link></li>
           </ul>
         </div>
 
@@ -40,6 +41,7 @@ export function SiteFooter() {
             <FooterIcon href={socials.github.url} label="GitHub"><Github size={16} /></FooterIcon>
             <FooterIcon href={socials.linkedin.url} label="LinkedIn"><Linkedin size={16} /></FooterIcon>
             <FooterIcon href={socials.huggingface.url} label="Hugging Face"><HFIcon /></FooterIcon>
+            <FooterIcon href={socials.upwork.url} label="Upwork"><Briefcase size={16} /></FooterIcon>
             <FooterIcon href={socials.email.url} label="Email"><Mail size={16} /></FooterIcon>
             <FooterIcon href={socials.whatsapp.url} label="WhatsApp"><MessageCircle size={16} /></FooterIcon>
           </div>
@@ -69,17 +71,10 @@ function FooterIcon({ href, label, children }: { href: string; label: string; ch
       rel="noopener noreferrer"
       aria-label={label}
       title={label}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[--color-border] text-[--color-text-muted] transition-colors hover:border-[--color-accent] hover:text-[--color-accent]"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[--color-border] text-[--color-text-muted] transition-all duration-200 hover:-translate-y-0.5 hover:border-[--color-accent] hover:text-[--color-accent] active:translate-y-0 active:scale-90"
     >
       {children}
     </a>
   );
 }
 
-function HFIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zM8.5 8a1.3 1.3 0 110 2.6A1.3 1.3 0 018.5 8zm7 0a1.3 1.3 0 110 2.6A1.3 1.3 0 0115.5 8zM12 18c-2.3 0-4.3-1.4-5.1-3.5h10.2C16.3 16.6 14.3 18 12 18z" />
-    </svg>
-  );
-}

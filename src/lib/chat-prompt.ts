@@ -24,8 +24,14 @@ export function buildSystemPrompt(): string {
   const expLines = experience
     .map(
       (e) =>
-        `- ${e.role}, ${e.org} — ${e.location} (${e.period})\n` +
-        e.bullets.map((b) => `  - ${b}`).join("\n")
+        `- ${e.org} — ${e.location} (${e.totalPeriod})\n` +
+        e.roles
+          .map(
+            (r) =>
+              `  - ${r.title} (${r.period})\n` +
+              r.bullets.map((b) => `    - ${b}`).join("\n")
+          )
+          .join("\n")
     )
     .join("\n");
   const studyLines = caseStudies
@@ -81,6 +87,7 @@ ${repoLines}
 - LinkedIn: ${socials.linkedin.url}
 - GitHub: ${socials.github.url}
 - Hugging Face: ${socials.huggingface.url} (org: ${socials.huggingfaceOrg.url})
+- Upwork: ${socials.upwork.url}
 He is ${profile.availability.toLowerCase()}.
 
 ## Rules

@@ -1,12 +1,16 @@
 import Link from "next/link";
-import { ArrowUpRight, Download, Github, Linkedin } from "lucide-react";
-import { AmbientBackground } from "@/components/ambient-background";
-import { profile, metrics, socials } from "@/content/site";
+import { ArrowUpRight, Download } from "lucide-react";
+import { SiteBackground } from "@/components/site-background";
+import { profile, metrics } from "@/content/site";
 
+// The ambient backdrop (glow blobs + the dot/line particle constellation)
+// is scoped to this section only — it fades to fully transparent before
+// the bottom edge of Hero, so it never trails into About or later sections.
+// See src/components/site-background.tsx.
 export function Hero() {
   return (
     <section className="relative flex min-h-[92vh] items-center overflow-hidden pt-16">
-      <AmbientBackground />
+      <SiteBackground />
       <div className="container-page py-20">
         <div className="inline-flex items-center gap-2 rounded-full border border-[--color-border-strong] bg-[--color-surface]/60 px-3 py-1.5 text-xs text-[--color-text-muted] backdrop-blur">
           <span className="relative flex h-2 w-2">
@@ -34,13 +38,13 @@ export function Hero() {
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link
             href="/work"
-            className="inline-flex items-center gap-2 rounded-lg bg-[--color-accent] px-5 py-3 text-sm font-semibold text-black transition-transform hover:-translate-y-0.5 glow-accent"
+            className="inline-flex items-center gap-2 rounded-lg bg-[--color-accent] px-5 py-3 text-sm font-semibold text-black transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 glow-accent"
           >
             View Featured Work <ArrowUpRight size={16} />
           </Link>
           <Link
             href="/#contact"
-            className="inline-flex items-center gap-2 rounded-lg border border-[--color-border-strong] px-5 py-3 text-sm font-semibold text-[--color-text] transition-colors hover:border-[--color-accent] hover:text-[--color-accent]"
+            className="inline-flex items-center gap-2 rounded-lg border border-[--color-border-strong] px-5 py-3 text-sm font-semibold text-[--color-text] transition-all duration-200 hover:-translate-y-0.5 hover:border-[--color-accent] hover:text-[--color-accent] active:translate-y-0 active:scale-95"
           >
             Get in Touch
           </Link>
@@ -48,20 +52,10 @@ export function Hero() {
             href="/Rakibul_Hasan_Naym_CV.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg px-4 py-3 text-sm text-[--color-text-muted] transition-colors hover:text-[--color-text]"
+            className="inline-flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-[--color-text-muted] transition-all duration-200 hover:-translate-y-0.5 hover:text-[--color-text] active:translate-y-0 active:scale-95"
           >
-            <Download size={15} /> Résumé
+            <Download size={15} /> Resume
           </a>
-          <div className="ml-1 flex items-center gap-2">
-            <a href={socials.github.url} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[--color-border] text-[--color-text-muted] transition-colors hover:border-[--color-accent] hover:text-[--color-accent]">
-              <Github size={17} />
-            </a>
-            <a href={socials.linkedin.url} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[--color-border] text-[--color-text-muted] transition-colors hover:border-[--color-accent] hover:text-[--color-accent]">
-              <Linkedin size={17} />
-            </a>
-          </div>
         </div>
 
         <dl className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-[--color-border] bg-[--color-border] sm:grid-cols-3 lg:grid-cols-5">

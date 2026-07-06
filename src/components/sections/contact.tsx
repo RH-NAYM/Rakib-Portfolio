@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, MessageCircle, Linkedin, Github, Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Mail, MessageCircle, Linkedin, Github, Briefcase, Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
+import { HFIcon } from "@/components/hf-icon";
 import { profile, socials } from "@/content/site";
 
 type Status = "idle" | "sending" | "ok" | "error";
@@ -50,12 +51,28 @@ export function Contact() {
       />
 
       <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr]">
-        <div className="space-y-3">
-          <ContactRow href={socials.email.url} icon={<Mail size={18} />} label="Email" value={profile.email} />
-          <ContactRow href={socials.whatsapp.url} icon={<MessageCircle size={18} />} label="WhatsApp" value={socials.whatsapp.handle} external />
-          <ContactRow href={socials.linkedin.url} icon={<Linkedin size={18} />} label="LinkedIn" value={socials.linkedin.handle} external />
-          <ContactRow href={socials.github.url} icon={<Github size={18} />} label="GitHub" value={socials.github.handle} external />
-          <p className="pt-2 text-sm text-[--color-text-faint]">{profile.location}</p>
+        <div className="flex h-full flex-col">
+          {/* Primary — the two ways people actually reach out directly */}
+          <div className="space-y-3">
+            <EmailRow email={profile.email} mailto={socials.email.url} />
+            <ContactRow href={socials.whatsapp.url} icon={<MessageCircle size={18} />} label="WhatsApp" value={socials.whatsapp.handle} external />
+          </div>
+
+          {/* Secondary — profiles to browse, grouped so they read as a set rather than 5 near-identical rows */}
+          <div className="mt-6">
+            <h4 className="mb-3 font-mono text-xs uppercase tracking-widest text-[--color-text-faint]">
+              Find me elsewhere
+            </h4>
+            <div className="grid grid-cols-2 gap-2.5">
+              <ProfileChip href={socials.linkedin.url} icon={<Linkedin size={16} />} label="LinkedIn" value={socials.linkedin.handle} />
+              <ProfileChip href={socials.github.url} icon={<Github size={16} />} label="GitHub" value={socials.github.handle} />
+              <ProfileChip href={socials.huggingface.url} icon={<HFIcon size={16} />} label="Hugging Face" value={socials.huggingface.handle} />
+              <ProfileChip href={socials.huggingfaceOrg.url} icon={<HFIcon size={16} />} label="HF · Org" value={socials.huggingfaceOrg.handle} />
+              <ProfileChip href={socials.upwork.url} icon={<Briefcase size={16} />} label="Upwork" value={socials.upwork.handle} />
+            </div>
+          </div>
+
+          <p className="mt-auto pt-6 text-sm text-[--color-text-faint]">{profile.location}</p>
         </div>
 
         <form onSubmit={onSubmit} className="card p-6">
@@ -141,6 +158,8 @@ function Field({
   );
 }
 
+// Primary contact rows — Email + WhatsApp, the two ways someone actually
+// starts a conversation. Kept larger/more prominent than the profile chips.
 function ContactRow({
   href,
   icon,
@@ -158,9 +177,9 @@ function ContactRow({
     <a
       href={href}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      className="card flex items-center gap-4 p-4"
+      className="card flex items-center gap-4 p-4 transition-all duration-200 hover:-translate-y-0.5"
     >
-      <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[--color-accent-soft] text-[--color-accent]">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[--color-accent-soft] text-[--color-accent]">
         {icon}
       </span>
       <span>
@@ -168,6 +187,84 @@ function ContactRow({
           {label}
         </span>
         <span className="block text-sm text-[--color-text]">{value}</span>
+      </span>
+    </a>
+  );
+}
+
+// Secondary profile links — compact 2-up chips so five external profiles
+// read as one glanceable group instead of stretching the column past the
+// form's height.
+function ProfileChip({
+  href,
+  icon,
+  label,
+  value,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="card flex min-w-0 items-center gap-2.5 p-3 transition-all duration-200 hover:-translate-y-0.5"
+    >
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[--color-accent-soft] text-[--color-accent]">
+        {icon}
+      </span>
+      <span className="min-w-0">
+        <span className="block truncate text-xs font-medium text-[--color-text]">{label}</span>
+        <span className="block truncate font-mono text-[11px] text-[--color-text-faint]">{value}</span>
+      </span>
+    </a>
+  );
+}
+
+// Plain `mailto:` links silently do nothing if the visitor's OS/browser has
+// no default mail client configured — there's no error, just no feedback.
+// This keeps the mailto href (so a configured mail client still opens) and
+// adds a copy-to-clipboard fallback with visible "Copied" confirmation, so
+// the click always does *something* useful either way.
+function EmailRow({ email, mailto }: { email: string; mailto: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleClick() {
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard API unavailable (e.g. insecure context) — the mailto
+      // navigation triggered by the anchor's href still gets a chance to run.
+    }
+  }
+
+  return (
+    <a
+      href={mailto}
+      onClick={handleClick}
+      className="card flex items-center gap-4 p-4 transition-all duration-200 hover:-translate-y-0.5"
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[--color-accent-soft] text-[--color-accent]">
+        <Mail size={18} />
+      </span>
+      <span className="flex-1">
+        <span className="block font-mono text-xs uppercase tracking-widest text-[--color-text-faint]">
+          Email
+        </span>
+        <span className="block text-sm text-[--color-text]">{email}</span>
+      </span>
+      <span
+        className={`shrink-0 font-mono text-xs text-[--color-success] transition-opacity duration-200 ${
+          copied ? "opacity-100" : "opacity-0"
+        }`}
+        aria-live="polite"
+      >
+        {copied ? "Copied ✓" : ""}
       </span>
     </a>
   );

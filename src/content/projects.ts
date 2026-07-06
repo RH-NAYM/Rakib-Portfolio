@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Projects — 6 featured case studies + the full 56-repo index.
+// Projects — 8 featured case studies + the full 55-repo index.
 // Sourced from Rakibul_Hasan_Naym_Project_Portfolio.docx and the CV.
 // Repo-evidenced facts (commit counts, model counts) are stated as facts;
 // CV-sourced scale metrics (2M+ outlets, ~99%) are marked with `source: "cv"`.
@@ -69,11 +69,10 @@ export const caseStudies: CaseStudy[] = [
       { text: "Unilever counterpart runs 10+ versioned YOLO models with cross-model reconciliation; parallel live deployments for Malaysia, Square, and Nagad (MFS branding).", source: "repo" },
     ],
     links: [
-      { label: "BAT_Master (GitHub)", url: "https://github.com/RH-NAYM/BAT-MASTER" },
-      { label: "BAT_Master (Hugging Face)", url: "https://huggingface.co/HawkEyesAI/BAT_Master" },
-      { label: "Unilever (GitHub)", url: "https://github.com/RH-NAYM/UNILEVER-MASTER" },
+      { label: "BAT-Master-Live (Hugging Face)", url: "https://huggingface.co/rakib72642/BAT-Master-Live" },
+      { label: "UNILEVER-Master-Live (Hugging Face)", url: "https://huggingface.co/rakib72642/UNILEVER-Master-Live" },
     ],
-    related: ["BAT_Master", "UBL-Backup", "Malay-DAIA", "Squere_Demo", "Nagad", "ubl_data_management"],
+    related: ["BAT-Master-Live", "UNILEVER-Master-Live", "Malay-DAIA", "Squere_Demo", "Nagad"],
   },
   {
     slug: "real-time-voice-agent",
@@ -117,7 +116,7 @@ export const caseStudies: CaseStudy[] = [
       { text: "Bangla speech to be supplied by the in-house custom Bangladeshi-accent TTS (see the TTS case study).", source: "repo" },
     ],
     links: [{ label: "Voice-AI-Agent (Hugging Face)", url: "https://huggingface.co/HawkEyesAI/Voice-AI-Agent" }],
-    related: ["Voice-AI-Agent", "AI-ChatBot", "VITS-FineTune"],
+    related: ["Voice-AI-Agent", "Hospital-AI-Agent", "AI-ChatBot", "Custom-TTS-Bangla-Accent-VITS-XTTSv2"],
   },
   {
     slug: "agentic-grounded-rag",
@@ -170,7 +169,7 @@ export const caseStudies: CaseStudy[] = [
     title: "Custom Bangladeshi-Accent Bangla TTS",
     subtitle:
       "A VITS text-to-speech model with a grapheme frontend, built to give production voice agents a natural Bangladeshi accent.",
-    context: "HawkEyes · VITS-FineTune · current focus · 2026",
+    context: "HawkEyes · Custom-TTS-Bangla-Accent-VITS-XTTSv2 · current focus · 2026",
     domain: "Speech, Audio & NLP",
     featured: true,
     tags: ["Coqui VITS", "PyTorch", "torchaudio", "librosa", "Bangla NLP"],
@@ -205,10 +204,10 @@ export const caseStudies: CaseStudy[] = [
       { text: "Designed to plug directly into the production voice agent to unlock Bangla telephony automation.", source: "cv" },
     ],
     links: [
-      { label: "VITS-FineTune (Hugging Face)", url: "https://huggingface.co/HawkEyesAI/VITS-FineTune" },
+      { label: "Custom-TTS-Bangla-Accent-VITS-XTTSv2 (Hugging Face)", url: "https://huggingface.co/rakib72642/Custom-TTS-Bangla-Accent-VITS-XTTSv2" },
       { label: "genMaxTxt (GitHub)", url: "https://github.com/RH-NAYM/genMaxTxt" },
     ],
-    related: ["VITS-FineTune", "genMaxTxt", "Voice-AI-Agent"],
+    related: ["Custom-TTS-Bangla-Accent-VITS-XTTSv2", "genMaxTxt", "Voice-AI-Agent"],
   },
   {
     slug: "on-prem-gpu-infra",
@@ -289,6 +288,90 @@ export const caseStudies: CaseStudy[] = [
     ],
     related: ["Bangla-ICR", "DemoOCRBangla", "OCR_CloudVision_Gemeni"],
   },
+  {
+    slug: "hospital-ai-agent",
+    title: "Hospital Appointment AI Agent",
+    subtitle:
+      "A Gemini-Live voice & chat assistant that carries a real multi-turn conversation to book, confirm, and manage hospital appointments.",
+    context: "HawkEyes · Hospital-AI-Agent · Gemini Live + LangGraph · 2026",
+    domain: "LLM, RAG & Conversational AI",
+    featured: true,
+    tags: ["Gemini Live", "LangGraph", "WebRTC", "Twilio", "RVC", "FastAPI"],
+    metrics: [
+      { value: "LangGraph", label: "stateful appointment-booking core", source: "repo" },
+      { value: "2", label: "interchangeable voice backends", source: "repo" },
+      { value: "Twilio+Email", label: "real confirmation actions", source: "repo" },
+    ],
+    problem:
+      "Hospital front-desk appointment booking over phone or chat is repetitive, staff-intensive, and error-prone — it needs an agent that can hold a genuine multi-turn conversation, track slot-filling (doctor, date, time), stay strictly on-topic, and take real actions rather than just talk.",
+    approach: [
+      "Built a LangGraph state-machine agent (persona 'তানিয়া ইসলাম') that tracks slot memory across turns — doctor selection, natural-language date/time parsing (dateparser), and domain-strict guardrails that keep the conversation on-topic.",
+      "Added a dedicated Gemini Live bridge alongside the existing STT→LLM→TTS pipeline so the same appointment tools, prompts, and conversation state can drive either native Gemini Live audio or the classic loop — an interchangeable-backend design.",
+      "Delivered both a WebRTC voice transport and a text/chat transport from one FastAPI backend, with Twilio call/SMS and email tool-calling for appointment confirmations.",
+      "Added an internal RVC (voice-conversion) module and a lightweight DB-view/admin API for operational visibility into bookings.",
+    ],
+    architecture: {
+      pipeline: [
+        "Caller/browser audio or chat → FastAPI transport (WebRTC / WebSocket / REST)",
+        "VAD → STT, or native Gemini Live audio",
+        "LangGraph agent — slot memory + domain-strict guardrails",
+        "Tool-calls: doctor/date lookup, Twilio call/SMS, email confirmation",
+        "TTS or Gemini Live audio response streamed back",
+        "aiosqlite-checkpointed conversation state + DB-view admin API",
+      ],
+      stack: [
+        "Python", "FastAPI", "LangChain + LangGraph", "langchain-google-genai (Gemini Live)",
+        "Twilio", "aiosqlite", "dateparser", "RVC", "WebRTC",
+      ],
+    },
+    results: [
+      { text: "Runs two interchangeable generation backends — native Gemini Live audio and a classic STT→LLM→TTS loop — behind one appointment-booking agent core.", source: "repo" },
+      { text: "Takes real-world action (Twilio call/SMS and email confirmations), not just conversation, on top of a domain-strict, slot-memory LangGraph core.", source: "repo" },
+    ],
+    links: [{ label: "Hospital-AI-Agent (Hugging Face)", url: "https://huggingface.co/rakib72642/Hospital-AI-Agent" }],
+    related: ["Hospital-AI-Agent", "Voice-AI-Agent", "Custom-TTS-Bangla-Accent-VITS-XTTSv2"],
+  },
+  {
+    slug: "he-universe-model-store",
+    title: "HE-Universe Multi-Domain AI Model Store",
+    subtitle:
+      "One FastAPI service unifying 15+ production AI modules — retail CV, face recognition, OCR, and conversational NLP — behind a single deployable Hugging Face Space.",
+    context: "HawkEyes · Universe-Model-Store (formerly v2_HE_Universe) · 2025–present",
+    domain: "Computer Vision & Retail Intelligence",
+    featured: true,
+    tags: ["FastAPI", "YOLO", "OCR", "NLP", "face_recognition", "Hugging Face", "multi-module"],
+    metrics: [
+      { value: "15+", label: "production modules in one service", source: "repo" },
+      { value: "BAT+UBL", label: "+ OCR, face, NLP, speech modules", source: "repo" },
+      { value: "1", label: "unified deploy (Hugging Face)", source: "repo" },
+    ],
+    problem:
+      "As the number of client programs grew (BAT, Unilever, OCR, face verification, speech), running each as a fully separate service became an operational burden — duplicated boilerplate, scattered deployments, and no single place to reason about the whole model estate.",
+    approach: [
+      "Consolidated BAT, Unilever (UBL), face detection/recognition, Bangla & 'MT House' OCR, material detection, beverage-industry detection, hotspot calculation, eKYC, and five NLP/conversational modules (general NLP, Zerocal, Maya, conversational guidance, speak-metric merge) behind one FastAPI app (Universe_API.py).",
+      "Kept each domain in its own class/module boundary (modules/<name>/<name>_main.py) while sharing a common tools/model-handler layer for loading and serving models.",
+      "Deployed as a single Hugging Face Space so every client-facing capability the team ships can be reached from one live endpoint instead of a dozen scattered ones.",
+    ],
+    architecture: {
+      pipeline: [
+        "Request → Universe_API.py router",
+        "Domain class dispatch (BAT / UBL / OCR / Face / NLP / Speech …)",
+        "Shared model-handler loads the right model set",
+        "Per-module inference + response shaping",
+        "Structured JSON response + per-module logs",
+      ],
+      stack: [
+        "Python", "FastAPI", "PyTorch", "Ultralytics YOLO", "OpenCV",
+        "Tesseract / OCR", "face_recognition", "NLTK", "Hugging Face deploy", "Git LFS",
+      ],
+    },
+    results: [
+      { text: "One live Hugging Face Space now fronts 15+ previously-separate production modules spanning retail CV, OCR, identity, and conversational NLP.", source: "repo" },
+      { text: "Gives the team a single place to add, version, and monitor new AI capabilities instead of standing up a new service per client.", source: "cv" },
+    ],
+    links: [{ label: "Universe-Model-Store (Hugging Face)", url: "https://huggingface.co/rakib72642/Universe-Model-Store" }],
+    related: ["Universe-Model-Store", "BAT-Master-Live", "UNILEVER-Master-Live"],
+  },
 ];
 
 // ─── Full repository index (all 56) ──────────────────────────────────────────
@@ -314,20 +397,18 @@ export const domains = [
 
 export const repos: Repo[] = [
   // Computer Vision & Retail Intelligence
-  { name: "BAT_Master", description: "Central production CV+analytics API for a British American Tobacco retail-execution program.", url: "https://github.com/RH-NAYM/BAT-MASTER", tags: ["FastAPI", "YOLO", "PyTorch", "Hypercorn"], domain: "Computer Vision & Retail Intelligence", caseStudy: "retail-execution-intelligence" },
-  { name: "UBL-Backup", description: "Unilever Bangladesh retail-execution API (deployable production snapshot) — 10+ versioned YOLO models.", url: "https://github.com/RH-NAYM/UNILEVER-MASTER", tags: ["FastAPI", "YOLO", "dlib", "Docker"], domain: "Computer Vision & Retail Intelligence", caseStudy: "retail-execution-intelligence" },
+  { name: "BAT-Master-Live", description: "Central production CV+analytics API for a British American Tobacco retail-execution program — live Hugging Face deployment (merges the BAT_Master flagship and its earliest prototype lineage).", url: "https://huggingface.co/rakib72642/BAT-Master-Live", tags: ["FastAPI", "YOLO", "PyTorch", "Hypercorn", "Hugging Face"], domain: "Computer Vision & Retail Intelligence", caseStudy: "retail-execution-intelligence" },
+  { name: "UNILEVER-Master-Live", description: "Unilever Bangladesh retail-execution API — 10+ versioned YOLO models with cross-model reconciliation (Display Audit, QPDS, SOS, MTSOS), live Hugging Face deployment.", url: "https://huggingface.co/rakib72642/UNILEVER-Master-Live", tags: ["FastAPI", "YOLO", "dlib", "Docker", "Hugging Face"], domain: "Computer Vision & Retail Intelligence", caseStudy: "retail-execution-intelligence" },
   { name: "Malay-DAIA", description: "Retail item-detection + agent face-verification API for a Malaysian deployment.", url: "https://huggingface.co/HawkEyesAI/Malay-DAIA", tags: ["FastAPI", "YOLO", "face_recognition"], domain: "Computer Vision & Retail Intelligence", caseStudy: "retail-execution-intelligence" },
   { name: "Squere_Demo", description: "Multi-module retail-audit API: Display Audit, POSM, Sachet, and Share-of-Shelf.", url: "https://huggingface.co/HawkEyesAI/Squere_Demo", tags: ["FastAPI", "YOLO", "OpenCV", "async"], domain: "Computer Vision & Retail Intelligence", caseStudy: "retail-execution-intelligence" },
   { name: "Nagad", description: "Mobile-financial-services (Nagad/bKash/Rocket/Tap) branding detection API.", url: "https://github.com/RH-NAYM/Nagad", tags: ["FastAPI", "YOLO", "pandas"], domain: "Computer Vision & Retail Intelligence", caseStudy: "retail-execution-intelligence" },
   { name: "nagad_version_12", description: "Versioned (v12) snapshot of the Nagad detection API.", url: "https://github.com/RH-NAYM/nagad_version_12", tags: ["FastAPI", "YOLO"], domain: "Computer Vision & Retail Intelligence" },
-  { name: "ubl_data_management", description: "Unilever multi-model detection + cross-model reconciliation core.", url: "https://github.com/RH-NAYM/ubl_data_management", tags: ["FastAPI", "YOLO", "pandas"], domain: "Computer Vision & Retail Intelligence", caseStudy: "retail-execution-intelligence" },
-  { name: "ubl_mtsos", description: "Unilever MTSOS (multi-tier share-of-shelf) detection API v1, deployed from Hugging Face.", url: "https://github.com/RH-NAYM/ubl_mtsos", tags: ["FastAPI", "YOLO", "Git LFS"], domain: "Computer Vision & Retail Intelligence" },
   { name: "GP_HawkEyes", description: "Async object-detection & counting microservice (reusable detection pattern).", url: "https://github.com/RH-NAYM/GP_HawkEyes", tags: ["FastAPI", "YOLOv5", "asyncio"], domain: "Computer Vision & Retail Intelligence" },
-  { name: "Sample_Project_BAT", description: "Earliest BAT detection prototype — precursor to BAT_Master.", url: "https://github.com/RH-NAYM/Sample_Project_BAT", tags: ["FastAPI", "YOLOv5"], domain: "Computer Vision & Retail Intelligence" },
   { name: "distance-calculate", description: "Object distance/spacing estimation from detections (pixel-to-metric).", url: "https://huggingface.co/HawkEyesAI/distance-calculate", tags: ["FastAPI", "YOLO", "NumPy"], domain: "Computer Vision & Retail Intelligence" },
   { name: "Hypothesis-for-detect-common-competitor-products", description: "Competitor-product detection experiment (YOLO + Gemini vision).", url: "https://huggingface.co/HawkEyesAI/Hypothesis-for-detect-common-competitor-products", tags: ["FastAPI", "YOLO", "Gemini"], domain: "Computer Vision & Retail Intelligence" },
   { name: "Himel_Face_Detection", description: "Team recognition + directory-lookup API.", url: "https://github.com/RH-NAYM/Himel_Face_Detection", tags: ["FastAPI", "YOLOv5", "pandas"], domain: "Computer Vision & Retail Intelligence" },
   { name: "Demo_AR", description: "Browser AR camera demo (WebSocket + OpenCV) — maps to the AR validation tool.", url: "https://github.com/RH-NAYM/Demo_AR", tags: ["FastAPI", "WebSockets", "OpenCV"], domain: "Computer Vision & Retail Intelligence" },
+  { name: "Universe-Model-Store", description: "Multi-module AI model store/API unifying BAT, Unilever, face recognition, OCR, and conversational-NLP services behind one Hugging Face deployment.", url: "https://huggingface.co/rakib72642/Universe-Model-Store", tags: ["FastAPI", "YOLO", "OCR", "NLP", "multi-module", "Hugging Face"], domain: "Computer Vision & Retail Intelligence", caseStudy: "he-universe-model-store" },
 
   // Identity & Face Verification
   { name: "NID-Face-Validation-with-AI", description: "Identity verification by matching a selfie against an NID photo (face embeddings).", url: "https://github.com/RH-NAYM/NID-Face-Validation-with-AI", tags: ["FastAPI", "face_recognition", "dlib"], domain: "Identity & Face Verification" },
@@ -341,6 +422,7 @@ export const repos: Repo[] = [
 
   // LLM, RAG & Conversational AI
   { name: "Voice-AI-Agent", description: "Production real-time conversational voice agent (WebRTC → STT → LangGraph → TTS).", url: "https://huggingface.co/HawkEyesAI/Voice-AI-Agent", tags: ["WebRTC", "LangGraph", "faster-whisper", "MCP"], domain: "LLM, RAG & Conversational AI", caseStudy: "real-time-voice-agent" },
+  { name: "Hospital-AI-Agent", description: "Hospital appointment-booking voice & chat agent — LangGraph slot-memory core with a Gemini Live audio bridge, Twilio/email tool-calling, and WebRTC transport.", url: "https://huggingface.co/rakib72642/Hospital-AI-Agent", tags: ["Gemini Live", "LangGraph", "Twilio", "WebRTC", "FastAPI"], domain: "LLM, RAG & Conversational AI", caseStudy: "hospital-ai-agent" },
   { name: "AI-Agent_MongoDB", description: "Multi-agent, self-correcting RAG over MongoDB (Planner→Executor→Critic).", url: "https://github.com/RH-NAYM/AI-Agent_MongoDB", tags: ["LangGraph", "MongoDB", "SSE"], domain: "LLM, RAG & Conversational AI", caseStudy: "agentic-grounded-rag" },
   { name: "mongoRAG", description: "Clean MongoDB retrieval-augmented-generation pipeline (E5 embeddings).", url: "https://github.com/RH-NAYM/mongoRAG", tags: ["FastAPI", "MongoDB", "sentence-transformers"], domain: "LLM, RAG & Conversational AI", caseStudy: "agentic-grounded-rag" },
   { name: "HE-Sherlock", description: "Bangla document RAG Q&A with strict grounding (FAISS + Gemini).", url: "https://huggingface.co/HawkEyesAI/HE-Sherlock", tags: ["LangChain", "FAISS", "Gemini", "Tesseract"], domain: "LLM, RAG & Conversational AI", caseStudy: "agentic-grounded-rag" },
@@ -352,7 +434,7 @@ export const repos: Repo[] = [
   { name: "AI-ChatBot", description: "Local, GPU-accelerated voice assistant loop (whisper → local LLM → TTS).", url: "https://github.com/RH-NAYM/AI-ChatBot", tags: ["faster-whisper", "Transformers", "llama.cpp"], domain: "LLM, RAG & Conversational AI" },
 
   // Speech, Audio & NLP
-  { name: "VITS-FineTune", description: "Bangla text-to-speech fine-tuning (Coqui VITS + grapheme frontend).", url: "https://huggingface.co/HawkEyesAI/VITS-FineTune", tags: ["Coqui VITS", "PyTorch", "librosa"], domain: "Speech, Audio & NLP", caseStudy: "bangla-tts" },
+  { name: "Custom-TTS-Bangla-Accent-VITS-XTTSv2", description: "Bangla text-to-speech fine-tuning (Coqui VITS + grapheme frontend, expanding toward XTTSv2).", url: "https://huggingface.co/rakib72642/Custom-TTS-Bangla-Accent-VITS-XTTSv2", tags: ["Coqui VITS", "PyTorch", "librosa", "XTTSv2"], domain: "Speech, Audio & NLP", caseStudy: "bangla-tts" },
   { name: "genMaxTxt", description: "Speech-to-text dataset builder (Cloud Speech + Gemini normalization).", url: "https://github.com/RH-NAYM/genMaxTxt", tags: ["Cloud Speech", "Gemini", "openpyxl"], domain: "Speech, Audio & NLP", caseStudy: "bangla-tts" },
   { name: "BAT_Audio_NLP", description: "Audio brand-mention detection for BAT (AssemblyAI + fuzzy regex).", url: "https://github.com/RH-NAYM/BAT_Audio_NLP", tags: ["AssemblyAI", "regex"], domain: "Speech, Audio & NLP" },
   { name: "BAT_NLP_Campaign", description: "Campaign-phrase compliance detection from field audio (NLTK + fuzzy match).", url: "https://github.com/RH-NAYM/BAT_NLP_Campaign", tags: ["AssemblyAI", "NLTK", "regex"], domain: "Speech, Audio & NLP" },

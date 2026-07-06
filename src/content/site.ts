@@ -49,6 +49,13 @@ export const socials = {
     handle: "naym.mj@gmail.com",
     url: "mailto:naym.mj@gmail.com",
   },
+  upwork: {
+    label: "Upwork",
+    handle: "@mdrakibulhasannaym",
+    // Public share link — works for signed-out visitors, unlike the vanity
+    // /freelancers/mdrakibulhasannaym URL which can bounce logged-out users.
+    url: "https://www.upwork.com/freelancers/~015c849967a428cc5d?mp_source=share",
+  },
 } as const;
 
 // Headline metrics — CV/portfolio sourced. Keep honest.
@@ -145,45 +152,85 @@ export const skillGroups: SkillGroup[] = [
   },
 ];
 
+// Roles are grouped by employer — mirrors LinkedIn's internal-promotion
+// display (one company, several titles over time) so the timeline stays
+// accurate to the real progression instead of collapsing it into one title.
+export type ExperienceRole = { title: string; period: string; bullets: string[] };
+export type ExperienceLink = { label: string; url: string };
 export type ExperienceItem = {
-  role: string;
   org: string;
   location: string;
-  period: string;
-  bullets: string[];
+  totalPeriod: string;
+  roles: ExperienceRole[];
+  link?: ExperienceLink;
 };
 
 export const experience: ExperienceItem[] = [
   {
-    role: "Applied AI Engineer & AI Team Lead",
     org: "HawkEyes Digital Monitoring Ltd.",
     location: "Dhaka, Bangladesh",
-    period: "Mar 2023 – Present",
-    bullets: [
-      "Own applied-AI delivery end to end — research, model design, deployment, and monitoring — across retail-execution, manufacturing, and surveillance product lines; mentor a growing AI team.",
-      "Built and scaled the flagship retail-execution CV platform serving 2M+ outlets at ~99% accuracy, routing each outlet image to campaign-specific YOLO models behind async FastAPI services (BAT program: 397 commits over 18 months).",
-      "Delivered multi-client production detection for BAT, Unilever (10+ versioned models with cross-model reconciliation), Malaysia, Square, and Nagad — POSM, planogram, share-of-shelf, and competitor detection.",
-      "Architected production RAG and multi-agent systems (MongoDB Atlas Vector Search, LangGraph, self-correcting Planner→Executor→Critic loops, SSE streaming) plus strict-grounding RAG over Bangla PDFs.",
-      "Engineered a real-time conversational voice agent (WebRTC/WebSocket, VAD→STT→LangGraph→TTS, per-session memory, MCP tool-calling) with explicit latency engineering.",
-      "Designed, built, and administer two on-premises Ubuntu GPU servers hosting most of the team's AI services and training — an in-house alternative to rented cloud GPUs.",
+    totalPeriod: "Mar 2023 – Present · 3 yrs 5 mos",
+    roles: [
+      {
+        title: "Applied AI Engineer & AI Team Lead",
+        period: "Aug 2024 – Present",
+        bullets: [
+          "Lead AI strategy, architecture, and end-to-end delivery — research through deployment and monitoring — across retail-execution, manufacturing, and surveillance product lines; mentor a growing AI team.",
+          "Architected production RAG and multi-agent systems (MongoDB Atlas Vector Search, LangGraph, self-correcting Planner→Executor→Critic loops, SSE streaming) plus strict-grounding RAG over Bangla PDFs.",
+          "Engineered a real-time conversational voice agent (WebRTC/WebSocket, VAD→STT→LangGraph→TTS, per-session memory, MCP tool-calling) with explicit latency engineering.",
+          "Designed, built, and administer two on-premises Ubuntu GPU servers hosting most of the team's AI services and training — an in-house alternative to rented cloud GPUs.",
+        ],
+      },
+      {
+        title: "Artificial Intelligence Engineer",
+        period: "Feb 2024 – Aug 2024",
+        bullets: [
+          "Designed, developed, and deployed AI solutions across computer vision, OCR, and NLP, contributing to enterprise-scale retail analytics and intelligent automation projects.",
+          "Extended multi-client production detection to Unilever (10+ versioned models with cross-model reconciliation), Malaysia, Square, and Nagad — POSM, planogram, share-of-shelf, and competitor detection.",
+          "Began building the team's first Retrieval-Augmented Generation (RAG) systems and a custom Bangla OCR/ICR pipeline for document intelligence.",
+        ],
+      },
+      {
+        title: "Junior Artificial Intelligence Engineer",
+        period: "Mar 2023 – Feb 2024",
+        bullets: [
+          "Supported the development and deployment of AI and computer-vision solutions for retail analytics and intelligent automation, building production experience in machine learning and backend integration.",
+          "Built and scaled the flagship retail-execution CV platform serving 2M+ outlets at ~99% accuracy, routing each outlet image to campaign-specific YOLO models behind async FastAPI services (BAT program: 397 commits over 18 months).",
+          "Delivered the team's first production multi-client detection deployment for BAT, establishing the FastAPI/YOLO architecture later extended across every client program.",
+        ],
+      },
     ],
   },
   {
-    role: "Data Analyst",
     org: "Quantanite",
     location: "Dhaka, Bangladesh",
-    period: "Jan 2023 – Mar 2023",
-    bullets: [
-      "Executed large-scale data analysis, quality assurance, and operational reporting supporting business-intelligence initiatives across client accounts.",
+    totalPeriod: "Jan 2023 – Mar 2023 · 3 mos",
+    roles: [
+      {
+        title: "Data Analyst",
+        period: "Jan 2023 – Mar 2023",
+        bullets: [
+          "Executed large-scale data analysis, quality assurance, and operational reporting supporting business-intelligence initiatives across client accounts.",
+        ],
+      },
     ],
   },
   {
-    role: "Freelance ML / Computer Vision Engineer",
-    org: "Upwork (Remote)",
+    org: "Upwork",
     location: "Remote",
-    period: "2022",
-    bullets: [
-      "Delivered YOLOv5-based computer-vision solutions and project supervision for international clients; maintained a 5.0/5.0 client rating (image processing, deep learning, Python, C++).",
+    totalPeriod: "Jan 2022 – Dec 2022 · 1 yr",
+    link: {
+      label: "Real-Time Custom Object Detection (Upwork)",
+      url: "https://www.upwork.com/services/product/development-it-a-real-time-custom-object-detection-machine-learning-model-1550132751383220224?ref=project_share",
+    },
+    roles: [
+      {
+        title: "Freelance ML / Computer Vision Engineer",
+        period: "Jan 2022 – Dec 2022",
+        bullets: [
+          "Delivered YOLOv5-based computer-vision solutions and project supervision for international clients; maintained a 5.0/5.0 client rating across completed contracts (image processing, deep learning, Python, C++).",
+        ],
+      },
     ],
   },
 ];
@@ -202,5 +249,14 @@ export const recognition = [
 ] as const;
 
 export const languages = "Bangla (native) · English (professional working proficiency)";
+
+// Compact "focus pillar" chips shown under the About copy — one per core
+// competency, mirrored from the About paragraphs above so the two never drift.
+export type AboutPillar = { key: "cv" | "genai" | "infra"; label: string; note: string };
+export const aboutPillars: AboutPillar[] = [
+  { key: "cv", label: "Computer Vision", note: "YOLO detection & segmentation at 2M+ outlets, ~99% accuracy." },
+  { key: "genai", label: "Generative AI", note: "Production RAG, LangGraph multi-agent systems, voice agents." },
+  { key: "infra", label: "MLOps & Infra", note: "Self-hosted GPU servers, Docker, GPU-optimized inference." },
+];
 
 export const siteUrl = "https://rakib-portfolio-lilac.vercel.app";

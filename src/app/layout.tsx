@@ -68,7 +68,7 @@ const jsonLd = {
   url: siteUrl,
   address: { "@type": "PostalAddress", addressLocality: "Dhaka", addressCountry: "BD" },
   worksFor: { "@type": "Organization", name: profile.company },
-  sameAs: [socials.github.url, socials.huggingface.url, socials.huggingfaceOrg.url, socials.linkedin.url],
+  sameAs: [socials.github.url, socials.huggingface.url, socials.huggingfaceOrg.url, socials.linkedin.url, socials.upwork.url],
   knowsAbout: [
     "Computer Vision", "Deep Learning", "Retrieval-Augmented Generation",
     "AI Agents", "MLOps", "GPU Optimization", "Text-to-Speech", "OCR",

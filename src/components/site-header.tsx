@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, X, Github } from "lucide-react";
-import { profile } from "@/content/site";
+import { Menu, X, Github, Linkedin } from "lucide-react";
+import { HFIcon } from "@/components/hf-icon";
+import { profile, socials } from "@/content/site";
 
 const nav = [
   { href: "/#about", label: "About" },
@@ -45,20 +46,42 @@ export function SiteHeader() {
             <li key={item.href}>
               <Link
                 href={item.href}
-                className="rounded-lg px-3 py-2 text-sm text-[--color-text-muted] transition-colors hover:text-[--color-text]"
+                className="relative rounded-lg px-3 py-2 text-sm text-[--color-text-muted] transition-colors hover:text-[--color-text] after:absolute after:inset-x-3 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-[--color-accent] after:transition-transform after:duration-300 hover:after:scale-x-100"
               >
                 {item.label}
               </Link>
             </li>
           ))}
-          <li>
+          <li className="ml-2 flex items-center gap-1.5">
+            <a
+              href={socials.linkedin.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              title="LinkedIn"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[--color-border] text-[--color-text-muted] transition-all duration-200 hover:-translate-y-0.5 hover:border-[--color-accent] hover:text-[--color-accent] active:translate-y-0 active:scale-90"
+            >
+              <Linkedin size={15} />
+            </a>
+            <a
+              href={socials.huggingface.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Hugging Face"
+              title="Hugging Face · @rakib72642"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[--color-border] text-[--color-text-muted] transition-all duration-200 hover:-translate-y-0.5 hover:border-[--color-accent] hover:text-[--color-accent] active:translate-y-0 active:scale-90"
+            >
+              <HFIcon size={15} />
+            </a>
             <a
               href="https://github.com/RH-NAYM"
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-2 inline-flex items-center gap-2 rounded-lg border border-[--color-border-strong] px-3 py-2 text-sm text-[--color-text] transition-colors hover:border-[--color-accent] hover:text-[--color-accent]"
+              aria-label="GitHub"
+              title="GitHub"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[--color-border-strong] text-[--color-text] transition-all duration-200 hover:-translate-y-0.5 hover:border-[--color-accent] hover:text-[--color-accent] active:translate-y-0 active:scale-90"
             >
-              <Github size={15} /> GitHub
+              <Github size={15} />
             </a>
           </li>
         </ul>
@@ -67,7 +90,7 @@ export function SiteHeader() {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="rounded-lg border border-[--color-border] p-2 text-[--color-text] md:hidden"
+          className="rounded-lg border border-[--color-border] p-2 text-[--color-text] transition-transform duration-150 active:scale-90 md:hidden"
         >
           {open ? <X size={18} /> : <Menu size={18} />}
         </button>
@@ -88,6 +111,35 @@ export function SiteHeader() {
               </li>
             ))}
           </ul>
+          <div className="container-page flex items-center gap-2 border-t border-[--color-border] py-3">
+            <a
+              href="https://github.com/RH-NAYM"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[--color-border] text-[--color-text-muted] transition-all duration-200 active:scale-90 hover:border-[--color-accent] hover:text-[--color-accent]"
+            >
+              <Github size={15} />
+            </a>
+            <a
+              href={socials.linkedin.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[--color-border] text-[--color-text-muted] transition-all duration-200 active:scale-90 hover:border-[--color-accent] hover:text-[--color-accent]"
+            >
+              <Linkedin size={15} />
+            </a>
+            <a
+              href={socials.huggingface.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Hugging Face"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[--color-border] text-[--color-text-muted] transition-all duration-200 active:scale-90 hover:border-[--color-accent] hover:text-[--color-accent]"
+            >
+              <HFIcon size={15} />
+            </a>
+          </div>
         </div>
       )}
     </header>
