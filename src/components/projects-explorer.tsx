@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ExternalLink, Search, Star } from "lucide-react";
 import { repos, domains } from "@/content/projects";
+import { domainStyle } from "@/content/domain-colors";
 
 export function ProjectsExplorer() {
   const [domain, setDomain] = useState<string>("All");
@@ -47,6 +48,7 @@ export function ProjectsExplorer() {
           </Chip>
           {domains.map((d) => (
             <Chip key={d} active={domain === d} onClick={() => setDomain(d)}>
+              <span className="mr-1.5 inline-block h-2 w-2 rounded-[2px]" style={{ backgroundColor: domainStyle(d).color }} />
               {d} <span className="text-[--color-text-faint]">{counts[d]}</span>
             </Chip>
           ))}
@@ -58,19 +60,23 @@ export function ProjectsExplorer() {
       </p>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((r) => (
-          <div key={r.name} className="card flex flex-col p-4">
+        {filtered.map((r, i) => (
+          <div
+            key={`${domain}:${r.name}`}
+            className="deal-in group card flex flex-col border-l-2 p-4 transition-transform duration-300 hover:-translate-y-0.5"
+            style={{ borderLeftColor: domainStyle(r.domain).color, animationDelay: `${Math.min(i, 12) * 30}ms` }}
+          >
             <div className="flex items-start justify-between gap-2">
               <a
                 href={r.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-sm font-medium text-[--color-text] hover:text-[--color-accent]"
+                className="text-sm font-bold text-[--color-text] hover:text-[--color-accent]"
               >
                 {r.name}
               </a>
               <a href={r.url} target="_blank" rel="noopener noreferrer" aria-label={`Open ${r.name}`}>
-                <ExternalLink size={14} className="text-[--color-text-faint] hover:text-[--color-accent]" />
+                <ExternalLink size={14} className="nudge text-[--color-text-faint] group-hover:text-[--color-accent]" />
               </a>
             </div>
             <p className="mt-2 flex-1 text-xs leading-relaxed text-[--color-text-muted]">
@@ -78,7 +84,7 @@ export function ProjectsExplorer() {
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
               {r.tags.slice(0, 4).map((t) => (
-                <span key={t} className="rounded border border-[--color-border] px-1.5 py-0.5 font-mono text-[10px] text-[--color-text-faint]">
+                <span key={t} className="rounded-[3px] bg-[--color-surface-2] px-1.5 py-0.5 text-[11px] text-[--color-text-muted]">
                   {t}
                 </span>
               ))}
@@ -114,9 +120,9 @@ function Chip({
   return (
     <button
       onClick={onClick}
-      className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
+      className={`press rounded-md border px-3 py-1.5 text-sm ${
         active
-          ? "border-[--color-accent] bg-[--color-accent-soft] text-[--color-accent]"
+          ? "border-[--color-text-muted] bg-[--color-surface-2] text-[--color-text]"
           : "border-[--color-border] text-[--color-text-muted] hover:border-[--color-border-strong] hover:text-[--color-text]"
       }`}
     >

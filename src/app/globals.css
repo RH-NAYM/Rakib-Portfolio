@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────
-   Design tokens — restrained dark "engineered" theme.
-   One primary accent (electric cyan-blue), one secondary (violet),
-   subtle glow, no neon walls, WCAG-AA text contrast.
+   Design tokens. The original near-black + electric cyan theme,
+   one family (Archivo, variable width), and a categorical
+   annotation palette where each AI domain owns a color.
    ───────────────────────────────────────────────────────────── */
 @theme {
   --color-bg: #06070a;
@@ -23,16 +23,15 @@
   --color-secondary: #a78bfa;
   --color-success: #34d399;
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* "mono" is repurposed as the narrow data face (tags, numbers);
+     real code still uses --font-code. */
+  --font-mono: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-code: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
 
-  --radius: 0.9rem;
+  --radius: 0.5rem;
 }
 
-/* Guarantee every color variable is emitted to :root.
-   Tailwind v4 tree-shakes theme vars that are only referenced through
-   arbitrary utilities like bg-[--color-x], which left some backgrounds
-   (chat panel, primary button) resolving to transparent. This fixes that. */
 :root {
   --color-bg: #06070a;
   --color-bg-elevated: #0b0d12;
@@ -50,6 +49,17 @@
   --color-accent-soft: rgba(56, 189, 248, 0.12);
   --color-secondary: #a78bfa;
   --color-success: #34d399;
+
+  /* annotation classes */
+  --c-cv: #2dd4a7;
+  --c-face: #fb923c;
+  --c-ocr: #a78bfa;
+  --c-llm: #60a5fa;
+  --c-speech: #f472b6;
+  --c-infra: #fbbf24;
+  --c-web: #94a3b8;
+  --c-opencv: #67e8f9;
+  --c-product: #f87171;
 }
 
 /* ─── base ─── */
@@ -66,9 +76,39 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+
+/* the narrow data face: tags, numbers, small meta */
+.font-mono {
+  font-variation-settings: "wdth" 80;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* width axis as a typographic device */
+.wide {
+  font-variation-settings: "wdth" 125;
+}
+.narrow {
+  font-variation-settings: "wdth" 75;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -79,6 +119,7 @@ body {
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
@@ -89,7 +130,6 @@ body {
   color: #fff;
 }
 
-/* thin custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -101,67 +141,238 @@ body {
   background: var(--color-border-strong);
   border-radius: 6px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #384357;
-}
 
-/* ─── reusable utilities ─── */
+/* ─── layout ─── */
 .container-page {
   width: 100%;
-  max-width: 72rem;
+  max-width: 76rem;
   margin-inline: auto;
   padding-inline: 1.25rem;
 }
-
-.text-gradient {
-  background: linear-gradient(120deg, var(--color-text) 30%, var(--color-accent) 75%, var(--color-secondary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 2rem;
+  }
 }
 
+/* Kept for older call sites; no gradient text in this system. */
+.text-gradient {
+  color: var(--color-text);
+}
+
+/* Surfaces: flat, one hairline, no glow. Hover only lifts the border. */
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-  will-change: transform;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 .card:hover {
   border-color: var(--color-border-strong);
-  background: var(--color-surface-2);
-  box-shadow: 0 14px 32px -18px rgba(56, 189, 248, 0.35);
 }
 
-.reveal {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.reveal.is-visible {
-  opacity: 1;
-  transform: none;
+/* ─────────────────────────────────────────────────────────────
+   Motion. Easing tokens, then three layers:
+   1. entrance kinds (armed by motion-root.tsx, below-the-fold only)
+   2. the hero load sequence (the page's one authored moment)
+   3. responses to the visitor (hover, press, filter, navigation)
+   Only transform / opacity / filter / clip-path move. No bounce.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --e: cubic-bezier(0.16, 1, 0.3, 1);
+  --e2: cubic-bezier(0.33, 1, 0.68, 1);
+  --io: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .glow-accent {
-  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.25), 0 8px 40px -12px rgba(56, 189, 248, 0.45);
+  box-shadow: none;
 }
 
 .eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  color: var(--color-accent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 1 ── entrance kinds */
+  [data-m-armed] {
+    opacity: 0;
+  }
+  [data-m-armed][data-m="up"] {
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+  [data-m-armed][data-m="card"] {
+    transform: translateY(24px) scale(0.985);
+    filter: blur(6px);
+  }
+  [data-m-armed][data-m="left"] {
+    transform: translateX(-10px);
+    filter: blur(4px);
+  }
+  [data-m-armed][data-m="pop"] {
+    transform: scale(0.86);
+    filter: blur(4px);
+  }
+  [data-m-armed][data-m="photo"] {
+    filter: blur(14px) saturate(0.6);
+  }
+  [data-m-armed][data-m="line"] {
+    opacity: 1;
+    transform: scaleX(0);
+  }
+  [data-m-armed][data-m="grow"] {
+    opacity: 1;
+    transform: scaleY(0);
+  }
+  [data-m="line"] {
+    transform-origin: left center;
+  }
+  [data-m="grow"] {
+    transform-origin: center top;
+  }
+  [data-m-in] {
+    transition:
+      opacity 0.6s var(--e2),
+      transform 0.7s var(--e),
+      filter 0.6s var(--e2);
+    transition-delay: calc(var(--i, 0) * 60ms);
+  }
+  [data-m-in][data-m="line"],
+  [data-m-in][data-m="grow"] {
+    transition: transform 0.7s var(--io);
+    transition-delay: calc(var(--i, 0) * 60ms);
+  }
+
+  /* 2 ── hero load sequence */
+  @keyframes hero-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+      filter: blur(4px);
+    }
+  }
+  @keyframes line-rise {
+    from {
+      transform: translateY(105%);
+    }
+  }
+  @keyframes photo-in {
+    from {
+      opacity: 0;
+      filter: blur(14px) saturate(0.6);
+    }
+  }
+  .hero-up {
+    animation: hero-up 0.7s var(--e) backwards;
+    animation-delay: var(--d, 0ms);
+  }
+  .line-rise {
+    display: block;
+    animation: line-rise 0.7s var(--e) backwards;
+    animation-delay: var(--d, 0ms);
+  }
+  .photo-in {
+    animation: photo-in 0.7s var(--e2) 0.25s backwards;
+  }
+
+  /* 3 ── responses */
+  @keyframes page-in {
+    from {
+      opacity: 0;
+    }
+  }
+  .page-in {
+    animation: page-in 0.3s var(--e2) backwards;
+  }
+  @keyframes deal-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.985);
+      filter: blur(4px);
+    }
+  }
+  .deal-in {
+    animation: deal-in 0.45s var(--e) backwards;
+  }
+}
+
+/* mask that clips a rising headline line without cutting descenders */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+/* image inside a frame: slow zoom on hover */
+.zoom-media {
+  transition: transform 0.6s var(--e);
+}
+.group:hover .zoom-media,
+.group:focus-within .zoom-media {
+  transform: scale(1.035);
+}
+
+/* arrow nudge for links and buttons */
+.nudge {
+  transition: transform 0.25s var(--e);
+}
+.group:hover .nudge,
+a:hover > .nudge,
+button:hover > .nudge {
+  transform: translate(2px, -2px);
+}
+.nudge-x {
+  transition: transform 0.25s var(--e);
+}
+.group:hover .nudge-x {
+  transform: translateX(4px);
+}
+
+/* pressable controls */
+.press {
+  transition:
+    transform 0.15s var(--e),
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+/* drawn underline for nav links */
+.underline-draw {
+  position: relative;
+}
+.underline-draw::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.2rem;
+  height: 2px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s var(--e);
+}
+.underline-draw:hover::after,
+.underline-draw:focus-visible::after {
+  transform: scaleX(1);
 }
 
 .prose-post {
   color: var(--color-text-muted);
   line-height: 1.75;
+  max-width: 68ch;
 }
 .prose-post h2 {
   color: var(--color-text);
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 700;
   margin-top: 2.25rem;
   margin-bottom: 0.75rem;
 }
@@ -189,7 +400,7 @@ body {
   margin-bottom: 0.4rem;
 }
 .prose-post code {
-  font-family: var(--font-mono);
+  font-family: var(--font-code);
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
   padding: 0.1rem 0.4rem;

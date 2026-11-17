@@ -12,17 +12,15 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   return (
     <div className="container-page pt-28 pb-8">
-      <Reveal>
-        <p className="eyebrow">Case Studies</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Featured Work</h1>
-        <p className="mt-4 max-w-2xl text-[--color-text-muted]">
-          Eight deep dives chosen from {repos.length} repositories across {domains.length} AI domains — the systems with the
-          richest problem-to-impact story. Each follows problem → approach → architecture → results,
-          and links to the real repositories.
+      <Reveal className="hero-up">
+        <h1 className="wide text-4xl font-extrabold leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl">Case studies</h1>
+        <p className="mt-5 max-w-[60ch] text-lg text-[--color-text-muted]">
+          Eight systems chosen from {repos.length} repositories across {domains.length} AI domains. Each one covers
+          the problem, the approach, the architecture and the measured result, with links to the real code.
         </p>
       </Reveal>
 
-      <div className="mt-12">
+      <div className="mt-14">
         <WorkGrid />
       </div>
     </div>

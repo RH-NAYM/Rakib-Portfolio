@@ -10,9 +10,8 @@ export const metadata: Metadata = {
 export default function ProjectsPage() {
   return (
     <div className="container-page pt-28 pb-8">
-      <p className="eyebrow">Repository Index</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">All Projects</h1>
-      <p className="mt-4 max-w-2xl text-[--color-text-muted]">
+      <h1 className="hero-up wide text-4xl font-extrabold leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl">All projects</h1>
+      <p className="hero-up mt-5 max-w-[60ch] text-lg text-[--color-text-muted]" style={{ ["--d" as string]: "90ms" }}>
         The complete catalog of {repos.length} repositories across {domains.length} AI domains, each regenerated from code and
         git history. Filter by domain or search by name, tech, or keyword.
       </p>

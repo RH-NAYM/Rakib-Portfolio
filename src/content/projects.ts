@@ -23,11 +23,13 @@ export type CaseStudy = {
   results: { text: string; source?: "cv" | "repo" }[];
   links: Link[];
   related: string[]; // repo names
+  cover?: string; // 16:9 image in /public/images/work — optional
 };
 
 export const caseStudies: CaseStudy[] = [
   {
     slug: "retail-execution-intelligence",
+    cover: "/images/work/retail-execution-intelligence.jpg",
     title: "Retail-Execution Intelligence Platform",
     subtitle:
       "Campaign-specific computer vision for POSM, planogram, share-of-shelf & competitor detection at national scale.",
@@ -76,6 +78,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "real-time-voice-agent",
+    cover: "/images/work/real-time-voice-agent.jpg",
     title: "Real-Time Conversational Voice Agent",
     subtitle:
       "Browser-based, low-latency spoken AI — WebRTC audio into a streaming STT → agent → TTS loop with tool-calling.",
@@ -95,6 +98,7 @@ export const caseStudies: CaseStudy[] = [
       "Per-session checkpointed memory and MCP tool-calling (Twilio, email, dates) so the agent can take real actions.",
       "Multi-provider LLM backends (Ollama / OpenAI / Gemini / Hugging Face) behind one interface.",
       "Explicit latency engineering: parallel TTS, GPU-batched STT, and concurrent LLM+TTS to cut perceived response time.",
+      "Took the agent from the browser to the phone network: a LiveKit Cloud agent with Twilio Elastic SIP trunking for real outbound calls and local Coqui XTTS v2 voice cloning.",
     ],
     architecture: {
       pipeline: [
@@ -108,6 +112,7 @@ export const caseStudies: CaseStudy[] = [
       stack: [
         "Python", "FastAPI", "WebRTC / WebSockets", "LangChain + LangGraph",
         "faster-whisper", "edge-tts", "Ollama / OpenAI / Gemini / HF", "aiosqlite", "MCP", "Twilio",
+        "LiveKit Agents / Cloud", "Twilio Elastic SIP", "Coqui XTTS v2",
       ],
     },
     results: [
@@ -120,6 +125,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "agentic-grounded-rag",
+    cover: "/images/work/agentic-grounded-rag.jpg",
     title: "Agentic & Strictly-Grounded RAG",
     subtitle:
       "A self-correcting Planner→Executor→Critic agent over MongoDB, plus strict-grounding RAG over Bangla PDFs.",
@@ -166,6 +172,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "bangla-tts",
+    cover: "/images/work/bangla-tts.jpg",
     title: "Custom Bangladeshi-Accent Bangla TTS",
     subtitle:
       "A VITS text-to-speech model with a grapheme frontend, built to give production voice agents a natural Bangladeshi accent.",
@@ -211,6 +218,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "on-prem-gpu-infra",
+    cover: "/images/work/on-prem-gpu-infra.jpg",
     title: "On-Prem AI Server Infrastructure",
     subtitle:
       "Two self-hosted Ubuntu GPU servers, designed and built in-house — an alternative to renting cloud GPUs.",
@@ -249,6 +257,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "bangla-ocr-icr",
+    cover: "/images/work/bangla-ocr-icr.jpg",
     title: "Bangla OCR / ICR Engine",
     subtitle:
       "End-to-end custom PyTorch intelligent character recognition for the low-resource Bangla script.",
@@ -290,6 +299,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "hospital-ai-agent",
+    cover: "/images/work/hospital-ai-agent.jpg",
     title: "Hospital Appointment AI Agent",
     subtitle:
       "A Gemini-Live voice & chat assistant that carries a real multi-turn conversation to book, confirm, and manage hospital appointments.",
@@ -333,6 +343,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "he-universe-model-store",
+    cover: "/images/work/he-universe-model-store.jpg",
     title: "HE-Universe Multi-Domain AI Model Store",
     subtitle:
       "One FastAPI service unifying 15+ production AI modules — retail CV, face recognition, OCR, and conversational NLP — behind a single deployable Hugging Face Space.",
@@ -393,6 +404,7 @@ export const domains = [
   "MLOps, Infrastructure & Tooling",
   "Web, Backend & Systems",
   "OpenCV Fundamentals",
+  "AI Products (Bikolpo AI)",
 ] as const;
 
 export const repos: Repo[] = [
@@ -466,4 +478,10 @@ export const repos: Repo[] = [
   { name: "OpenCV-Camera-Calibration---Lens-Distortion", description: "Chessboard calibration & lens-distortion correction (intrinsics).", url: "https://github.com/RH-NAYM/OpenCV-Camera-Calibration---Lens-Distortion", tags: ["OpenCV", "calibration"], domain: "OpenCV Fundamentals" },
   { name: "OpenCV-Affine-Transformation", description: "Affine transforms — translation, rotation, scale, shear.", url: "https://github.com/RH-NAYM/OpenCV-Affine-Transformation", tags: ["OpenCV", "NumPy"], domain: "OpenCV Fundamentals" },
   { name: "OpenCV-Feature-Detection-and-Matching", description: "Feature matching from classical keypoints up to GPU LightGlue.", url: "https://github.com/RH-NAYM/OpenCV-Feature-Detection-and-Matching", tags: ["OpenCV", "LightGlue", "CUDA"], domain: "OpenCV Fundamentals" },
+
+  // AI Products (Bikolpo AI) — product repos are private; links go to the public org.
+  { name: "OrderJadu", description: "AI sales agent for Bangladeshi Facebook shops — answers inbox messages and \"price?\" comments in Banglish, Bangla or English (voice notes and photos too), bargains but never below a floor price enforced in code, takes bKash/SSLCommerz advance or COD, and books Pathao/Steadfast after a human approves.", url: "https://github.com/BikolpoAI", tags: ["LangGraph", "FastAPI", "Next.js", "OpenAI / Gemini / Claude", "SQLAlchemy"], domain: "AI Products (Bikolpo AI)" },
+  { name: "EkInbox", description: "One live team inbox for Messenger, Instagram and WhatsApp that answers repetitive Bangla/Banglish/English questions only from the shop's own FAQ and stock sheet, hands off with a draft when it can't cite a source, links the same buyer across channels, and turns \"I want to buy\" into a one-tap draft order.", url: "https://github.com/BikolpoAI", tags: ["LangGraph", "FastAPI", "Next.js", "faster-whisper", "SQLAlchemy"], domain: "AI Products (Bikolpo AI)" },
+  { name: "Nishchit", description: "Cash-on-delivery verification agent — scores every COD order for risk (BD phone checks, courier history, rules + LightGBM), runs a short automated Bangla confirmation call, and books the courier only after the customer confirms twice.", url: "https://github.com/BikolpoAI", tags: ["LightGBM", "LiveKit", "faster-whisper", "FastAPI", "Next.js"], domain: "AI Products (Bikolpo AI)" },
+  { name: "HishabKhata", description: "Point of sale and khata (ledger) for Bangladeshi shops — keyboard-first billing, 58/80 mm Bangla or English memos, automatic customer dues and supplier credit, daily profit, bKash-approved subscriptions, and offline billing when the internet drops.", url: "https://github.com/BikolpoAI", tags: ["Django", "PostgreSQL", "Bangla UI", "Offline-first"], domain: "AI Products (Bikolpo AI)" },
 ];

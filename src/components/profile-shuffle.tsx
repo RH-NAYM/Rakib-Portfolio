@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Cross-fades between a set of profile photos, swapping to a random one
+ * Cross-fades between a set of profile photos, stepping to the next one
  * every `intervalMs`. All images are stacked and pre-rendered so the
  * transition is a pure opacity fade with no flash/reflow.
  *
@@ -27,7 +27,8 @@ export function ProfileShuffle({
     if (reduceMotionRef.current || images.length <= 1) return;
 
     const id = setInterval(() => {
-      setActive(Math.floor(Math.random() * images.length));
+      // step to the next photo so every cycle visibly changes
+      setActive((current) => (current + 1) % images.length);
     }, intervalMs);
 
     return () => clearInterval(id);

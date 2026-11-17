@@ -8,6 +8,7 @@ import {
   education,
   recognition,
   languages,
+  services,
 } from "@/content/site";
 import { caseStudies, repos, domains } from "@/content/projects";
 
@@ -24,12 +25,13 @@ export function buildSystemPrompt(): string {
   const expLines = experience
     .map(
       (e) =>
-        `- ${e.org} — ${e.location} (${e.totalPeriod})\n` +
+        `- ${e.org} — ${e.location} (${e.period}, ${e.duration})\n` +
         e.roles
           .map(
             (r) =>
               `  - ${r.title} (${r.period})\n` +
-              r.bullets.map((b) => `    - ${b}`).join("\n")
+              r.bullets.map((b) => `    - ${b}`).join("\n") +
+              (r.stack ? `\n    - Stack: ${r.stack.join(", ")}` : "")
           )
           .join("\n")
     )
@@ -88,7 +90,11 @@ ${repoLines}
 - GitHub: ${socials.github.url}
 - Hugging Face: ${socials.huggingface.url} (org: ${socials.huggingfaceOrg.url})
 - Upwork: ${socials.upwork.url}
+- Fiverr: ${socials.fiverr.url}
 He is ${profile.availability.toLowerCase()}.
+
+## Freelance services (fixed-price packages on Fiverr and Upwork; link to /#services)
+${services.map((s) => `- ${s.title} — from ${s.from}: ${s.blurb}`).join("\n")}
 
 ## Rules
 - Represent him accurately and positively, but never fabricate or exaggerate beyond the facts above.

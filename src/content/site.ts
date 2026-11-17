@@ -9,7 +9,7 @@ import { repos, domains } from "@/content/projects";
 export const profile = {
   name: "MD Rakibul Hasan Naym",
   shortName: "Rakib",
-  // Flip to "Head of AI" here if you prefer that framing everywhere.
+  // Keep in sync with LinkedIn, Upwork and Fiverr — all use "Applied AI Engineer".
   title: "Applied AI Engineer & AI Team Lead",
   tagline:
     "Production Computer Vision · Generative AI (RAG & AI Agents) · GPU-Optimized MLOps",
@@ -19,7 +19,7 @@ export const profile = {
   email: "naym.mj@gmail.com",
   phone: "+880 163 883 0165",
   company: "HawkEyes Digital Monitoring Ltd.",
-  availability: "Open to BD & international / remote AI roles",
+  availability: "Open to BD & international / remote AI roles and freelance projects",
 } as const;
 
 export const socials = {
@@ -56,7 +56,49 @@ export const socials = {
     // /freelancers/mdrakibulhasannaym URL which can bounce logged-out users.
     url: "https://www.upwork.com/freelancers/~015c849967a428cc5d?mp_source=share",
   },
+  fiverr: {
+    label: "Fiverr",
+    handle: "@rakib72642",
+    url: "https://www.fiverr.com/rakib72642",
+  },
 } as const;
+
+// Freelance services — mirrors the live Fiverr gigs and Upwork Project Catalog
+// (same scope and starting prices on both), so the site never quotes a
+// different number than the marketplaces do.
+export type Service = { title: string; blurb: string; from: string; image: string };
+export const services: Service[] = [
+  {
+    title: "Custom YOLO object detection",
+    blurb: "Detection & segmentation trained on your data — retail, safety, vehicles, defects — with metrics and an inference API.",
+    from: "$90", image: "/images/services/g01-yolo.jpg",
+  },
+  {
+    title: "RAG chatbot over your documents",
+    blurb: "Answers only from your PDFs, sites or database, with citations and groundedness checks. OpenAI, Gemini, Claude or local.",
+    from: "$150", image: "/images/services/g02-rag.jpg",
+  },
+  {
+    title: "AI voice agent with real phone calls",
+    blurb: "LiveKit + Twilio SIP agents for booking, sales and support — streaming STT, tool calling, low-latency TTS, human hand-off.",
+    from: "$300", image: "/images/services/g03-voice.jpg",
+  },
+  {
+    title: "AI agents & automation (LangGraph)",
+    blurb: "Tool-using and multi-agent systems with memory, MCP, a self-check step and traces — hard rules enforced in code.",
+    from: "$120", image: "/images/services/g04-agents.jpg",
+  },
+  {
+    title: "OCR & document data extraction",
+    blurb: "Invoices, IDs, forms and handwriting to clean JSON/Excel — including custom OCR for low-resource scripts like Bangla.",
+    from: "$100", image: "/images/services/g06-ocr.jpg",
+  },
+  {
+    title: "Model deployment & GPU MLOps",
+    blurb: "Your model as a fast async FastAPI service on Docker — batching, ONNX/FP16 speedups, CI/CD and monitoring.",
+    from: "$60", image: "/images/services/g05-deploy.jpg",
+  },
+];
 
 // Headline metrics — CV/portfolio sourced. Keep honest.
 // Repo/domain counts are derived from content/projects.ts (the single source
@@ -64,7 +106,7 @@ export const socials = {
 export const metrics = [
   { value: "2M+", label: "Retail outlets served" },
   { value: "~99%", label: "Detection accuracy" },
-  { value: String(repos.length), label: `Repos · ${domains.length} AI domains` },
+  { value: String(repos.length), label: `Repos across ${domains.length} AI domains` },
   { value: "50+", label: "Hugging Face models" },
   { value: "5.0", label: "Upwork rating" },
 ] as const;
@@ -155,62 +197,69 @@ export const skillGroups: SkillGroup[] = [
 // Roles are grouped by employer — mirrors LinkedIn's internal-promotion
 // display (one company, several titles over time) so the timeline stays
 // accurate to the real progression instead of collapsing it into one title.
-export type ExperienceRole = { title: string; period: string; bullets: string[] };
+export type ExperienceRole = { title: string; period: string; bullets: string[]; stack?: string[] };
 export type ExperienceLink = { label: string; url: string };
 export type ExperienceItem = {
   org: string;
   location: string;
-  totalPeriod: string;
+  period: string;
+  duration: string;
   roles: ExperienceRole[];
   link?: ExperienceLink;
 };
 
+// One plain sentence per bullet (what was done and what it achieved);
+// the tools live in `stack` so the sentences stay readable.
 export const experience: ExperienceItem[] = [
   {
     org: "HawkEyes Digital Monitoring Ltd.",
     location: "Dhaka, Bangladesh",
-    totalPeriod: "Mar 2023 – Present · 3 yrs 5 mos",
+    period: "Mar 2023 – Present",
+    duration: "3 yrs 9 mos",
     roles: [
       {
         title: "Applied AI Engineer & AI Team Lead",
         period: "Aug 2024 – Present",
         bullets: [
-          "Lead AI strategy, architecture, and end-to-end delivery — research through deployment and monitoring — across retail-execution, manufacturing, and surveillance product lines; mentor a growing AI team.",
-          "Architected production RAG and multi-agent systems (MongoDB Atlas Vector Search, LangGraph, self-correcting Planner→Executor→Critic loops, SSE streaming) plus strict-grounding RAG over Bangla PDFs.",
-          "Engineered a real-time conversational voice agent (WebRTC/WebSocket, VAD→STT→LangGraph→TTS, per-session memory, MCP tool-calling) with explicit latency engineering.",
-          "Designed, built, and administer two on-premises Ubuntu GPU servers hosting most of the team's AI services and training — an in-house alternative to rented cloud GPUs.",
+          "Lead AI strategy and delivery, from research to deployment and monitoring, across retail-execution, manufacturing and surveillance products, and mentor a growing AI team.",
+          "Built production RAG and multi-agent systems with self-correcting planner, executor and critic loops, plus strictly grounded RAG over Bangla PDFs.",
+          "Built a real-time conversational voice agent with tuned latency, then took it to real outbound phone calls with local voice cloning.",
+          "Designed, built and run two on-premises GPU servers that host most of the team's AI services and training, in place of rented cloud GPUs.",
         ],
+        stack: ["LangGraph", "MongoDB Atlas Vector Search", "WebRTC", "LiveKit", "Twilio SIP", "XTTS v2", "MCP", "Ubuntu GPU servers"],
       },
       {
         title: "Artificial Intelligence Engineer",
         period: "Feb 2024 – Aug 2024",
         bullets: [
-          "Designed, developed, and deployed AI solutions across computer vision, OCR, and NLP, contributing to enterprise-scale retail analytics and intelligent automation projects.",
-          "Extended multi-client production detection to Unilever (10+ versioned models with cross-model reconciliation), Malaysia, Square, and Nagad — POSM, planogram, share-of-shelf, and competitor detection.",
-          "Began building the team's first Retrieval-Augmented Generation (RAG) systems and a custom Bangla OCR/ICR pipeline for document intelligence.",
+          "Shipped computer vision, OCR and NLP solutions for enterprise retail analytics and automation.",
+          "Extended production detection to Unilever (10+ versioned models), Malaysia, Square and Nagad, covering POSM, planogram, share-of-shelf and competitor detection.",
+          "Started the team's first RAG systems and a custom Bangla OCR/ICR pipeline.",
         ],
+        stack: ["YOLO", "OCR / ICR", "RAG", "FastAPI"],
       },
       {
         title: "Junior Artificial Intelligence Engineer",
         period: "Mar 2023 – Feb 2024",
         bullets: [
-          "Supported the development and deployment of AI and computer-vision solutions for retail analytics and intelligent automation, building production experience in machine learning and backend integration.",
-          "Built and scaled the flagship retail-execution CV platform serving 2M+ outlets at ~99% accuracy, routing each outlet image to campaign-specific YOLO models behind async FastAPI services (BAT program: 397 commits over 18 months).",
-          "Delivered the team's first production multi-client detection deployment for BAT, establishing the FastAPI/YOLO architecture later extended across every client program.",
+          "Built and scaled the flagship retail-execution platform: 2M+ outlets at ~99% accuracy, with each outlet image routed to campaign-specific YOLO models behind async APIs.",
+          "Delivered the team's first multi-client production deployment for BAT (397 commits over 18 months); its architecture now runs every client program.",
         ],
+        stack: ["YOLO", "FastAPI", "async Python"],
       },
     ],
   },
   {
     org: "Quantanite",
     location: "Dhaka, Bangladesh",
-    totalPeriod: "Jan 2023 – Mar 2023 · 3 mos",
+    period: "Jan 2023 – Mar 2023",
+    duration: "3 mos",
     roles: [
       {
         title: "Data Analyst",
         period: "Jan 2023 – Mar 2023",
         bullets: [
-          "Executed large-scale data analysis, quality assurance, and operational reporting supporting business-intelligence initiatives across client accounts.",
+          "Ran large-scale data analysis, quality assurance and operational reporting for business-intelligence work across client accounts.",
         ],
       },
     ],
@@ -218,9 +267,10 @@ export const experience: ExperienceItem[] = [
   {
     org: "Upwork",
     location: "Remote",
-    totalPeriod: "Jan 2022 – Dec 2022 · 1 yr",
+    period: "Jan 2022 – Dec 2022",
+    duration: "1 yr",
     link: {
-      label: "Real-Time Custom Object Detection (Upwork)",
+      label: "Real-time custom object detection service",
       url: "https://www.upwork.com/services/product/development-it-a-real-time-custom-object-detection-machine-learning-model-1550132751383220224?ref=project_share",
     },
     roles: [
@@ -228,8 +278,9 @@ export const experience: ExperienceItem[] = [
         title: "Freelance ML / Computer Vision Engineer",
         period: "Jan 2022 – Dec 2022",
         bullets: [
-          "Delivered YOLOv5-based computer-vision solutions and project supervision for international clients; maintained a 5.0/5.0 client rating across completed contracts (image processing, deep learning, Python, C++).",
+          "Delivered computer-vision projects and project supervision for international clients, with a 5.0/5.0 rating across completed contracts.",
         ],
+        stack: ["YOLOv5", "Python", "C++", "Image processing"],
       },
     ],
   },

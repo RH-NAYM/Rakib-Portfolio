@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, MessageCircle, Linkedin, Github, Briefcase, Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Mail, MessageCircle, Linkedin, Github, Briefcase, ShoppingBag, Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import { HFIcon } from "@/components/hf-icon";
 import { profile, socials } from "@/content/site";
@@ -45,37 +45,38 @@ export function Contact() {
   return (
     <section id="contact" className="container-page scroll-mt-24 py-20">
       <SectionHeading
-        index="05"
-        title="Get in Touch"
-        kicker="Interested in production AI, computer vision, or LLM/agent systems? I'm open to BD and international / remote roles and collaboration."
+       
+        title="Get in touch"
+        kicker="Hiring for production AI, computer vision or LLM and agent systems? I'm open to roles in Bangladesh, remote international roles and freelance projects."
       />
 
       <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr]">
         <div className="flex h-full flex-col">
           {/* Primary — the two ways people actually reach out directly */}
-          <div className="space-y-3">
+          <div data-m-group className="space-y-3">
             <EmailRow email={profile.email} mailto={socials.email.url} />
             <ContactRow href={socials.whatsapp.url} icon={<MessageCircle size={18} />} label="WhatsApp" value={socials.whatsapp.handle} external />
           </div>
 
           {/* Secondary — profiles to browse, grouped so they read as a set rather than 5 near-identical rows */}
           <div className="mt-6">
-            <h4 className="mb-3 font-mono text-xs uppercase tracking-widest text-[--color-text-faint]">
-              Find me elsewhere
+            <h4 className="mb-3 text-sm text-[--color-text-faint]">
+              Profiles
             </h4>
-            <div className="grid grid-cols-2 gap-2.5">
+            <div data-m-group className="grid grid-cols-2 gap-2.5">
               <ProfileChip href={socials.linkedin.url} icon={<Linkedin size={16} />} label="LinkedIn" value={socials.linkedin.handle} />
               <ProfileChip href={socials.github.url} icon={<Github size={16} />} label="GitHub" value={socials.github.handle} />
               <ProfileChip href={socials.huggingface.url} icon={<HFIcon size={16} />} label="Hugging Face" value={socials.huggingface.handle} />
               <ProfileChip href={socials.huggingfaceOrg.url} icon={<HFIcon size={16} />} label="HF · Org" value={socials.huggingfaceOrg.handle} />
               <ProfileChip href={socials.upwork.url} icon={<Briefcase size={16} />} label="Upwork" value={socials.upwork.handle} />
+              <ProfileChip href={socials.fiverr.url} icon={<ShoppingBag size={16} />} label="Fiverr" value={socials.fiverr.handle} />
             </div>
           </div>
 
           <p className="mt-auto pt-6 text-sm text-[--color-text-faint]">{profile.location}</p>
         </div>
 
-        <form onSubmit={onSubmit} className="card p-6">
+        <form data-m="card" onSubmit={onSubmit} className="card p-6">
           {/* honeypot */}
           <input type="text" name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
 
@@ -103,12 +104,12 @@ export function Contact() {
           <button
             type="submit"
             disabled={status === "sending"}
-            className="mt-5 inline-flex items-center justify-center gap-2 rounded-lg bg-[--color-accent] px-5 py-3 text-sm font-semibold text-black transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+            className="mt-5 inline-flex items-center justify-center gap-2 rounded-md bg-[--color-accent] px-5 py-3 text-sm font-bold text-[--color-bg] press hover:bg-[--color-accent-strong] disabled:opacity-60"
           >
             {status === "sending" ? (
               <><Loader2 size={16} className="animate-spin" /> Sending…</>
             ) : (
-              <><Send size={16} /> Send Message</>
+              <><Send size={16} /> Send message</>
             )}
           </button>
 
@@ -177,13 +178,13 @@ function ContactRow({
     <a
       href={href}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      className="card flex items-center gap-4 p-4 transition-all duration-200 hover:-translate-y-0.5"
+      data-m="up" className="group card flex items-center gap-4 p-4"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[--color-accent-soft] text-[--color-accent]">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[--color-accent-soft] text-[--color-accent] transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105">
         {icon}
       </span>
       <span>
-        <span className="block font-mono text-xs uppercase tracking-widest text-[--color-text-faint]">
+        <span className="block text-sm text-[--color-text-faint]">
           {label}
         </span>
         <span className="block text-sm text-[--color-text]">{value}</span>
@@ -211,9 +212,9 @@ function ProfileChip({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="card flex min-w-0 items-center gap-2.5 p-3 transition-all duration-200 hover:-translate-y-0.5"
+      data-m="up" className="group card flex min-w-0 items-center gap-2.5 p-3"
     >
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[--color-accent-soft] text-[--color-accent]">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[--color-accent-soft] text-[--color-accent] transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105">
         {icon}
       </span>
       <span className="min-w-0">
@@ -247,13 +248,13 @@ function EmailRow({ email, mailto }: { email: string; mailto: string }) {
     <a
       href={mailto}
       onClick={handleClick}
-      className="card flex items-center gap-4 p-4 transition-all duration-200 hover:-translate-y-0.5"
+      data-m="up" className="group card flex items-center gap-4 p-4"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[--color-accent-soft] text-[--color-accent]">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[--color-accent-soft] text-[--color-accent] transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105">
         <Mail size={18} />
       </span>
       <span className="flex-1">
-        <span className="block font-mono text-xs uppercase tracking-widest text-[--color-text-faint]">
+        <span className="block text-sm text-[--color-text-faint]">
           Email
         </span>
         <span className="block text-sm text-[--color-text]">{email}</span>

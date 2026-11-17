@@ -1,0 +1,1 @@
+MD Rakibul Hasan Naym — Applied AI Engineer. Production AI shipped at real scale: 2M+ retail outlets, ~99% detection accuracy, 50+ Hugging Face models.

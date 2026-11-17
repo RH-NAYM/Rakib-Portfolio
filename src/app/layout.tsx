@@ -1,13 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ChatWidget } from "@/components/chat-widget-loader";
 import { HashScroll } from "@/components/hash-scroll";
+import { MotionRoot } from "@/components/motion-root";
 import { profile, siteUrl, socials } from "@/content/site";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const archivo = Archivo({
+  subsets: ["latin"],
+  variable: "--font-archivo",
+  axes: ["wdth"],
+  display: "swap",
+});
 const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains",
@@ -25,7 +31,7 @@ export const metadata: Metadata = {
   },
   description,
   keywords: [
-    "Applied AI Engineer", "Head of AI", "Computer Vision", "YOLO", "Retail Intelligence",
+    "Applied AI Engineer", "AI Team Lead", "Freelance AI Engineer", "Computer Vision", "YOLO", "Retail Intelligence",
     "RAG", "LangGraph", "AI Agents", "MLOps", "GPU optimization", "FastAPI", "PyTorch",
     "Bangla TTS", "Bangla OCR", "MD Rakibul Hasan Naym", "HawkEyes", "Bangladesh AI",
   ],
@@ -68,7 +74,7 @@ const jsonLd = {
   url: siteUrl,
   address: { "@type": "PostalAddress", addressLocality: "Dhaka", addressCountry: "BD" },
   worksFor: { "@type": "Organization", name: profile.company },
-  sameAs: [socials.github.url, socials.huggingface.url, socials.huggingfaceOrg.url, socials.linkedin.url, socials.upwork.url],
+  sameAs: [socials.github.url, socials.huggingface.url, socials.huggingfaceOrg.url, socials.linkedin.url, socials.upwork.url, socials.fiverr.url],
   knowsAbout: [
     "Computer Vision", "Deep Learning", "Retrieval-Augmented Generation",
     "AI Agents", "MLOps", "GPU Optimization", "Text-to-Speech", "OCR",
@@ -77,7 +83,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${archivo.variable} ${jetbrains.variable}`}>
       <body>
         <script
           type="application/ld+json"
@@ -85,11 +91,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[--color-accent] focus:px-4 focus:py-2 focus:text-black"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[--color-accent] focus:px-4 focus:py-2 focus:text-[--color-bg]"
         >
           Skip to content
         </a>
         <HashScroll />
+        <MotionRoot />
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />

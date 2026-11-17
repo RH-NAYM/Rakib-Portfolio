@@ -14,11 +14,10 @@ export default function BlogPage() {
 
   return (
     <div className="container-page pt-28 pb-8">
-      <p className="eyebrow">Writing & Insights</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Blog</h1>
-      <p className="mt-4 max-w-2xl text-[--color-text-muted]">
-        Field notes on production AI — computer vision, RAG & agents, GPU optimization, and the
-        engineering that keeps ML systems alive after deployment.
+      <h1 className="hero-up wide text-4xl font-extrabold leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl">Writing</h1>
+      <p className="hero-up mt-5 max-w-[60ch] text-lg text-[--color-text-muted]" style={{ ["--d" as string]: "90ms" }}>
+        Notes on running AI in production: computer vision, RAG and agents, GPU optimization, and the
+        engineering that keeps models working after launch.
       </p>
 
       {posts.length === 0 ? (

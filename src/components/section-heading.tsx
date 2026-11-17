@@ -1,22 +1,24 @@
-import { Reveal } from "./reveal";
-
+// Section title in the expanded cut, with an optional one-paragraph intro.
+// On wide screens the intro sits beside the title so the heading reads as
+// one line of structure instead of a stacked eyebrow/title/kicker block.
 export function SectionHeading({
-  index,
   title,
   kicker,
+  id,
 }: {
-  index?: string;
   title: string;
   kicker?: string;
+  id?: string;
 }) {
   return (
-    <Reveal className="mb-10">
-      <div className="flex items-center gap-4">
-        {index && <span className="eyebrow">{index}</span>}
-        <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h2>
-        <span className="h-px flex-1 bg-gradient-to-r from-[--color-border-strong] to-transparent" />
-      </div>
-      {kicker && <p className="mt-3 max-w-2xl text-[--color-text-muted]">{kicker}</p>}
-    </Reveal>
+    <div data-m-group className="relative mb-12 grid gap-4 pt-8 lg:grid-cols-12 lg:gap-8">
+      <span data-m="line" aria-hidden className="absolute inset-x-0 top-0 h-px bg-[--color-border]" />
+      <h2 id={id} data-m="up" className="wide text-3xl font-extrabold leading-[1.05] tracking-tight sm:text-4xl lg:col-span-5">
+        {title}
+      </h2>
+      {kicker && (
+        <p data-m="up" className="max-w-[60ch] text-[--color-text-muted] lg:col-span-6 lg:col-start-7 lg:pt-1.5">{kicker}</p>
+      )}
+    </div>
   );
 }

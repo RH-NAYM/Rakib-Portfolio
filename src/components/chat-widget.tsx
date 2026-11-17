@@ -69,7 +69,7 @@ export function ChatWidget() {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Close AI assistant" : "Open AI assistant"}
-        className="fixed bottom-5 right-5 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[--color-accent] text-black shadow-lg transition-transform hover:scale-105 glow-accent"
+        className="fixed bottom-5 right-5 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[--color-accent] text-[--color-bg] shadow-lg transition-transform hover:scale-105"
       >
         {open ? <X size={22} /> : <Bot size={24} />}
       </button>
@@ -92,7 +92,7 @@ export function ChatWidget() {
                 key={i}
                 className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                   m.role === "user"
-                    ? "ml-auto bg-[--color-accent] text-black"
+                    ? "ml-auto bg-[--color-accent] text-[--color-bg]"
                     : "bg-[--color-surface] text-[--color-text-muted]"
                 }`}
               >
@@ -119,7 +119,7 @@ export function ChatWidget() {
                 onClick={send}
                 disabled={loading}
                 aria-label="Send"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[--color-accent] text-black disabled:opacity-60"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[--color-accent] text-[--color-bg] disabled:opacity-60"
               >
                 <Send size={16} />
               </button>

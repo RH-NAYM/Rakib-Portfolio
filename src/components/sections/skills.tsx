@@ -1,35 +1,36 @@
 import { SectionHeading } from "@/components/section-heading";
-import { Reveal } from "@/components/reveal";
 import { skillGroups } from "@/content/site";
 
+// A ruled list rather than a grid of cards: each row is one cluster, its
+// note on the left, the tools it covers on the right.
 export function Skills() {
   return (
     <section id="skills" className="container-page scroll-mt-24 py-20">
       <SectionHeading
-        index="02"
-        title="Skills & Stack"
-        kicker="Grouped by what I actually ship — each cluster is backed by real, in-production projects, not self-rated percentages."
+        title="Skills and stack"
+        kicker="Grouped by what I ship. Every cluster here is backed by projects running in production, not self-rated percentages."
       />
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {skillGroups.map((group, i) => (
-          <Reveal key={group.title} delay={(i % 3) * 80}>
-            <div className="card h-full p-6 transition-transform duration-300 hover:-translate-y-1">
-              <h3 className="text-base font-semibold text-[--color-text]">{group.title}</h3>
-              <p className="mt-1 text-xs text-[--color-text-faint]">{group.note}</p>
-              <ul className="mt-4 flex flex-wrap gap-2">
-                {group.items.map((item) => (
-                  <li
-                    key={item}
-                    className="rounded-md border border-[--color-border] bg-[--color-bg-elevated] px-2.5 py-1 font-mono text-xs text-[--color-text-muted] transition-colors duration-200 hover:border-[--color-accent] hover:text-[--color-text]"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
+      <ul className="divide-y divide-[--color-border] border-b border-[--color-border]">
+        {skillGroups.map((group) => (
+          <li key={group.title} data-m="up" className="grid gap-3 py-6 md:grid-cols-12 md:gap-8">
+            <div className="md:col-span-4">
+              <h3 className="font-bold text-[--color-text]">{group.title}</h3>
+              <p className="mt-1 text-sm text-[--color-text-faint]">{group.note}</p>
             </div>
-          </Reveal>
+            <ul data-m-group className="flex flex-wrap gap-x-2 gap-y-2 md:col-span-8 md:pt-0.5">
+              {group.items.map((item) => (
+                <li
+                  key={item}
+                  data-m="left"
+                  className="rounded-[3px] bg-[--color-surface] px-2.5 py-1 text-sm text-[--color-text-muted] transition-colors duration-200 hover:bg-[--color-surface-2] hover:text-[--color-text]"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
