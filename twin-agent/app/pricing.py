@@ -10,6 +10,9 @@ PRICES_PER_M: dict[str, tuple[float, float]] = {
     "gemini-2.5-flash-lite": (0.10, 0.40),
     "gemini-2.5-pro": (1.25, 10.00),
     "gemini-embedding-001": (0.15, 0.0),
+    # TTS: output is audio tokens. Verify against current Vertex/Gemini pricing before launch.
+    "gemini-2.5-flash-preview-tts": (0.50, 10.00),
+    "gemini-2.5-flash-tts": (0.50, 10.00),
 }
 
 

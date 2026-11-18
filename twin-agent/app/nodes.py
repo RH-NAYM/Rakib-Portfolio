@@ -36,6 +36,10 @@ class Turn(TypedDict):
 
 class State(TypedDict, total=False):
     message: str
+    audio: tuple[bytes, str] | None
+    image: tuple[bytes, str] | None
+    image_note: str
+    transcript: str
     history: list[Turn]
     reply_to: Turn | None
     lang_override: str | None
@@ -65,11 +69,54 @@ class Deps:
         return self.clock() - self.started
 
 
-def _emit(step: str, status: str) -> None:
+def _write(event: dict) -> None:
     try:
-        get_stream_writer()({"v": 1, "type": "step", "step": step, "status": status})
+        get_stream_writer()(event)
     except Exception:  # outside a streaming run (unit tests calling nodes directly)
         pass
+
+
+def _emit(step: str, status: str) -> None:
+    _write({"v": 1, "type": "step", "step": step, "status": status})
+
+
+# ── normalize: voice → transcript, image → description (phases 2-3) ─────────
+def make_normalize(deps: "Deps"):
+    async def normalize(state: State) -> dict:
+        out: dict = {}
+        message = state.get("message", "")
+        if state.get("audio"):
+            try:
+                r = await deps.llm.json("transcribe", "You transcribe speech accurately.", P.TRANSCRIBE_PROMPT, P.TRANSCRIBE_SCHEMA, deps.meter, media=[state["audio"]])
+            except LLMParseError:
+                r = {"transcript": "", "lang": "en"}
+            message = str(r.get("transcript", "")).strip()[:2000]
+            out["transcript"] = message
+            meta = {"v": 1, "type": "meta", "transcript": message}
+            if r.get("lang") in P.LANG_STYLE and message:
+                meta["lang"] = r["lang"]
+            _write(meta)
+        if state.get("image"):
+            projects = "\n".join(f"- {d.id.removeprefix('case-')}: {d.title}" for d in deps.knowledge.docs if d.kind == "case_study")
+            try:
+                r = await deps.llm.json("vision", "You describe images neutrally.", P.VISION_PROMPT.format(projects=projects), P.VISION_SCHEMA, deps.meter, media=[state["image"]])
+            except LLMParseError:
+                r = {"description": "", "visible_text": "", "project_slug": ""}
+            desc = str(r.get("description", ""))[:600]
+            out["image_note"] = P.IMAGE_BLOCK.format(
+                description=desc, visible_text=str(r.get("visible_text", ""))[:300] or "(none)", project=r.get("project_slug") or "none"
+            )
+            _write({"v": 1, "type": "meta", "image_description": desc})
+            if not message:
+                message = "What is this? Tell me about it."
+        out["message"] = message
+        return out
+
+    return normalize
+
+
+def route_after_normalize(state: State) -> str:
+    return "no_audio" if state.get("audio") and not state.get("message") else "guard"
 
 
 def _quote(state: State) -> str:
@@ -157,7 +204,7 @@ def make_plan(deps: Deps):
             r = await deps.llm.json(
                 "plan",
                 P.PERSONA,
-                P.PLAN_PROMPT.format(history=_history(state), quote=_quote(state), message=state["message"]),
+                P.PLAN_PROMPT.format(history=_history(state), quote=_quote(state), message=state["message"], image_block=state.get("image_note", "")),
                 P.PLAN_SCHEMA,
                 deps.meter,
             )
@@ -191,6 +238,7 @@ def make_draft(deps: Deps):
                 quote=_quote(state),
                 message=state["message"],
                 critique=critique,
+                image_block=state.get("image_note", ""),
             ),
             P.DRAFT_SCHEMA,
             deps.meter,

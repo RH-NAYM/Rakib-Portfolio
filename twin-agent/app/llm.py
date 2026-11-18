@@ -17,8 +17,13 @@ from app.gate import CostMeter
 THINKING_BUDGET = {"draft": int(os.environ.get("TWIN_DRAFT_THINKING", "512"))}
 
 
+Media = tuple[bytes, str]  # (data, mime type)
+
+
 class LLM(Protocol):
-    async def json(self, role: str, system: str, prompt: str, schema: dict, meter: CostMeter) -> dict: ...
+    async def json(self, role: str, system: str, prompt: str, schema: dict, meter: CostMeter, media: list[Media] | None = None) -> dict: ...
+
+    async def speech(self, text: str, voice: str, meter: CostMeter) -> bytes: ...
 
 
 class LLMParseError(RuntimeError):
@@ -63,17 +68,20 @@ class GeminiLLM:
     def model_for(self, role: str) -> str:
         return self.models["main"] if role == "draft" else self.models["fast"]
 
-    async def json(self, role: str, system: str, prompt: str, schema: dict, meter: CostMeter) -> dict:
+    async def json(self, role: str, system: str, prompt: str, schema: dict, meter: CostMeter, media: list[Media] | None = None) -> dict:
         from google.genai import types
 
         model = self.model_for(role)
+        contents: Any = prompt
+        if media:
+            contents = [types.Part.from_bytes(data=d, mime_type=m) for d, m in media] + [prompt]
         # Gemini 2.5 thinking tokens count against max_output_tokens: with thinking on, short
         # budgets truncate the JSON (seen live: critic verdict cut off → fail-closed on a good answer)
         # and add seconds of latency. Classify/plan/critic don't need it; the draft gets a small budget.
         thinking = THINKING_BUDGET.get(role, 0)
         resp = await self._client.aio.models.generate_content(
             model=model,
-            contents=prompt,
+            contents=contents,
             config=types.GenerateContentConfig(
                 system_instruction=system,
                 response_mime_type="application/json",
@@ -91,16 +99,46 @@ class GeminiLLM:
             raise LLMParseError(f"{role}: model returned non-JSON") from exc
 
 
+    async def speech(self, text: str, voice: str, meter: CostMeter) -> bytes:
+        """Gemini TTS → 16-bit mono 24 kHz PCM, wrapped as WAV for the browser."""
+        from google.genai import types
+
+        model = os.environ.get("TWIN_TTS_MODEL", "gemini-2.5-flash-preview-tts")
+        resp = await self._client.aio.models.generate_content(
+            model=model,
+            contents=text,
+            config=types.GenerateContentConfig(
+                response_modalities=["AUDIO"],
+                speech_config=types.SpeechConfig(
+                    voice_config=types.VoiceConfig(prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=voice))
+                ),
+            ),
+        )
+        um = resp.usage_metadata
+        meter.add(model, getattr(um, "prompt_token_count", 0) or 0, getattr(um, "candidates_token_count", 0) or 0)
+        pcm = resp.candidates[0].content.parts[0].inline_data.data
+        return pcm_to_wav(pcm)
+
+
+def pcm_to_wav(pcm: bytes, rate: int = 24000) -> bytes:
+    import struct
+
+    header = b"RIFF" + struct.pack("<I", 36 + len(pcm)) + b"WAVEfmt " + struct.pack("<IHHIIHH", 16, 1, 1, rate, rate * 2, 2, 16)
+    return header + b"data" + struct.pack("<I", len(pcm)) + pcm
+
+
 class FakeLLM:
     """Scripted LLM for tests. `script` maps role -> list of responses (dict or Exception)."""
 
     def __init__(self, script: dict[str, list[Any]], model: str = "gemini-2.5-flash") -> None:
         self.script = {k: list(v) for k, v in script.items()}
         self.calls: list[tuple[str, str]] = []
+        self.media_seen: list[Media] = []
         self.model = model
 
-    async def json(self, role: str, system: str, prompt: str, schema: dict, meter: CostMeter) -> dict:
+    async def json(self, role: str, system: str, prompt: str, schema: dict, meter: CostMeter, media: list[Media] | None = None) -> dict:
         self.calls.append((role, prompt))
+        self.media_seen.extend(media or [])
         meter.add(self.model, 1000, 100)
         queue = self.script.get(role) or []
         if not queue:
@@ -109,3 +147,8 @@ class FakeLLM:
         if isinstance(item, Exception):
             raise item
         return item
+
+    async def speech(self, text: str, voice: str, meter: CostMeter) -> bytes:
+        self.calls.append(("speech", f"{voice}:{text}"))
+        meter.add(self.model, 100, 1000)
+        return pcm_to_wav(b"\x00\x00" * 2400)

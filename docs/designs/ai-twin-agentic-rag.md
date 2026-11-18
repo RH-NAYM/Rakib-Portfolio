@@ -925,6 +925,16 @@ Actual answer: "ok next build do it this way" (2026-11-18), on the recommendatio
 Accepted scope: `vercel.json` services `web` + `twin`; `twin-agent` as the FastAPI service with routes at `/api/twin/*`; Vertex creds via `GOOGLE_SERVICE_ACCOUNT_B64` (or `GEMINI_API_KEY`); Upstash Redis replaces Firestore; the client IP comes from Vercel edge headers only (the proxy header is gone, so it would be spoofable); the corpus is committed with a CI freshness check; the eval gate is the GitHub Actions `agent` job selected in Vercel Deployment Checks; Dockerfile, cloudbuild.yaml, the Next proxy, the WIF auth and the old `/api/chat` bot are removed in the same change (one atomic deploy, so no cutover ordering).
 History: supersedes the infra parts of D2 (proxy route), D8, D10, D11 and the Firestore part of D12.
 
+### Build status (2026-11-18)
+All four phases are implemented on `dev` (all-Vercel, D17). Optional pieces are behind env switches so the site works before they're configured.
+- **1a** grounded first-person twin, gate, outage/resting/rate-limit states, chat identity, Anek Bangla, step chips.
+- **1b** invisible Turnstile → signed HttpOnly session cookie (on when `TURNSTILE_SECRET_KEY` + `TWIN_SESSION_SECRET` are set); reply-to by swipe, long-press menu, hover/focus icon or keyboard R; "How I answered" inline, or as a drawer on `/chat` at ≥1100px; language pill.
+- **2** gallery/camera attach with client resize and EXIF strip, server-side MIME sniffing, Gemini vision reading the image as data, catalog-only agent images, 2-col group + lightbox, thumbnail quotes.
+- **3** mic tap recording (fake-device tested), Gemini transcription, editable transcript → re-ask, Gemini TTS with Banglish → Bengali transliteration, autoplay after a voice question with the blocked → "Tap ▶" fallback.
+- **4** logs in Upstash (90-day TTL, no IP, disclosed when on), `/admin/insights` (PBKDF2 password, 5 attempts/15 min, admin token with its own secret and audience), in-chat lead form posting to `/api/contact`.
+
+Deviation: TTS audio isn't cached server-side (values are too big for Redis to be worth it). The browser caches it per message for the session, and replies are rate-limited at 2× the chat limit.
+
 ## Design Review Completion Summary
 
 ```

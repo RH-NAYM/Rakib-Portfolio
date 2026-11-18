@@ -4,110 +4,291 @@
   "title": "TwinEvent",
   "description": "Server-sent events streamed by twin-agent /chat. Single source of truth for Python (api.py) and TypeScript (src/lib/twin-events.ts). Clients MUST ignore unknown `type` values and unknown fields (eng review D9).",
   "oneOf": [
-    { "$ref": "#/$defs/StepEvent" },
-    { "$ref": "#/$defs/MetaEvent" },
-    { "$ref": "#/$defs/TokenEvent" },
-    { "$ref": "#/$defs/FinalEvent" },
-    { "$ref": "#/$defs/ErrorEvent" }
+    {
+      "$ref": "#/$defs/StepEvent"
+    },
+    {
+      "$ref": "#/$defs/MetaEvent"
+    },
+    {
+      "$ref": "#/$defs/TokenEvent"
+    },
+    {
+      "$ref": "#/$defs/FinalEvent"
+    },
+    {
+      "$ref": "#/$defs/ErrorEvent"
+    }
   ],
   "$defs": {
-    "Version": { "type": "integer", "const": 1 },
-    "Lang": { "type": "string", "enum": ["en", "bn", "banglish"] },
+    "Version": {
+      "type": "integer",
+      "const": 1
+    },
+    "Lang": {
+      "type": "string",
+      "enum": [
+        "en",
+        "bn",
+        "banglish"
+      ]
+    },
     "StepEvent": {
       "type": "object",
-      "required": ["v", "type", "step", "status"],
+      "required": [
+        "v",
+        "type",
+        "step",
+        "status"
+      ],
       "properties": {
-        "v": { "$ref": "#/$defs/Version" },
-        "type": { "const": "step" },
-        "step": { "type": "string", "enum": ["planning", "reading", "checking", "rechecking"] },
-        "status": { "type": "string", "enum": ["active", "done"] }
+        "v": {
+          "$ref": "#/$defs/Version"
+        },
+        "type": {
+          "const": "step"
+        },
+        "step": {
+          "type": "string",
+          "enum": [
+            "planning",
+            "reading",
+            "checking",
+            "rechecking"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "done"
+          ]
+        }
       }
     },
     "MetaEvent": {
       "type": "object",
-      "required": ["v", "type", "lang"],
+      "required": [
+        "v",
+        "type"
+      ],
       "properties": {
-        "v": { "$ref": "#/$defs/Version" },
-        "type": { "const": "meta" },
-        "lang": { "$ref": "#/$defs/Lang" },
-        "transcript": { "type": "string" },
-        "image_description": { "type": "string" }
-      }
+        "v": {
+          "$ref": "#/$defs/Version"
+        },
+        "type": {
+          "const": "meta"
+        },
+        "lang": {
+          "$ref": "#/$defs/Lang"
+        },
+        "transcript": {
+          "type": "string"
+        },
+        "image_description": {
+          "type": "string"
+        }
+      },
+      "description": "Side information. `lang` (when present) is the visitor's language; `transcript` is what the twin heard (voice); `image_description` is what it saw (upload)."
     },
     "TokenEvent": {
       "type": "object",
-      "required": ["v", "type", "text"],
+      "required": [
+        "v",
+        "type",
+        "text"
+      ],
       "properties": {
-        "v": { "$ref": "#/$defs/Version" },
-        "type": { "const": "token" },
-        "text": { "type": "string" }
+        "v": {
+          "$ref": "#/$defs/Version"
+        },
+        "type": {
+          "const": "token"
+        },
+        "text": {
+          "type": "string"
+        }
       }
     },
     "Source": {
       "type": "object",
-      "required": ["n", "title", "url"],
+      "required": [
+        "n",
+        "title",
+        "url"
+      ],
       "properties": {
-        "n": { "type": "integer", "minimum": 1 },
-        "title": { "type": "string" },
-        "url": { "type": "string" }
+        "n": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
       }
     },
     "Media": {
       "type": "object",
-      "required": ["id", "src", "caption"],
+      "required": [
+        "id",
+        "src",
+        "caption"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "src": { "type": "string" },
-        "caption": { "type": "string" },
-        "alt": { "type": "string" },
-        "project_url": { "type": "string" }
+        "id": {
+          "type": "string"
+        },
+        "src": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "project_url": {
+          "type": "string"
+        }
       }
     },
     "Trace": {
       "type": "object",
-      "required": ["plan", "source_count", "revisions", "elapsed_ms", "critic"],
+      "required": [
+        "plan",
+        "source_count",
+        "revisions",
+        "elapsed_ms",
+        "critic"
+      ],
       "properties": {
-        "plan": { "type": "array", "items": { "type": "string" } },
-        "source_count": { "type": "integer", "minimum": 0 },
-        "revisions": { "type": "integer", "minimum": 0 },
-        "elapsed_ms": { "type": "integer", "minimum": 0 },
+        "plan": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "revisions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "elapsed_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
         "critic": {
           "type": "object",
-          "required": ["passed", "removed_sentences"],
+          "required": [
+            "passed",
+            "removed_sentences"
+          ],
           "properties": {
-            "passed": { "type": "boolean" },
-            "removed_sentences": { "type": "integer", "minimum": 0 },
-            "fallback": { "type": "boolean" }
+            "passed": {
+              "type": "boolean"
+            },
+            "removed_sentences": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fallback": {
+              "type": "boolean"
+            }
           }
         }
       }
     },
     "FinalEvent": {
       "type": "object",
-      "required": ["v", "type", "msg_id", "text", "lang", "sources", "media", "card", "trace"],
+      "required": [
+        "v",
+        "type",
+        "msg_id",
+        "text",
+        "lang",
+        "sources",
+        "media",
+        "card",
+        "trace"
+      ],
       "properties": {
-        "v": { "$ref": "#/$defs/Version" },
-        "type": { "const": "final" },
-        "msg_id": { "type": "string" },
-        "text": { "type": "string", "description": "Full answer. Citation markers are written as [[n]] and rendered by the client as superscripts." },
-        "lang": { "$ref": "#/$defs/Lang" },
-        "sources": { "type": "array", "items": { "$ref": "#/$defs/Source" } },
-        "media": { "type": "array", "items": { "$ref": "#/$defs/Media" } },
-        "card": { "type": ["string", "null"], "enum": ["contact", null] },
-        "trace": { "$ref": "#/$defs/Trace" }
+        "v": {
+          "$ref": "#/$defs/Version"
+        },
+        "type": {
+          "const": "final"
+        },
+        "msg_id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "description": "Full answer. Citation markers are written as [[n]] and rendered by the client as superscripts."
+        },
+        "lang": {
+          "$ref": "#/$defs/Lang"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Source"
+          }
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Media"
+          }
+        },
+        "card": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "contact",
+            null
+          ]
+        },
+        "trace": {
+          "$ref": "#/$defs/Trace"
+        }
       }
     },
     "ErrorEvent": {
       "type": "object",
-      "required": ["v", "type", "kind"],
+      "required": [
+        "v",
+        "type",
+        "kind"
+      ],
       "properties": {
-        "v": { "$ref": "#/$defs/Version" },
-        "type": { "const": "error" },
+        "v": {
+          "$ref": "#/$defs/Version"
+        },
+        "type": {
+          "const": "error"
+        },
         "kind": {
           "type": "string",
-          "enum": ["upstream_unavailable", "timeout", "cap_exceeded", "rate_limited", "bad_request"]
+          "enum": [
+            "upstream_unavailable",
+            "timeout",
+            "cap_exceeded",
+            "rate_limited",
+            "bad_request"
+          ]
         },
-        "retry_after_s": { "type": "integer", "minimum": 0 }
+        "retry_after_s": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     }
   }

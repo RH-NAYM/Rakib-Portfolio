@@ -1,6 +1,7 @@
 """LangGraph wiring (phase 1a, full-context baseline per eng D7).
 
-  START → guard ─┬─ handoff ───────────────────────────────► END
+  START → normalize (voice → transcript, image → description) ─┬─ no_audio ─► END
+                                                               └─ guard ─┬─ handoff ───────────────────────────────► END
                  ├─ steer ─────────────────────────────────► END
                  ├─ smalltalk ─────────────────────────────► END
                  └─ plan → draft → critic ─┬─ respond ─────► END
@@ -17,6 +18,8 @@ from app import nodes as N
 
 def build_graph(deps: N.Deps):
     g = StateGraph(N.State)
+    g.add_node("normalize", N.make_normalize(deps))
+    g.add_node("no_audio", N.make_template(deps, "no_audio", None))
     g.add_node("guard", N.make_guard(deps))
     g.add_node("handoff", N.make_template(deps, "handoff", "contact"))
     g.add_node("steer", N.make_template(deps, "off_topic", None))
@@ -27,7 +30,9 @@ def build_graph(deps: N.Deps):
     g.add_node("revise", N.revise)
     g.add_node("respond", N.make_respond(deps))
 
-    g.add_edge(START, "guard")
+    g.add_edge(START, "normalize")
+    g.add_conditional_edges("normalize", N.route_after_normalize, ["no_audio", "guard"])
+    g.add_edge("no_audio", END)
     g.add_conditional_edges("guard", N.route_after_guard, ["handoff", "steer", "smalltalk", "plan"])
     for t in ("handoff", "steer", "smalltalk"):
         g.add_edge(t, END)

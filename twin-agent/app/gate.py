@@ -52,6 +52,8 @@ class CostMeter:
 class LimitsBackend(Protocol):
     def incr(self, key: str, amount: float) -> float: ...
     def get(self, key: str) -> float: ...
+    def push(self, key: str, value: str, ttl_s: int) -> None: ...
+    def read(self, key: str, limit: int) -> list[str]: ...
 
 
 class MemoryBackend:
@@ -59,6 +61,7 @@ class MemoryBackend:
 
     def __init__(self) -> None:
         self._d: dict[str, float] = {}
+        self._lists: dict[str, list[str]] = {}
         self._lock = threading.Lock()
 
     def incr(self, key: str, amount: float) -> float:
@@ -68,6 +71,13 @@ class MemoryBackend:
 
     def get(self, key: str) -> float:
         return self._d.get(key, 0.0)
+
+    def push(self, key: str, value: str, ttl_s: int) -> None:
+        with self._lock:
+            self._lists.setdefault(key, []).insert(0, value)
+
+    def read(self, key: str, limit: int) -> list[str]:
+        return list(self._lists.get(key, []))[:limit]
 
 
 class UpstashBackend:
@@ -106,6 +116,13 @@ class UpstashBackend:
         (val,) = self._pipeline(["GET", key])
         return float(val) if val is not None else 0.0
 
+    def push(self, key: str, value: str, ttl_s: int) -> None:
+        self._pipeline(["LPUSH", key, value], ["EXPIRE", key, str(ttl_s)])
+
+    def read(self, key: str, limit: int) -> list[str]:
+        (vals,) = self._pipeline(["LRANGE", key, "0", str(limit - 1)])
+        return list(vals or [])
+
 
 @dataclass
 class Verdict:
@@ -120,16 +137,17 @@ class Gate:
         self.secret = secret
         self.cap = daily_cap_usd
 
-    def admit(self, client_ip: str, now: datetime | None = None) -> Verdict:
+    def admit(self, client_ip: str, now: datetime | None = None, kind: str = "chat") -> Verdict:
         now = (now or datetime.now(DHAKA)).astimezone(DHAKA)
         if self.backend.get(f"spend_{dhaka_day(now)}") >= self.cap:
             return Verdict(False, "cap_exceeded")
         k = ip_key(client_ip, self.secret)
-        hour = self.backend.incr(f"rl_{k}_{now:%Y%m%d%H}", 1)
-        day = self.backend.incr(f"rl_{k}_{now:%Y%m%d}", 1)
-        if hour > PER_HOUR:
+        per_hour = PER_HOUR if kind == "chat" else PER_HOUR * 2  # TTS: replies get replayed
+        hour = self.backend.incr(f"rl_{kind}_{k}_{now:%Y%m%d%H}", 1)
+        day = self.backend.incr(f"rl_{kind}_{k}_{now:%Y%m%d}", 1)
+        if hour > per_hour:
             return Verdict(False, "rate_limited", (60 - now.minute) * 60)
-        if day > PER_DAY:
+        if day > (PER_DAY if kind == "chat" else PER_DAY * 2):
             midnight = now.replace(hour=23, minute=59, second=59)
             return Verdict(False, "rate_limited", int((midnight - now).total_seconds()) + 1)
         return Verdict(True)
@@ -158,3 +176,74 @@ def gate_from_env() -> Gate:
     backend: LimitsBackend = MemoryBackend() if os.environ.get("TWIN_LIMITS_BACKEND") == "memory" else UpstashBackend()
     secret = os.environ.get("IP_HASH_SECRET", "test-secret").encode()
     return Gate(backend, secret, float(os.environ.get("TWIN_DAILY_USD_CAP", "2.0")))
+
+
+# ── signed tokens (visitor session after Turnstile; admin login) ─────────────
+import base64 as _b64
+import json as _json
+import time as _time
+
+
+def _b64e(b: bytes) -> str:
+    return _b64.urlsafe_b64encode(b).decode().rstrip("=")
+
+
+def _b64d(s: str) -> bytes:
+    return _b64.urlsafe_b64decode(s + "=" * (-len(s) % 4))
+
+
+def sign_token(claims: dict, secret: bytes, ttl_s: int, now: float | None = None) -> str:
+    body = _b64e(_json.dumps({**claims, "exp": int((now or _time.time()) + ttl_s)}, separators=(",", ":")).encode())
+    sig = _b64e(hmac.new(secret, body.encode(), hashlib.sha256).digest())
+    return f"{body}.{sig}"
+
+
+def verify_token(token: str | None, secret: bytes, aud: str, now: float | None = None) -> dict | None:
+    """Valid signature, matching audience, not expired → claims; anything else → None."""
+    if not token or "." not in token or not secret:
+        return None
+    body, sig = token.rsplit(".", 1)
+    good = _b64e(hmac.new(secret, body.encode(), hashlib.sha256).digest())
+    if not hmac.compare_digest(sig, good):
+        return None
+    try:
+        claims = _json.loads(_b64d(body))
+    except ValueError:
+        return None
+    if claims.get("aud") != aud or claims.get("exp", 0) < (now or _time.time()):
+        return None
+    return claims
+
+
+# ── admin password (PBKDF2; no extra dependency) ─────────────────────────────
+def hash_password(password: str, iterations: int = 310_000, salt: bytes | None = None) -> str:
+    salt = salt or os.urandom(16)
+    dk = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, iterations)
+    return f"pbkdf2_sha256${iterations}${salt.hex()}${dk.hex()}"
+
+
+def check_password(password: str, stored: str | None) -> bool:
+    try:
+        algo, iters, salt_hex, hash_hex = (stored or "").split("$")
+    except ValueError:
+        return False
+    if algo != "pbkdf2_sha256":
+        return False
+    dk = hashlib.pbkdf2_hmac("sha256", password.encode(), bytes.fromhex(salt_hex), int(iters))
+    return hmac.compare_digest(dk.hex(), hash_hex)
+
+
+# ── conversation logs (phase 4; only when TWIN_LOG_CONVERSATIONS=true) ───────
+LOG_TTL_S = 90 * 24 * 3600
+
+
+def log_turn(backend: "LimitsBackend", record: dict, now: datetime | None = None) -> None:
+    backend.push(f"log_{dhaka_day(now)}", _json.dumps(record, ensure_ascii=False), LOG_TTL_S)
+
+
+if __name__ == "__main__":  # python -m app.gate hash-password
+    import getpass
+    import sys
+
+    if sys.argv[1:] == ["hash-password"]:
+        print(hash_password(getpass.getpass("Admin password: ")))

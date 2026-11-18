@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ALL, PROMPTS, STRING_KEYS, t } from "./strings";
-import { emptyThread, historyFor, loadThread, reducer, SCHEMA, serializeThread, type Msg, type Thread } from "./thread-store";
+import { emptyThread, historyFor, loadThread, quoteOf, reducer, SCHEMA, serializeThread, type Msg, type Thread } from "./thread-store";
 
 const visitor: Msg = { id: "v1", role: "visitor", text: "What do you do?", createdAt: 1 };
 const sent = (): Thread => reducer(emptyThread(), { type: "send", visitor, twinId: "t1" });
@@ -83,5 +83,47 @@ describe("strings (design 7C)", () => {
   it("interpolates variables and has 4 prompts per language", () => {
     expect(t("rateLimited", "en", { m: 12 })).toBe("You've asked a lot. Try again in 12 min.");
     for (const l of ["en", "bn", "banglish"] as const) expect(PROMPTS[l]).toHaveLength(4);
+  });
+});
+
+describe("phases 1b-3 (reply-to, voice, images, language)", () => {
+  it("quotes snapshot the text without citation markers, with an image thumb", () => {
+    const img: Msg = { id: "i1", role: "visitor", text: "what's this?", createdAt: 1, attachment: { kind: "image", thumb: "data:x", description: "A dashboard" } };
+    expect(quoteOf(img)).toEqual({ id: "i1", role: "visitor", text: "[image: A dashboard] what's this?", thumb: "data:x" });
+    const twinMsg: Msg = { id: "t", role: "twin", text: "I built it.[[1]]", createdAt: 1 };
+    expect(quoteOf(twinMsg).text).toBe("I built it.");
+  });
+
+  it("meta transcript fills the visitor's voice message and switches the UI language in Auto", () => {
+    const voice: Msg = { id: "v9", role: "visitor", text: "", createdAt: 1, attachment: { kind: "audio", durationS: 3, waveform: [0.5] } };
+    let th = reducer(emptyThread(), { type: "send", visitor: voice, twinId: "t9" });
+    th = reducer(th, { type: "meta", twinId: "t9", event: { v: 1, type: "meta", transcript: "আপনি কী করেন?", lang: "bn" } });
+    const v = th.messages.find((m) => m.id === "v9")!;
+    expect(v.text).toBe("আপনি কী করেন?");
+    expect(v.attachment).toMatchObject({ kind: "audio", transcript: "আপনি কী করেন?" });
+    expect(th.uiLang).toBe("bn");
+  });
+
+  it("an explicit language choice wins over the detected language", () => {
+    let th = reducer(emptyThread(), { type: "langChoice", choice: "en" });
+    th = reducer(th, { type: "lang", lang: "banglish" });
+    expect(th.uiLang).toBe("en");
+    th = reducer(th, { type: "langChoice", choice: "auto" });
+    th = reducer(th, { type: "lang", lang: "banglish" });
+    expect(th.uiLang).toBe("banglish");
+  });
+
+  it("image descriptions from the server attach to the visitor's image", () => {
+    const img: Msg = { id: "i2", role: "visitor", text: "", createdAt: 1, attachment: { kind: "image", thumb: "data:x" } };
+    let th = reducer(emptyThread(), { type: "send", visitor: img, twinId: "t2" });
+    th = reducer(th, { type: "meta", twinId: "t2", event: { v: 1, type: "meta", image_description: "Retail dashboard" } });
+    expect(th.messages[0].attachment).toMatchObject({ description: "Retail dashboard" });
+  });
+
+  it("history describes images instead of dropping them", () => {
+    const img: Msg = { id: "i3", role: "visitor", text: "explain", createdAt: 1, attachment: { kind: "image", thumb: "x", description: "A chart" } };
+    const th = reducer(emptyThread(), { type: "send", visitor: img, twinId: "t3" });
+    th.messages.push({ id: "v4", role: "visitor", text: "next", createdAt: 2 });
+    expect(historyFor(th, "v4")[0]).toEqual({ role: "user", text: "[image: A chart] explain" });
   });
 });

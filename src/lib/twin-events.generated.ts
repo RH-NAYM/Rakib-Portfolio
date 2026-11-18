@@ -14,10 +14,13 @@ export interface StepEvent {
   status: "active" | "done";
   [k: string]: unknown;
 }
+/**
+ * Side information. `lang` (when present) is the visitor's language; `transcript` is what the twin heard (voice); `image_description` is what it saw (upload).
+ */
 export interface MetaEvent {
   v: Version;
   type: "meta";
-  lang: Lang;
+  lang?: Lang;
   transcript?: string;
   image_description?: string;
   [k: string]: unknown;

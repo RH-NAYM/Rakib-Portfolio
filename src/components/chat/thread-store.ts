@@ -1,13 +1,22 @@
-import type { ErrorEvent, FinalEvent, Media, Source, StepEvent, Trace } from "@/lib/twin-events";
+import type { ErrorEvent, FinalEvent, Media, MetaEvent, Source, StepEvent, Trace } from "@/lib/twin-events";
 import type { UiLang } from "./strings";
 
 /** Persisted thread shape. Bump SCHEMA when it changes; old threads are cleared silently (design 2A). */
-export const SCHEMA = 1;
+export const SCHEMA = 2;
 export const STORAGE_KEY = "twin-thread";
 export const MAX_STORED = 60;
+export const MAX_QUOTE = 1000;
 
 export type Step = { step: StepEvent["step"]; status: StepEvent["status"] };
-export type TwinErrorKind = ErrorEvent["kind"] | "partial" | "offline";
+export type TwinErrorKind = ErrorEvent["kind"] | "partial" | "offline" | "verify_failed";
+export type LangChoice = "auto" | UiLang;
+
+/** What the visitor attached. Bytes are never stored (stateless media, eng R1-10): only a small thumb / waveform. */
+export type Attachment =
+  | { kind: "image"; thumb: string; description?: string }
+  | { kind: "audio"; durationS: number; waveform: number[]; transcript?: string };
+
+export type Quote = { id: string; role: "visitor" | "twin"; text: string; thumb?: string };
 
 export type Msg = {
   id: string;
@@ -15,7 +24,10 @@ export type Msg = {
   text: string;
   createdAt: number;
   status?: "sending" | "sent" | "waiting" | "streaming" | "done" | "error";
-  replyToVisitorId?: string; // twin msg → the visitor message it answers (used by Retry)
+  replyToVisitorId?: string; // twin msg → the visitor message it answers (Retry)
+  quote?: Quote; // visitor msg → the bubble it replies to (design 1b reply-to)
+  attachment?: Attachment;
+  lang?: UiLang;
   steps?: Step[];
   sources?: Source[];
   media?: Media[];
@@ -25,24 +37,45 @@ export type Msg = {
   retryAfterS?: number;
 };
 
-export type Thread = { schema: number; messages: Msg[]; uiLang: UiLang; disclosureDismissed: boolean };
+export type Thread = {
+  schema: number;
+  messages: Msg[];
+  uiLang: UiLang;
+  langChoice: LangChoice;
+  disclosureDismissed: boolean;
+};
 
-export const emptyThread = (uiLang: UiLang = "en"): Thread => ({ schema: SCHEMA, messages: [], uiLang, disclosureDismissed: false });
+export const emptyThread = (uiLang: UiLang = "en"): Thread => ({
+  schema: SCHEMA,
+  messages: [],
+  uiLang,
+  langChoice: "auto",
+  disclosureDismissed: false,
+});
 
 export type Action =
   | { type: "load"; thread: Thread }
   | { type: "send"; visitor: Msg; twinId: string }
   | { type: "step"; twinId: string; event: StepEvent }
+  | { type: "meta"; twinId: string; event: MetaEvent }
   | { type: "lang"; lang: UiLang }
+  | { type: "langChoice"; choice: LangChoice }
   | { type: "token"; twinId: string; text: string }
   | { type: "final"; twinId: string; event: FinalEvent }
   | { type: "error"; twinId: string; kind: TwinErrorKind; retryAfterS?: number }
   | { type: "retry"; twinId: string }
+  | { type: "editTranscript"; visitorId: string; text: string }
   | { type: "clear" }
   | { type: "dismissDisclosure" };
 
 function patch(t: Thread, id: string, f: (m: Msg) => Msg): Thread {
   return { ...t, messages: t.messages.map((m) => (m.id === id ? f(m) : m)) };
+}
+
+function followLang(t: Thread, lang: UiLang | undefined): Thread {
+  // Explicit choice wins; in Auto the UI follows the visitor's language (design 7C).
+  if (!lang) return t;
+  return { ...t, uiLang: t.langChoice === "auto" ? lang : t.langChoice };
 }
 
 export function reducer(t: Thread, a: Action): Thread {
@@ -67,16 +100,33 @@ export function reducer(t: Thread, a: Action): Thread {
         else steps.push({ step: a.event.step, status: a.event.status });
         return { ...m, steps };
       });
+    case "meta": {
+      const twin = t.messages.find((m) => m.id === a.twinId);
+      let next = followLang(t, a.event.lang);
+      if (twin?.replyToVisitorId && (a.event.transcript !== undefined || a.event.image_description)) {
+        next = patch(next, twin.replyToVisitorId, (m) => {
+          if (m.attachment?.kind === "audio" && a.event.transcript !== undefined)
+            return { ...m, text: a.event.transcript ?? "", attachment: { ...m.attachment, transcript: a.event.transcript } };
+          if (m.attachment?.kind === "image" && a.event.image_description)
+            return { ...m, attachment: { ...m.attachment, description: a.event.image_description } };
+          return m;
+        });
+      }
+      return next;
+    }
     case "lang":
-      return { ...t, uiLang: a.lang };
+      return followLang(t, a.lang);
+    case "langChoice":
+      return { ...t, langChoice: a.choice, uiLang: a.choice === "auto" ? t.uiLang : a.choice };
     case "token":
       return markSent(patch(t, a.twinId, (m) => ({ ...m, status: "streaming", text: m.text + a.text })), a.twinId);
     case "final":
       return markSent(
-        patch(t, a.twinId, (m) => ({
+        patch(followLang(t, a.event.lang), a.twinId, (m) => ({
           ...m,
           status: "done",
           text: a.event.text,
+          lang: a.event.lang,
           sources: a.event.sources,
           media: a.event.media,
           card: a.event.card,
@@ -104,8 +154,10 @@ export function reducer(t: Thread, a: Action): Thread {
         retryAfterS: undefined,
         steps: [{ step: "planning", status: "active" }],
       }));
+    case "editTranscript":
+      return patch(t, a.visitorId, (m) => ({ ...m, text: a.text }));
     case "clear":
-      return { ...emptyThread(t.uiLang), disclosureDismissed: t.disclosureDismissed };
+      return { ...emptyThread(t.uiLang), langChoice: t.langChoice, disclosureDismissed: t.disclosureDismissed };
     case "dismissDisclosure":
       return { ...t, disclosureDismissed: true };
   }
@@ -117,13 +169,26 @@ function markSent(t: Thread, twinId: string): Thread {
   return patch(t, twin.replyToVisitorId, (m) => (m.status === "sending" ? { ...m, status: "sent" } : m));
 }
 
-/** History sent to the server: completed turns only, newest last (server caps at 12). */
+/** Plain text of a message for quoting/history: citation markers removed, image/voice described. */
+export function plainText(m: Msg): string {
+  const base = m.text.replace(/\[\[\d+\]\]/g, "").trim();
+  if (m.attachment?.kind === "image") return `[image${m.attachment.description ? `: ${m.attachment.description}` : ""}] ${base}`.trim();
+  return base;
+}
+
+/** The quote snapshot stored on a reply. Snapshotting means trimmed-out messages still quote fine (design 2A). */
+export function quoteOf(m: Msg): Quote {
+  return { id: m.id, role: m.role, text: plainText(m).slice(0, MAX_QUOTE), thumb: m.attachment?.kind === "image" ? m.attachment.thumb : undefined };
+}
+
+/** History sent to the server: completed turns only, newest last (server caps at 12; all treated as unverified). */
 export function historyFor(t: Thread, beforeId: string): Array<{ role: "user" | "assistant"; text: string }> {
   const out: Array<{ role: "user" | "assistant"; text: string }> = [];
   for (const m of t.messages) {
     if (m.id === beforeId) break;
-    if (m.role === "visitor" && m.text) out.push({ role: "user", text: m.text });
-    if (m.role === "twin" && m.status === "done" && m.text) out.push({ role: "assistant", text: m.text.replace(/\[\[\d+\]\]/g, "") });
+    const text = plainText(m);
+    if (m.role === "visitor" && text) out.push({ role: "user", text });
+    if (m.role === "twin" && m.status === "done" && text) out.push({ role: "assistant", text });
   }
   return out.slice(-12);
 }
@@ -137,7 +202,7 @@ export function loadThread(raw: string | null, fallbackLang: UiLang): Thread {
     const messages = p.messages.map((m) =>
       m.status === "waiting" || m.status === "streaming" ? { ...m, status: "error" as const, errorKind: (m.text ? "partial" : "upstream_unavailable") as TwinErrorKind } : m,
     );
-    return { ...p, messages };
+    return { ...emptyThread(fallbackLang), ...p, messages };
   } catch {
     return emptyThread(fallbackLang);
   }

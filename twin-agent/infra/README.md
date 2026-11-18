@@ -38,6 +38,17 @@ This injects `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
 | `TWIN_DAILY_USD_CAP` | e.g. `2.0` (USD per Asia/Dhaka day; the twin "rests" after) |
 | `TWIN_MODEL_FAST` | `gemini-2.5-flash` (must exist in `twin-agent/app/pricing.py`, else the function refuses to start) |
 
+## 3b. Optional features (each stays off until its variables exist)
+| Feature | Variables | How to get them |
+|---|---|---|
+| **Bot check** (invisible Turnstile, phase 1b) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`, `TWIN_SESSION_SECRET` | Cloudflare → Turnstile → Add widget (mode **Managed**, your domain) gives the site and secret keys. `TWIN_SESSION_SECRET` = `openssl rand -hex 32`. |
+| **Conversation logs + insights** (phase 4) | `TWIN_LOG_CONVERSATIONS=true` **and** `NEXT_PUBLIC_TWIN_LOGGING=true` (the second shows the 90-day notice in the chat) | Stored in Upstash for 90 days: question, answer, language, latency. No IP. |
+| **Admin page** `/admin/insights` | `ADMIN_PASSWORD_HASH`, `TWIN_ADMIN_SECRET` | `cd twin-agent && .venv/bin/python -m app.gate hash-password` prints the hash. `TWIN_ADMIN_SECRET` = `openssl rand -hex 32` (must differ from the session secret). |
+| Voice replies | `TWIN_TTS_MODEL` (default `gemini-2.5-flash-preview-tts`), `TWIN_VOICE_EN` / `TWIN_VOICE_BN` (default `Charon`) | Optional overrides. |
+| Turn images/voice off | `NEXT_PUBLIC_TWIN_IMAGES=false` / `NEXT_PUBLIC_TWIN_VOICE=false` | Both are on by default. |
+
+Images (≤1.5 MB after the client resizes them) and voice clips (≤60 s) fit under Vercel's 4.5 MB request limit.
+
 ## 4. Quality gate
 1. GitHub → repo → Settings → Secrets → Actions: add `GOOGLE_SERVICE_ACCOUNT_B64`, the same key as step 1, or a separate eval-only key with the same single role. Without it the eval step is skipped, not failed.
 2. Vercel → Project → Settings → **Deployment Checks**: select the `web` and `agent` checks from `twin-ci`. Production waits for them. Don't also add them as GitHub branch-protection required checks; Vercel's docs warn the two race.
@@ -53,6 +64,8 @@ This injects `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
 2. Open `https://<your-domain>/api/twin/healthz`. It should return `{"ok": true, "docs": 19}` or more.
 3. Ask one question each in English, বাংলা and Banglish on phone and desktop.
 4. Check that `/api/chat` (the old bot) returns 404.
+5. Send a photo, a voice note, and tap ▶ on a reply.
+6. If logging is on, sign in at `/admin/insights`.
 
 ## Local development
 ```bash

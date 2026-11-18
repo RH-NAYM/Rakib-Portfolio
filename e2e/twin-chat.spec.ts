@@ -95,7 +95,7 @@ test("Bangla answers render in Anek Bangla with roomy line-height (design 5A)", 
   await dlg.getByRole("textbox").fill("আপনি কী করেন?");
   await dlg.getByRole("textbox").press("Enter");
   // UI switches to বাংলা as soon as a Bengali message is sent (design 7C)
-  await expect(dlg.getByRole("button", { name: "পাঠান" })).toBeVisible();
+  await expect(dlg.getByPlaceholder("রাকিবের টুইনকে লিখুন…")).toBeVisible();
   const p = dlg.locator('p[lang="bn"]').filter({ hasText: "আমি HawkEyes" });
   await expect(p).toBeVisible();
   const style = await p.evaluate((el) => ({ font: getComputedStyle(el).fontFamily, lh: getComputedStyle(el).lineHeight, fs: getComputedStyle(el).fontSize }));
