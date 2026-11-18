@@ -1,0 +1,65 @@
+name: twin-ci
+
+on:
+  pull_request:
+    paths:
+      - "twin-agent/**"
+      - "content/twin/**"
+      - "src/content/**"
+      - "src/components/chat/**"
+      - "src/lib/twin-*"
+      - "src/app/api/twin/**"
+      - "src/app/chat/**"
+      - "contracts/**"
+      - "scripts/export-content.ts"
+      - "e2e/**"
+
+concurrency:
+  group: twin-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: SSE types are up to date with the contract (eng D4)
+        run: npm run gen:twin-types && git diff --exit-code src/lib/twin-events.generated.ts
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env: { CI: "1" }
+
+  agent:
+    runs-on: ubuntu-latest
+    permissions: { contents: read, id-token: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci && npx tsx scripts/export-content.ts
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r twin-agent/requirements-dev.txt
+      - working-directory: twin-agent
+        run: python -m ingest.build_corpus && python -m pytest -q -p no:warnings
+      # Early signal only; the real gate runs in Cloud Build against the deploy image (eng D8).
+      - id: auth
+        if: ${{ vars.GCP_WIF_PROVIDER_GITHUB != '' }}
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER_GITHUB }}
+          service_account: ${{ vars.TWIN_CI_EVALS_SA }}
+      - if: ${{ steps.auth.outcome == 'success' }}
+        working-directory: twin-agent
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GCP_LOCATION: us-central1
+        run: python -m evals.run --out eval-report.json
+      - if: ${{ always() && steps.auth.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with: { name: eval-report, path: twin-agent/eval-report.json }

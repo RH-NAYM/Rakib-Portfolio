@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, JetBrains_Mono } from "next/font/google";
+import { Anek_Bangla, Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { ChatWidget } from "@/components/chat-widget-loader";
+import { ChatWidget } from "@/components/chat/chat-loader";
 import { HashScroll } from "@/components/hash-scroll";
 import { MotionRoot } from "@/components/motion-root";
 import { profile, siteUrl, socials } from "@/content/site";
@@ -11,6 +11,13 @@ import { profile, siteUrl, socials } from "@/content/site";
 const archivo = Archivo({
   subsets: ["latin"],
   variable: "--font-archivo",
+  axes: ["wdth"],
+  display: "swap",
+});
+// Bengali glyphs only (next/font emits unicode-range for the subset); Latin stays Archivo (design 5A).
+const anekBangla = Anek_Bangla({
+  subsets: ["bengali"],
+  variable: "--font-bangla",
   axes: ["wdth"],
   display: "swap",
 });
@@ -83,7 +90,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${archivo.variable} ${anekBangla.variable} ${jetbrains.variable}`}>
       <body>
         <script
           type="application/ld+json"

@@ -23,10 +23,10 @@
   --color-secondary: #a78bfa;
   --color-success: #34d399;
 
-  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: var(--font-archivo), var(--font-bangla), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   /* "mono" is repurposed as the narrow data face (tags, numbers);
      real code still uses --font-code. */
-  --font-mono: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-archivo), var(--font-bangla), ui-sans-serif, system-ui, sans-serif;
   --font-code: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
 
   --radius: 0.5rem;
@@ -485,3 +485,19 @@ button:hover > .nudge {
 .from-\[--color-secondary\]{--tw-gradient-from:var(--color-secondary);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,transparent)}
 .via-\[--color-secondary\]{--tw-gradient-via:var(--color-secondary);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-via),var(--tw-gradient-to,transparent)}
 .from-\[--color-accent\]\/60{--tw-gradient-from:color-mix(in oklab,var(--color-accent) 60%,transparent);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,transparent)}
+
+/* ─── AI twin chat (design 4A, 5A) ─── */
+:lang(bn) {
+  line-height: 1.75;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes twin-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+  .twin-panel {
+    animation: twin-panel-in 0.3s var(--e) backwards;
+  }
+}

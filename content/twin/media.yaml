@@ -1,0 +1,10 @@
+# Screenshot catalog for the AI twin (phase 2 sends these as image messages).
+# The twin can ONLY show images listed here. Put files in public/twin-media/.
+# Entry format:
+# - id: retail-dashboard
+#   src: /twin-media/retail-dashboard.jpg
+#   project_slug: retail-execution-intelligence   # matches /work/<slug>
+#   caption: Retail Vision dashboard
+#   alt: Dashboard with outlet compliance charts and detection counts
+#   tags: [yolo, retail, dashboard, computer-vision]
+[]

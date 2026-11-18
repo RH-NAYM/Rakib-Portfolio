@@ -1,0 +1,89 @@
+# Cloud Build pipeline for twin-agent (trigger: push to main on twin-agent/**, content/twin/**,
+# src/content/**, contracts/**, scripts/export-content.ts). Runs as the `twin-build`
+# service account (see infra/README.md). Order is the eval deploy gate (eng D8):
+# export → corpus → unit tests → image → evals AGAINST THAT IMAGE → push → deploy.
+substitutions:
+  _REGION: asia-south1
+  _VERTEX_LOCATION: us-central1
+  _AR_REPO: twin
+  _DAILY_CAP: "2.0"
+  _MODEL_FAST: gemini-2.5-flash
+
+steps:
+  - id: export-content
+    name: node:22
+    entrypoint: bash
+    args: ["-c", "npm ci --no-audit --no-fund && npx tsx scripts/export-content.ts"]
+
+  - id: corpus-and-tests
+    name: python:3.12-slim
+    entrypoint: bash
+    secretEnv: [GITHUB_TOKEN]
+    env: [TWIN_FETCH_READMES=1]
+    args:
+      - -c
+      - |
+        set -e
+        pip install -q -r twin-agent/requirements-dev.txt
+        cd twin-agent
+        python -m ingest.build_corpus
+        python -m pytest -q -p no:warnings
+
+  - id: build-image
+    name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "twin-agent/Dockerfile", "-t", "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/twin-agent:${SHORT_SHA}", "."]
+
+  - id: eval-gate
+    name: gcr.io/cloud-builders/docker
+    args:
+      - run
+      - --rm
+      - --network=cloudbuild   # metadata-server credentials of twin-build (Vertex only)
+      - -e
+      - TWIN_ENV=test
+      - -e
+      - TWIN_LIMITS_BACKEND=memory
+      - -e
+      - TWIN_SKIP_APP_IMPORT=1
+      - -e
+      - GCP_PROJECT_ID=${PROJECT_ID}
+      - -e
+      - GCP_LOCATION=${_VERTEX_LOCATION}
+      - -e
+      - TWIN_MODEL_FAST=${_MODEL_FAST}
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/twin-agent:${SHORT_SHA}
+      - python
+      - -m
+      - evals.run
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args: ["push", "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/twin-agent:${SHORT_SHA}"]
+
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - twin-agent
+      - --image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/twin-agent:${SHORT_SHA}
+      - --region=${_REGION}
+      - --service-account=twin-runtime@${PROJECT_ID}.iam.gserviceaccount.com
+      - --no-allow-unauthenticated
+      - --max-instances=3          # eng D11 cost backstop
+      - --concurrency=20
+      - --cpu=1
+      - --memory=1Gi
+      - --timeout=60
+      - --set-env-vars=GCP_PROJECT_ID=${PROJECT_ID},GCP_LOCATION=${_VERTEX_LOCATION},TWIN_MODEL_FAST=${_MODEL_FAST},TWIN_DAILY_USD_CAP=${_DAILY_CAP},TWIN_LIMITS_BACKEND=firestore,TWIN_ENV=prod
+      - --set-secrets=IP_HASH_SECRET=ip-hash-secret:latest
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/${PROJECT_ID}/secrets/github-token/versions/latest
+      env: GITHUB_TOKEN
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+timeout: 1800s

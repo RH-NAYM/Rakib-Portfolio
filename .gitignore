@@ -37,3 +37,13 @@ env/
 .mypy_cache/
 .ruff_cache/
 .pytest_cache/
+
+# AI twin
+twin-agent/.venv/
+twin-agent/data/*.json
+twin-agent/eval-report.json
+__pycache__/
+.pytest_cache/
+test-results/
+playwright-report/
+.gstack/tmp/

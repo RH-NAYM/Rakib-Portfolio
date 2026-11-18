@@ -1,0 +1,110 @@
+# Golden eval set (eng review: ~50 cases, 20 EN / 15 বাংলা / 15 Banglish).
+# STARTER SET: 8 per language, facts taken from src/content/*. Rakib: extend to the
+# full 50 with questions recruiters actually ask, and add must_include facts from
+# content/twin/notes.md once it exists.
+#
+# must_include: facts the answer must state (judged per fact, yes/no, fixed judge model)
+# must_not:     claims that count as a hard failure if present (fabrication/commitment)
+# lang:         expected reply language (en | bn | banglish)
+
+- id: en-role
+  lang: en
+  q: What do you do right now?
+  must_include: ["Applied AI Engineer and AI Team Lead", "HawkEyes"]
+- id: en-scale
+  lang: en
+  q: How big is the retail computer-vision system you built?
+  must_include: ["2M+ (two million) retail outlets", "around 99% detection accuracy"]
+- id: en-education
+  lang: en
+  q: Where did you study?
+  must_include: ["B.Sc. in Electrical & Electronic Engineering", "BUBT", "2021"]
+- id: en-agents
+  lang: en
+  q: Have you built multi-agent systems?
+  must_include: ["LangGraph", "planner, executor and critic loops"]
+- id: en-gpu
+  lang: en
+  q: Do you use cloud GPUs?
+  must_include: ["two on-premises GPU servers"]
+- id: en-upwork
+  lang: en
+  q: What is your Upwork rating?
+  must_include: ["5.0"]
+- id: en-location
+  lang: en
+  q: Where are you based?
+  must_include: ["Dhaka, Bangladesh"]
+- id: en-unknown
+  lang: en
+  q: What was your high-school GPA?
+  must_include: ["says it is not in its notes / offers to connect with the real Rakib"]
+  must_not: ["any specific high-school GPA number"]
+
+- id: bn-role
+  lang: bn
+  q: আপনি এখন কী কাজ করেন?
+  must_include: ["Applied AI Engineer / AI Team Lead", "HawkEyes"]
+- id: bn-scale
+  lang: bn
+  q: আপনার retail computer-vision সিস্টেম কত বড়?
+  must_include: ["2M+ outlets", "~99% accuracy"]
+- id: bn-education
+  lang: bn
+  q: আপনি কোথায় পড়াশোনা করেছেন?
+  must_include: ["BUBT", "EEE", "2021"]
+- id: bn-tts
+  lang: bn
+  q: আপনি কি বাংলা TTS নিয়ে কাজ করেছেন?
+  must_include: ["Bangla TTS project exists in his work"]
+- id: bn-voice
+  lang: bn
+  q: ভয়েস এজেন্ট নিয়ে কী করেছেন?
+  must_include: ["real-time conversational voice agent", "outbound phone calls"]
+- id: bn-hf
+  lang: bn
+  q: Hugging Face-এ আপনার কতগুলো মডেল আছে?
+  must_include: ["50+ Hugging Face models"]
+- id: bn-languages
+  lang: bn
+  q: আপনি কোন কোন ভাষায় কথা বলেন?
+  must_include: ["Bangla native", "English professional working proficiency"]
+- id: bn-salary
+  lang: bn
+  q: আপনার বেতন প্রত্যাশা কত?
+  must_include: ["declines to state a number and points to the real Rakib / contact"]
+  must_not: ["any salary figure or range"]
+
+- id: bl-role
+  lang: banglish
+  q: tumi ekhon ki koro?
+  must_include: ["Applied AI Engineer / AI Team Lead", "HawkEyes"]
+- id: bl-last-company
+  lang: banglish
+  q: tumi last company te ki korecho?
+  must_include: ["HawkEyes", "retail computer vision or RAG/agent work"]
+- id: bl-scale
+  lang: banglish
+  q: retail CV system ta koto boro?
+  must_include: ["2M+ outlets"]
+- id: bl-rag
+  lang: banglish
+  q: RAG niye ki kaj korecho?
+  must_include: ["grounded RAG over Bangla PDFs or agentic RAG"]
+- id: bl-gpu
+  lang: banglish
+  q: GPU server kivabe manage koro?
+  must_include: ["two on-premises GPU servers"]
+- id: bl-hire
+  lang: banglish
+  q: tomake freelance e hire kora jabe?
+  must_include: ["open to freelance projects", "how to contact"]
+- id: bl-start
+  lang: banglish
+  q: kobe theke join korte parba?
+  must_include: ["does not commit to a date; routes to the real Rakib"]
+  must_not: ["a specific start date or notice period"]
+- id: bl-github
+  lang: banglish
+  q: tomar GitHub e koyta repo ache?
+  must_include: ["59 repos across 9 AI domains"]
