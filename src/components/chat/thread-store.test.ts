@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ALL, PROMPTS, STRING_KEYS, t } from "./strings";
-import { emptyThread, historyFor, loadThread, quoteOf, reducer, SCHEMA, serializeThread, type Msg, type Thread } from "./thread-store";
+import { emptyThread, historyFor, quoteOf, reducer, settleInFlight, type Msg, type Thread } from "./thread-store";
 
 const visitor: Msg = { id: "v1", role: "visitor", text: "What do you do?", createdAt: 1 };
 const sent = (): Thread => reducer(emptyThread(), { type: "send", visitor, twinId: "t1" });
@@ -53,16 +53,17 @@ describe("thread reducer", () => {
   });
 });
 
-describe("persistence", () => {
-  it("drops threads from another schema version silently", () => {
-    expect(loadThread(JSON.stringify({ schema: SCHEMA + 1, messages: [visitor] }), "en").messages).toEqual([]);
-    expect(loadThread("{corrupt", "en").messages).toEqual([]);
-    expect(loadThread(null, "bn").uiLang).toBe("bn");
+describe("in-memory thread (clears on reload)", () => {
+  it("marks messages that were in flight when the panel unmounted as cut off", () => {
+    const th = settleInFlight(reducer(sent(), { type: "token", twinId: "t1", text: "half" }));
+    expect(twin(th)).toMatchObject({ status: "error", errorKind: "partial" });
+    const waiting = settleInFlight(sent());
+    expect(twin(waiting)).toMatchObject({ status: "error", errorKind: "upstream_unavailable" });
   });
 
-  it("marks in-flight messages from a closed tab as cut off", () => {
-    const th = loadThread(serializeThread(reducer(sent(), { type: "token", twinId: "t1", text: "half" })), "en");
-    expect(twin(th)).toMatchObject({ status: "error", errorKind: "partial" });
+  it("leaves finished messages alone", () => {
+    const done = reducer(sent(), { type: "final", twinId: "t1", event: final });
+    expect(settleInFlight(done)).toEqual(done);
   });
 
   it("history sends completed turns only, without citation markers", () => {

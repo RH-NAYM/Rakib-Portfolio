@@ -6,10 +6,9 @@ import type { Payload } from "./media";
 import {
   emptyThread,
   historyFor,
-  loadThread,
+  LEGACY_STORAGE_KEY,
   reducer,
-  serializeThread,
-  STORAGE_KEY,
+  settleInFlight,
   type Attachment,
   type LangChoice,
   type Msg,
@@ -29,19 +28,19 @@ export type SendInput = {
   quote?: Quote;
 };
 
-function readStorage(): string | null {
-  try {
-    return localStorage.getItem(STORAGE_KEY);
-  } catch {
-    return null;
-  }
-}
+/**
+ * The conversation lives in page memory only: it survives in-app navigation (panel ⇄ /chat,
+ * design 6A) but every reload or hard reload starts a fresh chat (user request, 2026-11-18).
+ * Media bytes for Retry are kept the same way (never persisted, eng R1-10).
+ */
+let memoryThread: Thread | null = null;
+const memoryPayloads = new Map<string, { image?: Payload; audio?: Payload }>();
 
 class SessionError extends Error {}
 
-/** Chat state + streaming. The floating panel and /chat share one localStorage thread (design 6A). */
+/** Chat state + streaming. The floating panel and /chat share one in-memory thread. */
 export function useTwinChat() {
-  const [thread, dispatch] = useReducer(reducer, undefined, () => emptyThread("en"));
+  const [thread, dispatch] = useReducer(reducer, undefined, () => (memoryThread ? settleInFlight(memoryThread) : emptyThread("en")));
   const [loaded, setLoaded] = useState(false);
   const [online, setOnline] = useState(true);
   const [verifying, setVerifying] = useState(false);
@@ -49,36 +48,30 @@ export function useTwinChat() {
   const busy = useRef(false);
   const sessionUntil = useRef(0);
   const turnstileEl = useRef<HTMLDivElement>(null);
-  // Media bytes for Retry live in memory only (never persisted, eng R1-10).
-  const payloads = useRef(new Map<string, { image?: Payload; audio?: Payload }>());
+  const payloads = useRef(memoryPayloads);
 
   useEffect(() => {
-    dispatch({ type: "load", thread: loadThread(readStorage(), "en") });
+    // Older builds saved the chat in localStorage; remove it so nothing survives a reload.
+    try {
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    } catch {
+      /* storage blocked: nothing to remove */
+    }
     setLoaded(true);
     setOnline(navigator.onLine);
     const on = () => setOnline(true);
     const off = () => setOnline(false);
-    const sync = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY && !busy.current) dispatch({ type: "load", thread: loadThread(e.newValue, "en") });
-    };
     window.addEventListener("online", on);
     window.addEventListener("offline", off);
-    window.addEventListener("storage", sync);
     return () => {
       window.removeEventListener("online", on);
       window.removeEventListener("offline", off);
-      window.removeEventListener("storage", sync);
     };
   }, []);
 
   useEffect(() => {
-    if (!loaded) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, serializeThread(thread));
-    } catch {
-      /* storage full or blocked: chat still works for this tab */
-    }
-  }, [thread, loaded]);
+    memoryThread = thread;
+  }, [thread]);
 
   const ensureSession = useCallback(async (force = false) => {
     if (!TURNSTILE_SITE_KEY) return; // bot check not configured yet (phase 1b is opt-in)

@@ -933,6 +933,8 @@ All four phases are implemented on `dev` (all-Vercel, D17). Optional pieces are 
 - **3** mic tap recording (fake-device tested), Gemini transcription, editable transcript → re-ask, Gemini TTS with Banglish → Bengali transliteration, autoplay after a voice question with the blocked → "Tap ▶" fallback.
 - **4** logs in Upstash (90-day TTL, no IP, disclosed when on), `/admin/insights` (PBKDF2 password, 5 attempts/15 min, admin token with its own secret and audience), in-chat lead form posting to `/api/contact`.
 
+Change (2026-11-18, user request): the chat no longer persists in `localStorage`. It lives in page memory, so it survives panel ⇄ `/chat` navigation but **every reload or hard reload starts a fresh chat**. Old saved threads are deleted on load. This supersedes the localStorage parts of design 2A/6A.
+
 Deviation: TTS audio isn't cached server-side (values are too big for Redis to be worth it). The browser caches it per message for the session, and replies are rate-limited at 2× the chat limit.
 
 ## Design Review Completion Summary

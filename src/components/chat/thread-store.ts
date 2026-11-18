@@ -1,10 +1,10 @@
 import type { ErrorEvent, FinalEvent, Media, MetaEvent, Source, StepEvent, Trace } from "@/lib/twin-events";
 import type { UiLang } from "./strings";
 
-/** Persisted thread shape. Bump SCHEMA when it changes; old threads are cleared silently (design 2A). */
+/** Thread shape version. The thread is in-memory only now; this guards stale copies. */
 export const SCHEMA = 2;
-export const STORAGE_KEY = "twin-thread";
-export const MAX_STORED = 60;
+/** Where older builds persisted the chat. Kept only so it can be deleted on load. */
+export const LEGACY_STORAGE_KEY = "twin-thread";
 export const MAX_QUOTE = 1000;
 
 export type Step = { step: StepEvent["step"]; status: StepEvent["status"] };
@@ -193,21 +193,14 @@ export function historyFor(t: Thread, beforeId: string): Array<{ role: "user" | 
   return out.slice(-12);
 }
 
-export function loadThread(raw: string | null, fallbackLang: UiLang): Thread {
-  if (!raw) return emptyThread(fallbackLang);
-  try {
-    const p = JSON.parse(raw) as Thread;
-    if (p?.schema !== SCHEMA || !Array.isArray(p.messages)) return emptyThread(fallbackLang);
-    // In-flight messages from a closed tab can't resume; mark them cut off.
-    const messages = p.messages.map((m) =>
-      m.status === "waiting" || m.status === "streaming" ? { ...m, status: "error" as const, errorKind: (m.text ? "partial" : "upstream_unavailable") as TwinErrorKind } : m,
-    );
-    return { ...emptyThread(fallbackLang), ...p, messages };
-  } catch {
-    return emptyThread(fallbackLang);
-  }
-}
-
-export function serializeThread(t: Thread): string {
-  return JSON.stringify({ ...t, messages: t.messages.slice(-MAX_STORED) });
+/** A message still waiting/streaming when its component unmounted can't resume; mark it cut off. */
+export function settleInFlight(t: Thread): Thread {
+  return {
+    ...t,
+    messages: t.messages.map((m) =>
+      m.status === "waiting" || m.status === "streaming"
+        ? { ...m, status: "error" as const, errorKind: (m.text ? "partial" : "upstream_unavailable") as TwinErrorKind }
+        : m,
+    ),
+  };
 }

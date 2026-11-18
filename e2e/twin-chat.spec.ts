@@ -60,10 +60,30 @@ test("Banglish question: chips, cited first-person answer, no 'seen' receipt", a
   await expect(dlg.getByText(/seen/i)).toHaveCount(0);
   // UI follows the reply language (design 7C)
   await expect(dlg.getByPlaceholder("Rakib er twin ke likhun…")).toBeVisible();
-  // thread survives a reload (shared localStorage thread, design 6A)
+  // a reload starts a fresh chat (user request 2026-11-18): greeting + prompts again, old answer gone
   await page.reload();
   await page.getByRole("button", { name: "Chat with my AI twin" }).click();
-  await expect(page.getByRole("dialog").getByTestId("twin-bubble").getByText("Ami HawkEyes e AI Team Lead.")).toBeVisible();
+  await expect(page.getByRole("dialog").getByText(/I'm Rakib's AI twin/)).toBeVisible();
+  await expect(page.getByRole("dialog").getByText("Ami HawkEyes e AI Team Lead.")).toHaveCount(0);
+});
+
+test("hard reload clears the chat and removes any saved copy from older builds", async ({ page }) => {
+  await mockAgent(page, [frame(answer("Remember me?[[1]]", "en"))]);
+  await page.goto("/");
+  // simulate a visitor who used the old build that saved the thread in localStorage
+  await page.evaluate(() => localStorage.setItem("twin-thread", JSON.stringify({ schema: 2, messages: [{ id: "x", role: "visitor", text: "old question", createdAt: 1 }], uiLang: "en", langChoice: "auto", disclosureDismissed: false })));
+  await page.getByRole("button", { name: "Chat with my AI twin" }).click();
+  await expect(page.getByRole("dialog").getByText("old question")).toHaveCount(0);
+  await page.getByRole("dialog").getByRole("button", { name: "Show me a computer-vision project" }).click();
+  await expect(page.getByTestId("twin-bubble").getByText("Remember me?")).toBeVisible();
+  // hard reload = bypass cache
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send("Page.reload", { ignoreCache: true });
+  await page.waitForLoadState("load");
+  await page.getByRole("button", { name: "Chat with my AI twin" }).click();
+  await expect(page.getByRole("dialog").getByText(/I'm Rakib's AI twin/)).toBeVisible();
+  await expect(page.getByText("Remember me?")).toHaveCount(0);
+  expect(await page.evaluate(() => localStorage.getItem("twin-thread"))).toBeNull();
 });
 
 test("outage: error bubble with contact card, Retry recovers (eng D3)", async ({ page }) => {
@@ -103,12 +123,14 @@ test("Bangla answers render in Anek Bangla with roomy line-height (design 5A)", 
   expect(parseFloat(style.lh) / parseFloat(style.fs)).toBeCloseTo(1.75, 1);
 });
 
-test("/chat page shares the thread and has no floating launcher", async ({ page }) => {
+test("expanding to /chat keeps the conversation (in-app navigation) and hides the launcher", async ({ page, isMobile }) => {
+  test.skip(isMobile, "the expand button is desktop-only; mobile already opens the chat full-screen");
   await mockAgent(page, [frame(answer("Shared thread.[[1]]", "en"))]);
   await openChat(page);
   await page.getByRole("dialog").getByRole("button", { name: "Show me a computer-vision project" }).click();
   await expect(page.getByTestId("twin-bubble").getByText("Shared thread.")).toBeVisible();
-  await page.goto("/chat");
+  await page.getByRole("dialog").getByRole("link", { name: "Open full screen" }).click();
+  await expect(page).toHaveURL(/\/chat$/);
   await expect(page.getByTestId("twin-bubble").getByText("Shared thread.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Chat with my AI twin" })).toHaveCount(0);
 });
