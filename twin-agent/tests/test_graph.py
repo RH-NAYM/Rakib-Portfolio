@@ -125,3 +125,9 @@ async def test_citations_capped_at_two_per_sentence(knowledge):
     draft = {"sentences": [{"text": "Big.", "cites": ["case-retail", "profile", "cv"]}]}
     final, _, _ = await run({"guard": [OK_GUARD], "plan": [PLAN], "draft": [draft], "critic": [PASS]}, knowledge)
     assert final["text"] == "Big.[[1]][[2]]" and len(final["sources"]) == 2
+
+
+def test_guard_prompt_treats_about_yourself_as_a_real_question():
+    from app.prompts import GUARD_PROMPT
+
+    assert '"Tell me about yourself"' in GUARD_PROMPT and "are NOT smalltalk" in GUARD_PROMPT

@@ -33,7 +33,7 @@ GUARD_SCHEMA = {
 GUARD_PROMPT = """Classify the visitor's latest message to Rakib's AI twin.
 category:
 - ok: a question about Rakib, his work, projects, skills, experience, writing, services or how to contact/hire him
-- smalltalk: greeting, thanks, "who are you", bye
+- smalltalk: ONLY a bare greeting, thanks or goodbye with no question in it ("hi", "thanks!", "bye"). "Tell me about yourself", "who are you", "introduce yourself" are NOT smalltalk: they are ok.
 - commitment_request: asks for salary, rate, price quote, start date, availability for a specific date, interview booking, or an offer/acceptance
 - off_topic: unrelated to Rakib (homework, general coding help, other people, politics)
 - abusive: insults, harassment, sexual content

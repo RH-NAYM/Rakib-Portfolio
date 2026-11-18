@@ -10,7 +10,7 @@ import { t, type UiLang } from "./strings";
 import { plainText, type Msg } from "./thread-store";
 import type { SpeechState } from "./use-speech";
 
-export const AVATAR = "/profile-photos/photo-1.jpg"; // swap for /twin-avatar.webp (design 7A crop) when generated
+export const AVATAR = "/twin-avatar.webp"; // 256px face crop of profile-photos/photo-3.jpg (design 7A)
 const BENGALI = /[ঀ-৿]/;
 export const langAttr = (text: string): "bn" | undefined => (BENGALI.test(text) ? "bn" : undefined);
 

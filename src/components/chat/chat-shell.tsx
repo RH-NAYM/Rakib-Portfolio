@@ -104,7 +104,8 @@ function TwinBody({ msg, lang, thread, question, onRetry, onOpenMedia, traceOpen
       <p className="whitespace-pre-wrap text-[--color-text]" lang={langAttr(msg.text)}><Citations text={msg.text} sources={msg.sources} /></p>
       {msg.media && msg.media.length > 0 && <MediaGroup media={msg.media} lang={lang} onOpen={(i) => onOpenMedia(msg.media!, i)} />}
       {msg.card === "contact" && <HandoffCard lang={lang} thread={thread} question={question} />}
-      {msg.status === "done" && msg.trace && (
+      {/* Templated replies (greeting, handoff, off-topic) have no plan or sources: nothing to explain. */}
+      {msg.status === "done" && msg.trace && (msg.trace.source_count > 0 || msg.trace.plan.length > 0) && (
         <div className="mt-2 border-t border-[--color-border] pt-1.5">
           <button type="button" onClick={onToggleTrace} aria-expanded={traceOpen} className="inline-flex min-h-8 items-center gap-1 text-xs text-[--color-text-muted] hover:text-[--color-text]">
             {t("howIAnswered", lang)} · {msg.trace.source_count} {t("sources", lang)} · {(msg.trace.elapsed_ms / 1000).toFixed(1)}s

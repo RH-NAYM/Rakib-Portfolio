@@ -83,11 +83,15 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4 {
-  text-wrap: balance;
-}
-p {
-  text-wrap: pretty;
+/* In @layer base so Tailwind utilities (e.g. `truncate`, `whitespace-nowrap`) can override them.
+   Unlayered, `text-wrap` beat `truncate`'s white-space and made truncated text wrap. */
+@layer base {
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
 }
 
 /* the narrow data face: tags, numbers, small meta */

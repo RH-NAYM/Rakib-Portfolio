@@ -167,3 +167,44 @@ test("admin insights: sign in, then knowledge gaps and top questions", async ({ 
   await expect(page.getByText("what is your gpa?")).toBeVisible();
   await expect(page.getByText("what did you build?")).toBeVisible();
 });
+
+// ── regressions from the first production run (2026-11-18) ───────────────────
+test("chat header stays on one line (global p text-wrap must not beat `truncate`)", async ({ page }) => {
+  const dlg = await openChat(page);
+  const name = dlg.getByText("Rakib (AI twin)", { exact: true }).first();
+  const status = dlg.getByText("Answers from my CV, projects & notes").first();
+  for (const el of [name, status]) {
+    const lh = await el.evaluate((n) => parseFloat(getComputedStyle(n).lineHeight) || 20);
+    expect((await el.boundingBox())!.height).toBeLessThan(lh * 1.5);
+  }
+});
+
+test("every image on the home page and in the chat actually loads", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Chat with my AI twin" }).click();
+  await page.waitForLoadState("networkidle");
+  const broken = await page.evaluate(() =>
+    Array.from(document.images)
+      .filter((i) => i.loading !== "lazy" || i.getBoundingClientRect().top < innerHeight)
+      .filter((i) => i.complete && i.naturalWidth === 0)
+      .map((i) => i.currentSrc || i.src),
+  );
+  expect(broken).toEqual([]);
+  expect(await page.evaluate(() => Array.from(document.images).some((i) => i.src.includes("/_next/image")))).toBe(false);
+});
+
+test("/chat header sits below the fixed site header", async ({ page }) => {
+  await page.goto("/chat");
+  const siteHeader = await page.locator("header").first().boundingBox();
+  const chatName = await page.locator("[data-chat-root]").getByText("Rakib (AI twin)", { exact: true }).first().boundingBox();
+  expect(chatName!.y).toBeGreaterThanOrEqual(siteHeader!.y + siteHeader!.height - 1);
+});
+
+test("templated replies don't show an empty 'How I answered'", async ({ page }) => {
+  await mockChat(page, [frame(final("Hi! I'm Rakib's AI twin.", { sources: [], trace: { plan: [], source_count: 0, revisions: 0, elapsed_ms: 600, critic: { passed: true, removed_sentences: 0 } } }))]);
+  const dlg = await openChat(page);
+  await dlg.getByRole("textbox").fill("hi");
+  await dlg.getByRole("textbox").press("Enter");
+  await expect(dlg.getByTestId("twin-bubble").getByText("Hi! I'm Rakib's AI twin.")).toBeVisible();
+  await expect(dlg.getByRole("button", { name: /How I answered/ })).toHaveCount(0);
+});

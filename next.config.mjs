@@ -3,7 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    formats: ["image/avif", "image/webp"],
+    // Vercel Services mode doesn't route /_next/image to the optimizer (it 404'd in production
+    // and broke every next/image). Serve originals from /public; they're already web-sized.
+    unoptimized: true,
   },
   // Lint is available via `npm run lint`; don't let it block production builds.
   eslint: { ignoreDuringBuilds: true },
