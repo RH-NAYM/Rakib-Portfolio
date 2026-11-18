@@ -11,7 +11,7 @@ import json
 import os
 from typing import Any, Protocol
 
-from app.gate import CostMeter
+from app.gate import CostMeter, service_account_info
 
 
 THINKING_BUDGET = {"draft": int(os.environ.get("TWIN_DRAFT_THINKING", "512"))}
@@ -33,20 +33,18 @@ class LLMParseError(RuntimeError):
 def make_genai_client():
     """Gemini client from Vercel env (all-Vercel decision, D17).
 
-    Order: GOOGLE_SERVICE_ACCOUNT_B64 (Vertex, recommended) → GOOGLE_APPLICATION_CREDENTIALS
-    (Vertex, local key file / CI) → GEMINI_API_KEY (Gemini Developer API).
+    Order: service-account key in env (GOOGLE_SERVICE_ACCOUNT_JSON raw JSON, or *_B64) → Vertex
+    → GOOGLE_APPLICATION_CREDENTIALS key file (local / CI) → GEMINI_API_KEY (Developer API).
+    Project comes from the key; location defaults to `global` (most Gemini capacity).
     """
-    import base64
-
     from google import genai
 
     project = os.environ.get("GCP_PROJECT_ID")
     location = os.environ.get("GCP_LOCATION", "global")
-    b64 = os.environ.get("GOOGLE_SERVICE_ACCOUNT_B64")
-    if b64:
+    info = service_account_info()
+    if info:
         from google.oauth2 import service_account
 
-        info = json.loads(base64.b64decode(b64).decode("utf-8"))
         creds = service_account.Credentials.from_service_account_info(
             info, scopes=["https://www.googleapis.com/auth/cloud-platform"]
         )
@@ -55,7 +53,7 @@ def make_genai_client():
         return genai.Client(vertexai=True, project=project, location=location)
     if os.environ.get("GEMINI_API_KEY"):
         return genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    raise RuntimeError("No Gemini credentials: set GOOGLE_SERVICE_ACCOUNT_B64 (Vertex) or GEMINI_API_KEY.")
+    raise RuntimeError("No Gemini credentials: set GOOGLE_SERVICE_ACCOUNT_JSON (paste the key file) or GEMINI_API_KEY.")
 
 
 class GeminiLLM:

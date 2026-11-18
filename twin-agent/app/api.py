@@ -27,7 +27,7 @@ from datetime import datetime, timedelta
 import httpx
 
 from app import prompts as P
-from app.gate import DHAKA, CostMeter, Gate, check_password, check_startup, client_ip, dhaka_day, gate_from_env, ip_key, log_turn, sign_token, verify_token
+from app.gate import DHAKA, CostMeter, derived_secret, limits_mode, service_account_info, Gate, check_password, check_startup, client_ip, dhaka_day, gate_from_env, ip_key, log_turn, sign_token, verify_token
 from app.graph import build_graph
 from app.llm import LLM, GeminiLLM
 from app.nodes import Deps
@@ -142,8 +142,8 @@ def create_app(llm: LLM | None = None, knowledge: Knowledge | None = None, gate:
         return state["llm"]
 
     router = APIRouter()
-    session_secret = os.environ.get("TWIN_SESSION_SECRET", "").encode()
-    admin_secret = os.environ.get("TWIN_ADMIN_SECRET", "").encode()
+    session_secret = derived_secret("session")
+    admin_secret = derived_secret("admin")
     turnstile_secret = os.environ.get("TURNSTILE_SECRET_KEY", "")
     logging_on = os.environ.get("TWIN_LOG_CONVERSATIONS") == "true"
 
@@ -155,7 +155,22 @@ def create_app(llm: LLM | None = None, knowledge: Knowledge | None = None, gate:
 
     @router.get("/healthz")
     async def healthz() -> dict:
-        return {"ok": True, "docs": len(state["knowledge"].docs), "bot_check": bool(turnstile_secret and session_secret), "logging": logging_on}
+        # Config summary (no secrets) so a deploy can be checked from outside: is Gemini configured,
+        # which limits store is active, which optional features are on.
+        try:
+            sa = service_account_info()
+        except RuntimeError:
+            sa = None
+        gemini = "vertex" if sa or os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") else ("developer_api" if os.environ.get("GEMINI_API_KEY") else "missing")
+        return {
+            "ok": gemini != "missing" or state["llm"] is not None,
+            "docs": len(state["knowledge"].docs),
+            "gemini": gemini,
+            "limits": limits_mode(),
+            "bot_check": bool(turnstile_secret and session_secret),
+            "logging": logging_on,
+            "admin": bool(os.environ.get("ADMIN_PASSWORD_HASH") and admin_secret),
+        }
 
     @router.post("/session")
     async def session(request: Request):

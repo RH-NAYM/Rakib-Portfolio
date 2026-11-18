@@ -55,12 +55,11 @@ def test_startup_refuses_memory_backend_outside_tests(monkeypatch):
         check_startup(["gemini-2.5-flash"])
 
 
-def test_startup_requires_ip_secret_outside_tests(monkeypatch):
+def test_startup_accepts_no_extra_secrets_in_prod(monkeypatch):
     monkeypatch.setenv("TWIN_ENV", "prod")
-    monkeypatch.setenv("TWIN_LIMITS_BACKEND", "upstash")
+    monkeypatch.delenv("TWIN_LIMITS_BACKEND", raising=False)
     monkeypatch.delenv("IP_HASH_SECRET", raising=False)
-    with pytest.raises(RuntimeError, match="IP_HASH_SECRET"):
-        check_startup(["gemini-2.5-flash"])
+    check_startup(["gemini-2.5-flash"])  # only the service account is required now
 
 
 def test_zero_spend_writes_nothing():
@@ -116,3 +115,61 @@ def test_upstash_requires_env(monkeypatch):
         monkeypatch.delenv(k, raising=False)
     with pytest.raises(RuntimeError, match="Upstash"):
         UpstashBackend()
+
+
+# ── single-variable setup: only the service-account JSON in Vercel ───────────
+import base64 as _b64
+import json as _json
+
+SA = {"type": "service_account", "project_id": "p1", "private_key": "-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----\n", "client_email": "x@p1.iam.gserviceaccount.com"}
+
+
+def _clear_sa(monkeypatch):
+    for n in G.SA_ENV_NAMES + ("IP_HASH_SECRET", "TWIN_SESSION_SECRET", "TWIN_ADMIN_SECRET"):
+        monkeypatch.delenv(n, raising=False)
+
+
+def test_service_account_accepted_as_raw_json_or_base64(monkeypatch):
+    _clear_sa(monkeypatch)
+    monkeypatch.setenv("GOOGLE_SERVICE_ACCOUNT_JSON", "  " + _json.dumps(SA, indent=2) + "\n")
+    assert G.service_account_info()["project_id"] == "p1"
+    _clear_sa(monkeypatch)
+    monkeypatch.setenv("GOOGLE_SERVICE_ACCOUNT_B64", _b64.b64encode(_json.dumps(SA).encode()).decode())
+    assert G.service_account_info()["client_email"].startswith("x@")
+
+
+@pytest.mark.parametrize("value", ["not json", _json.dumps({"type": "authorized_user"})])
+def test_malformed_service_account_fails_fast(monkeypatch, value):
+    _clear_sa(monkeypatch)
+    monkeypatch.setenv("GOOGLE_SERVICE_ACCOUNT_JSON", value)
+    with pytest.raises(RuntimeError):
+        check_startup(["gemini-2.5-flash"])
+
+
+def test_secrets_derive_from_the_key_stable_and_distinct(monkeypatch):
+    _clear_sa(monkeypatch)
+    monkeypatch.setenv("TWIN_ENV", "prod")
+    monkeypatch.setenv("GOOGLE_SERVICE_ACCOUNT_JSON", _json.dumps(SA))
+    ip, ses, adm = G.derived_secret("ip"), G.derived_secret("session"), G.derived_secret("admin")
+    assert len({ip, ses, adm}) == 3 and all(len(x) == 32 for x in (ip, ses, adm))
+    assert G.derived_secret("ip") == ip  # stable across cold starts
+    monkeypatch.setenv("IP_HASH_SECRET", "explicit")
+    assert G.derived_secret("ip") == b"explicit"  # explicit env still wins
+
+
+def test_no_secret_without_key_outside_tests(monkeypatch):
+    _clear_sa(monkeypatch)
+    monkeypatch.setenv("TWIN_ENV", "prod")
+    assert G.derived_secret("session") == b""  # → bot check / admin stay off rather than using a guessable key
+
+
+def test_limits_fall_back_to_per_instance_with_split_cap(monkeypatch):
+    for k in ("KV_REST_API_URL", "KV_REST_API_TOKEN", "UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN", "TWIN_LIMITS_BACKEND"):
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setenv("TWIN_DAILY_USD_CAP", "3.0")
+    assert G.limits_mode() == "instance"
+    g = G.gate_from_env()
+    assert isinstance(g.backend, MemoryBackend) and g.cap == pytest.approx(1.0)
+    monkeypatch.setenv("KV_REST_API_URL", "https://kv.example")
+    monkeypatch.setenv("KV_REST_API_TOKEN", "t")
+    assert G.limits_mode() == "upstash" and isinstance(G.gate_from_env().backend, UpstashBackend)

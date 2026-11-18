@@ -164,18 +164,76 @@ def client_ip(headers) -> str:
     return raw.split(",")[0].strip() or "0.0.0.0"
 
 
+# ── single-variable setup (user decision: only the service-account JSON is set in Vercel) ──
+SA_ENV_NAMES = ("GOOGLE_SERVICE_ACCOUNT_JSON", "GOOGLE_SERVICE_ACCOUNT_B64", "GOOGLE_SERVICE_ACCOUNT")
+
+
+def service_account_info() -> dict | None:
+    """The service-account key from env, accepted as raw JSON (pasted file contents) or base64."""
+    import base64
+    import json
+
+    for name in SA_ENV_NAMES:
+        raw = (os.environ.get(name) or "").strip()
+        if not raw:
+            continue
+        try:
+            info = json.loads(raw) if raw.startswith("{") else json.loads(base64.b64decode(raw).decode("utf-8"))
+        except (ValueError, UnicodeDecodeError) as exc:
+            raise RuntimeError(f"{name} is set but is neither JSON nor base64 JSON") from exc
+        if info.get("type") != "service_account" or "private_key" not in info:
+            raise RuntimeError(f"{name} does not look like a Google service-account key")
+        return info
+    return None
+
+
+def derived_secret(purpose: str) -> bytes:
+    """Explicit env secret if set, else a stable secret derived from the service-account private key.
+
+    Keyed HMAC means the IP hashes / tokens can't be forged or reversed without the key, and nothing
+    extra has to be configured. Rotating the key rotates these too (counters/sessions just reset).
+    """
+    explicit = {"ip": "IP_HASH_SECRET", "session": "TWIN_SESSION_SECRET", "admin": "TWIN_ADMIN_SECRET"}[purpose]
+    if os.environ.get(explicit):
+        return os.environ[explicit].encode()
+    info = service_account_info()
+    if info:
+        return hmac.new(info["private_key"].encode(), f"twin:{purpose}:v1".encode(), hashlib.sha256).digest()
+    if os.environ.get("TWIN_ENV") == "test":
+        return f"test-{purpose}".encode()
+    return b""
+
+
+def upstash_configured() -> bool:
+    return bool((os.environ.get("KV_REST_API_URL") or os.environ.get("UPSTASH_REDIS_REST_URL")) and
+                (os.environ.get("KV_REST_API_TOKEN") or os.environ.get("UPSTASH_REDIS_REST_TOKEN")))
+
+
+def limits_mode() -> str:
+    """upstash (shared, exact) when connected; otherwise per-instance memory so the twin still works
+    with only the service account set. Explicit TWIN_LIMITS_BACKEND=memory stays test-only."""
+    if os.environ.get("TWIN_LIMITS_BACKEND") == "memory":
+        return "memory"
+    return "upstash" if upstash_configured() else "instance"
+
+
 def check_startup(models: list[str]) -> None:
     assert_priced(*models)
-    if os.environ.get("TWIN_LIMITS_BACKEND", "upstash") == "memory" and os.environ.get("TWIN_ENV") != "test":
+    if os.environ.get("TWIN_LIMITS_BACKEND") == "memory" and os.environ.get("TWIN_ENV") != "test":
         raise RuntimeError("TWIN_LIMITS_BACKEND=memory is only allowed with TWIN_ENV=test")
-    if os.environ.get("TWIN_ENV") != "test" and not os.environ.get("IP_HASH_SECRET"):
-        raise RuntimeError("IP_HASH_SECRET must be set outside tests")
+    service_account_info()  # fail fast on a malformed key
 
 
 def gate_from_env() -> Gate:
-    backend: LimitsBackend = MemoryBackend() if os.environ.get("TWIN_LIMITS_BACKEND") == "memory" else UpstashBackend()
-    secret = os.environ.get("IP_HASH_SECRET", "test-secret").encode()
-    return Gate(backend, secret, float(os.environ.get("TWIN_DAILY_USD_CAP", "2.0")))
+    mode = limits_mode()
+    backend: LimitsBackend = UpstashBackend() if mode == "upstash" else MemoryBackend()
+    cap = float(os.environ.get("TWIN_DAILY_USD_CAP", "2.0"))
+    if mode == "instance":
+        # Without shared storage each warm instance counts on its own; split the cap so a few
+        # concurrent instances still stay near the daily budget (Vercel scales a hobby site to very few).
+        cap = cap / float(os.environ.get("TWIN_EXPECTED_INSTANCES", "3"))
+    secret = derived_secret("ip") or b"unkeyed"
+    return Gate(backend, secret, cap)
 
 
 # ── signed tokens (visitor session after Turnstile; admin login) ─────────────

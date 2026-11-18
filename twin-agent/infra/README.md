@@ -1,5 +1,27 @@
 # AI twin: setup (all-Vercel, D17)
 
+## The only required step
+Vercel → your project → **Settings → Environment Variables** → Add:
+- **Key:** `GOOGLE_SERVICE_ACCOUNT_JSON`
+- **Value:** paste the entire contents of your service-account `.json` key file
+- **Environments:** Production (and Preview if you want previews to answer)
+
+Save, then redeploy (or push any commit). That's it. Everything else is derived or defaulted:
+- **project id:** read from the key
+- **Gemini location:** `global`
+- **rate-limit / session / admin secrets:** derived from the key's private key
+- **rate limits + daily spend cap:** kept per serverless instance
+- **daily cap:** `$2` in total. In per-instance mode it's split across an expected 3 instances, so about $0.67 each.
+
+The key's service account needs the **Vertex AI User** role, with the Vertex AI API enabled in its project.
+
+Check it worked: `https://<your-domain>/api/twin/healthz` should show `"gemini":"vertex"`.
+
+Everything below is **optional hardening** you can add later.
+
+---
+
+
 One Vercel project runs two **Services** (`vercel.json`):
 - `web`: the Next.js site (repo root)
 - `twin`: the FastAPI + LangGraph agent (`twin-agent/`), reachable at `/api/twin/*`
@@ -12,7 +34,7 @@ Checks hold production until it passes.
 1. Resend dashboard → API Keys: revoke the key that was committed in `.env.example`, create a new one, and put it only in Vercel env and `.env.local`.
 2. `.env.example` holds placeholders only. Rotating the key is the actual fix.
 
-## 1. Gemini credentials (pick one)
+## 1. Gemini credentials (alternatives)
 **A. Vertex AI (recommended: uses your GCP credit, enterprise data terms)**
 1. GCP Console → IAM → Service Accounts → create `twin-vertex`.
 2. Grant it **only** `Vertex AI User` (`roles/aiplatform.user`).
@@ -27,14 +49,14 @@ Checks hold production until it passes.
 
 Retire the old key used by the removed `/api/chat` route: GCP → that service account → Keys → delete. Then delete the local `service_account.json`.
 
-## 2. Upstash Redis (rate limits + spend cap)
+## 2. Upstash Redis (optional: exact shared limits, needed for logs/admin)
 Vercel → Project → Storage / Marketplace → **Upstash for Redis** → Create (free tier) → Connect to this project.
 This injects `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
 
-## 3. Remaining env vars (Vercel, Production + Preview)
+## 3. Optional overrides (Vercel, Production + Preview)
 | Name | Value |
 |---|---|
-| `IP_HASH_SECRET` | `openssl rand -hex 32` |
+| `IP_HASH_SECRET` | optional; derived from the key if unset |
 | `TWIN_DAILY_USD_CAP` | e.g. `2.0` (USD per Asia/Dhaka day; the twin "rests" after) |
 | `TWIN_MODEL_FAST` | `gemini-2.5-flash` (must exist in `twin-agent/app/pricing.py`, else the function refuses to start) |
 
