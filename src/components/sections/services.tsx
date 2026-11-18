@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import { services, socials } from "@/content/site";
@@ -51,12 +52,12 @@ export function Services() {
         >
           Hire on Upwork <ArrowUpRight size={16} className="nudge" />
         </a>
-        <a
+        <Link
           href="/#contact"
           className="px-2 py-3 text-sm font-semibold text-[--color-text-muted] underline decoration-[--color-border-strong] underline-offset-4 transition-colors hover:text-[--color-text]"
         >
           Need something custom? Send a message
-        </a>
+        </Link>
       </div>
     </section>
   );

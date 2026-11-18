@@ -1,8 +1,9 @@
-"""FastAPI entrypoint: POST /chat streams SSE events defined in
-contracts/sse-events.schema.json (eng D4, `v` field per D9).
+"""FastAPI entrypoint (Vercel Services, D17): POST /api/twin/chat streams SSE
+events defined in contracts/sse-events.schema.json (eng D4, `v` field per D9).
 
-The service is private (Cloud Run IAM, invoker = Vercel proxy only), so
-X-Twin-Client-IP is trusted here and nowhere else.
+Vercel routes /api/twin/* here with the original path. The service is public
+behind that rewrite, so the client IP comes only from Vercel's edge headers
+(gate.client_ip), never from a request-supplied custom header.
 """
 
 from __future__ import annotations
@@ -14,11 +15,11 @@ import os
 import re
 from typing import AsyncIterator, Literal
 
-from fastapi import FastAPI, Header, Request
+from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field, field_validator
 
-from app.gate import CostMeter, Gate, check_startup, gate_from_env
+from app.gate import CostMeter, Gate, check_startup, client_ip, gate_from_env
 from app.graph import build_graph
 from app.llm import LLM, GeminiLLM
 from app.nodes import Deps
@@ -77,19 +78,21 @@ def create_app(llm: LLM | None = None, knowledge: Knowledge | None = None, gate:
             state["llm"] = GeminiLLM(fast, main)
         return state["llm"]
 
-    @app.get("/healthz")
+    router = APIRouter()
+
+    @router.get("/healthz")
     async def healthz() -> dict:
         return {"ok": True, "docs": len(state["knowledge"].docs)}
 
-    @app.post("/chat")
-    async def chat(request: Request, x_twin_client_ip: str = Header(default="0.0.0.0")):
+    @router.post("/chat")
+    async def chat(request: Request):
         try:
             body = ChatIn.model_validate(await request.json())
         except Exception:
             return JSONResponse(error_event("bad_request"), status_code=400)
 
         gate: Gate = state["gate"]
-        verdict = gate.admit(x_twin_client_ip)
+        verdict = await asyncio.to_thread(gate.admit, client_ip(request.headers))
 
         async def stream() -> AsyncIterator[bytes]:
             if not verdict.ok:
@@ -146,19 +149,18 @@ def create_app(llm: LLM | None = None, knowledge: Knowledge | None = None, gate:
                 task.cancel()
                 # Spend is recorded even when the client aborts or the cap fires (eng D12).
                 try:
-                    gate.record_spend(meter)
+                    await asyncio.to_thread(gate.record_spend, meter)
                 except Exception:
                     log.exception("record_spend failed")
                 log.info(json.dumps({"evt": "chat", "usd": round(meter.usd, 6), "calls": len(meter.calls), "ms": int(deps.elapsed() * 1000)}))
 
         return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
+    # Same routes at /api/twin/* (Vercel passes the original path) and at the root (local uvicorn).
+    app.include_router(router, prefix="/api/twin")
+    app.include_router(router)
     return app
 
 
-def _lazy_app() -> FastAPI:
-    return create_app()
-
-
-# uvicorn app.api:app  (constructed at import so startup checks fail fast)
-app = _lazy_app() if os.environ.get("TWIN_SKIP_APP_IMPORT") != "1" else None
+# Vercel entrypoint `app.api:app` / `uvicorn app.api:app`. Built at import so startup checks fail fast.
+app = create_app() if os.environ.get("TWIN_SKIP_APP_IMPORT") != "1" else None

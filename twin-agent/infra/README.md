@@ -1,116 +1,66 @@
-# twin-agent infrastructure runbook
+# AI twin: setup (all-Vercel, D17)
 
-`gcloud` isn't installed on the dev machine, so these steps are run by hand once.
-Commands assume:
+One Vercel project runs two **Services** (`vercel.json`):
+- `web`: the Next.js site (repo root)
+- `twin`: the FastAPI + LangGraph agent (`twin-agent/`), reachable at `/api/twin/*`
 
-```bash
-export PROJECT_ID=<your-gcp-project-id>
-export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
-export REGION=asia-south1          # Cloud Run + Artifact Registry + Firestore (closest to Dhaka)
-export VERTEX_LOCATION=us-central1 # check Gemini availability in asia-south1 first; use it if available
-export GITHUB_REPO=RH-NAYM/Rakib-Portfolio
-export VERCEL_TEAM=<your-vercel-team-slug>   # Vercel → Settings → General
-export VERCEL_PROJECT=<your-vercel-project-name>
-gcloud config set project $PROJECT_ID
-```
+The agent calls Gemini with credentials stored in Vercel env. Rate limits and the daily
+spend cap live in Upstash Redis. GitHub Actions is the quality gate and Vercel Deployment
+Checks hold production until it passes.
 
 ## 0. Security first (T0)
-1. Resend dashboard → API Keys → revoke the key that was committed in `.env.example`, then create a new one. Put the new key in Vercel env and `.env.local` only.
-2. `.env.example` now holds placeholders only. If the repo is public, treat the old key and project id as exposed. Rotating the key is the actual fix; scrubbing history is optional.
+1. Resend dashboard → API Keys: revoke the key that was committed in `.env.example`, create a new one, and put it only in Vercel env and `.env.local`.
+2. `.env.example` holds placeholders only. Rotating the key is the actual fix.
 
-## 1. APIs, registry, database, secrets
-```bash
-gcloud services enable aiplatform.googleapis.com run.googleapis.com cloudbuild.googleapis.com \
-  artifactregistry.googleapis.com firestore.googleapis.com secretmanager.googleapis.com \
-  iamcredentials.googleapis.com sts.googleapis.com texttospeech.googleapis.com
-gcloud artifacts repositories create twin --repository-format=docker --location=$REGION
-gcloud firestore databases create --location=$REGION --type=firestore-native   # same region as Cloud Run (eng D14)
-openssl rand -hex 32 | gcloud secrets create ip-hash-secret --data-file=-
-printf '%s' '<github-token-with-public-repo-read>' | gcloud secrets create github-token --data-file=-
-```
+## 1. Gemini credentials (pick one)
+**A. Vertex AI (recommended: uses your GCP credit, enterprise data terms)**
+1. GCP Console → IAM → Service Accounts → create `twin-vertex`.
+2. Grant it **only** `Vertex AI User` (`roles/aiplatform.user`).
+3. Keys → Add key → JSON, then base64-encode it: `base64 -w0 key.json`.
+4. Vercel → Project → Settings → Environment Variables:
+   - `GOOGLE_SERVICE_ACCOUNT_B64`: the base64 string
+   - `GCP_PROJECT_ID`: your project id
+   - `GCP_LOCATION=global` (the global endpoint has the most Gemini capacity; it avoided the 429s seen on `us-central1`)
+5. Delete `key.json` from disk.
 
-## 2. Service accounts (least privilege)
-```bash
-for sa in twin-runtime twin-build twin-vercel-invoker twin-ci-evals; do
-  gcloud iam service-accounts create $sa; done
-SA() { echo "$1@$PROJECT_ID.iam.gserviceaccount.com"; }
+**B. Gemini Developer API (simplest)**: AI Studio → API key → set `GEMINI_API_KEY` in Vercel. The free tier may use your prompts to improve Google's products; a paid key doesn't.
 
-# runtime: Vertex, Firestore, logs, its own secret
-for r in roles/aiplatform.user roles/datastore.user roles/logging.logWriter; do
-  gcloud projects add-iam-policy-binding $PROJECT_ID --member=serviceAccount:$(SA twin-runtime) --role=$r; done
-gcloud secrets add-iam-policy-binding ip-hash-secret --member=serviceAccount:$(SA twin-runtime) --role=roles/secretmanager.secretAccessor
+Retire the old key used by the removed `/api/chat` route: GCP → that service account → Keys → delete. Then delete the local `service_account.json`.
 
-# build: embeddings/evals (Vertex), deploy revisions (not service IAM), push images, logs, github token
-for r in roles/aiplatform.user roles/run.developer roles/artifactregistry.writer roles/logging.logWriter; do
-  gcloud projects add-iam-policy-binding $PROJECT_ID --member=serviceAccount:$(SA twin-build) --role=$r; done
-gcloud iam service-accounts add-iam-policy-binding $(SA twin-runtime) --member=serviceAccount:$(SA twin-build) --role=roles/iam.serviceAccountUser
-gcloud secrets add-iam-policy-binding github-token --member=serviceAccount:$(SA twin-build) --role=roles/secretmanager.secretAccessor
+## 2. Upstash Redis (rate limits + spend cap)
+Vercel → Project → Storage / Marketplace → **Upstash for Redis** → Create (free tier) → Connect to this project.
+This injects `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
 
-# CI evals: Vertex only
-gcloud projects add-iam-policy-binding $PROJECT_ID --member=serviceAccount:$(SA twin-ci-evals) --role=roles/aiplatform.user
-```
-`twin-vercel-invoker` gets `roles/run.invoker` on the service after the first deploy (step 5).
+## 3. Remaining env vars (Vercel, Production + Preview)
+| Name | Value |
+|---|---|
+| `IP_HASH_SECRET` | `openssl rand -hex 32` |
+| `TWIN_DAILY_USD_CAP` | e.g. `2.0` (USD per Asia/Dhaka day; the twin "rests" after) |
+| `TWIN_MODEL_FAST` | `gemini-2.5-flash` (must exist in `twin-agent/app/pricing.py`, else the function refuses to start) |
 
-## 3. Workload Identity Federation (no JSON keys anywhere: eng D10)
-```bash
-gcloud iam workload-identity-pools create twin-pool --location=global
+## 4. Quality gate
+1. GitHub → repo → Settings → Secrets → Actions: add `GOOGLE_SERVICE_ACCOUNT_B64`, the same key as step 1, or a separate eval-only key with the same single role. Without it the eval step is skipped, not failed.
+2. Vercel → Project → Settings → **Deployment Checks**: select the `web` and `agent` checks from `twin-ci`. Production waits for them. Don't also add them as GitHub branch-protection required checks; Vercel's docs warn the two race.
 
-# GitHub Actions → twin-ci-evals
-gcloud iam workload-identity-pools providers create-oidc github --location=global --workload-identity-pool=twin-pool \
-  --issuer-uri=https://token.actions.githubusercontent.com \
-  --attribute-mapping=google.subject=assertion.sub,attribute.repository=assertion.repository \
-  --attribute-condition="assertion.repository=='$GITHUB_REPO'"
-gcloud iam service-accounts add-iam-policy-binding $(SA twin-ci-evals) --role=roles/iam.workloadIdentityUser \
-  --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/twin-pool/attribute.repository/$GITHUB_REPO"
+## 5. Cost backstops (eng D11, re-mapped)
+- Vercel → Settings → **Spend Management**: set a monthly limit with a pause.
+- GCP → Billing → Budgets & alerts: email at 50/90/100% of a monthly budget, e.g. $10.
+- GCP → IAM & Admin → Quotas: lower "Generate content requests per minute" for `gemini-2.5-flash`, e.g. 60/min.
+- App cap: `TWIN_DAILY_USD_CAP` (above).
 
-# Vercel (enable "OIDC Federation" in Vercel project settings, Team issuer mode) → twin-vercel-invoker
-gcloud iam workload-identity-pools providers create-oidc vercel --location=global --workload-identity-pool=twin-pool \
-  --issuer-uri=https://oidc.vercel.com/$VERCEL_TEAM \
-  --allowed-audiences=https://vercel.com/$VERCEL_TEAM \
-  --attribute-mapping=google.subject=assertion.sub,attribute.project=assertion.project \
-  --attribute-condition="assertion.project=='$VERCEL_PROJECT'"
-gcloud iam service-accounts add-iam-policy-binding $(SA twin-vercel-invoker) --role=roles/iam.workloadIdentityUser \
-  --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/twin-pool/attribute.project/$VERCEL_PROJECT"
-gcloud iam service-accounts add-iam-policy-binding $(SA twin-vercel-invoker) --role=roles/iam.serviceAccountTokenCreator \
-  --member=serviceAccount:$(SA twin-vercel-invoker)   # lets the federated identity mint its own ID token
-```
-GitHub repo → Settings → Variables: `GCP_WIF_PROVIDER_GITHUB=projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/twin-pool/providers/github`, `TWIN_CI_EVALS_SA=twin-ci-evals@…`, `GCP_PROJECT_ID`.
-
-## 4. Cost backstops (eng D11)
-- `--max-instances=3` is set in `cloudbuild.yaml`.
-- Vertex quota: Console → IAM & Admin → Quotas → filter "Generate content requests per minute per base model" for `gemini-2.5-flash` in `$VERTEX_LOCATION`, and request a lower override (e.g. 60/min).
-- Budget alert email at 50/90/100% of your monthly budget:
-```bash
-gcloud billing budgets create --billing-account=<BILLING_ACCOUNT_ID> --display-name=twin-monthly \
-  --budget-amount=10USD --threshold-rule=percent=0.5 --threshold-rule=percent=0.9 --threshold-rule=percent=1.0
-```
-- App cap: `_DAILY_CAP` substitution in `cloudbuild.yaml` (USD per Asia/Dhaka day).
-
-## 5. Build trigger and first deploy
-```bash
-gcloud builds triggers create github --name=twin-agent --repo-owner=RH-NAYM --repo-name=Rakib-Portfolio \
-  --branch-pattern='^main$' --build-config=twin-agent/cloudbuild.yaml \
-  --service-account=projects/$PROJECT_ID/serviceAccounts/$(SA twin-build) \
-  --included-files='twin-agent/**,content/twin/**,src/content/**,contracts/**,scripts/export-content.ts'
-gcloud builds triggers run twin-agent --branch=main     # or push to main
-gcloud run services add-iam-policy-binding twin-agent --region=$REGION \
-  --member=serviceAccount:$(SA twin-vercel-invoker) --role=roles/run.invoker
-```
-Smoke test: `curl -s -o /dev/null -w '%{http_code}' $(gcloud run services describe twin-agent --region=$REGION --format='value(status.url)')/healthz` must print **403** (private service).
-
-## 6. Cutover runbook (eng D9, order matters)
-1. Cloud Run `twin-agent` is live and step 5's 403 smoke test passes.
-2. Vercel env (Production): `TWIN_AGENT_URL=<cloud run url>`, `GCP_PROJECT_NUMBER`, `GCP_WIF_POOL_ID=twin-pool`, `GCP_WIF_PROVIDER_ID=vercel`, `TWIN_INVOKER_SA=twin-vercel-invoker@…`. Remove `GOOGLE_SERVICE_ACCOUNT_B64`.
-3. Deploy the site (merge to main). The new chat shell talks to `/api/twin/chat`.
-4. Check a real question in all three languages on phone and desktop.
-5. Delete the old route and client (`src/app/api/chat/`, `src/lib/vertex.ts`, `src/lib/chat-prompt.ts`, `src/components/chat-widget*.tsx`) in a follow-up deploy, then confirm `/api/chat` returns 404.
-6. Delete the old service-account key: `gcloud iam service-accounts keys list --iam-account=<old-sa>` → `keys delete <id>`. Delete the local `service_account.json` once nothing uses it.
+## 6. Deploy and check
+1. Merge to `main` (or push). Vercel builds both services in one deployment, so there's no cutover ordering.
+2. Open `https://<your-domain>/api/twin/healthz`. It should return `{"ok": true, "docs": 19}` or more.
+3. Ask one question each in English, বাংলা and Banglish on phone and desktop.
+4. Check that `/api/chat` (the old bot) returns 404.
 
 ## Local development
 ```bash
-cd twin-agent && python -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
-npx tsx ../scripts/export-content.ts && .venv/bin/python -m ingest.build_corpus
-TWIN_ENV=test TWIN_LIMITS_BACKEND=memory GOOGLE_APPLICATION_CREDENTIALS=../service_account.json \
-  GCP_PROJECT_ID=$PROJECT_ID GCP_LOCATION=$VERTEX_LOCATION .venv/bin/uvicorn app.api:app --port 8080
-# in .env.local for the site: TWIN_AGENT_URL=http://localhost:8080
+cd twin-agent && python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt && cd ..
+npm run twin:corpus                      # after editing src/content, content/twin, CV/docx or blog
+GOOGLE_APPLICATION_CREDENTIALS=$PWD/service_account.json GCP_PROJECT_ID=<id> GCP_LOCATION=global npm run twin:dev   # :8080
+TWIN_DEV_AGENT_URL=http://localhost:8080 npm run dev                                                                # site
 ```
+Or `vercel dev`, which runs both services together (see Vercel Services docs).
+
+The corpus (`twin-agent/data/*.json`) is committed: CI fails if it is stale, so run `npm run twin:corpus` and commit whenever its sources change.

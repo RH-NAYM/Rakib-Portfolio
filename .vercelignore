@@ -1,4 +1,8 @@
-twin-agent
-contracts
 e2e
 docs/designs
+test-results
+playwright-report
+twin-agent/.venv
+twin-agent/tests
+twin-agent/evals
+twin-agent/ingest

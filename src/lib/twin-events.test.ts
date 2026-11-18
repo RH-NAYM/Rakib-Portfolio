@@ -2,7 +2,6 @@ import { readFileSync } from "node:fs";
 import Ajv2020 from "ajv/dist/2020";
 import { describe, expect, it } from "vitest";
 import { createSSEParser, splitCitations, type TwinEvent } from "./twin-events";
-import { clientIp, sseError } from "./twin-proxy";
 
 const schema = JSON.parse(readFileSync("contracts/sse-events.schema.json", "utf-8"));
 const validate = new Ajv2020({ strict: false }).compile(schema);
@@ -60,20 +59,5 @@ describe("contract", () => {
     };
     expect(validate(final)).toBe(true);
     expect(validate({ ...final, lang: "fr" })).toBe(false);
-  });
-
-  it("proxy error events satisfy the contract", async () => {
-    for (const kind of ["upstream_unavailable", "timeout", "bad_request"] as const) {
-      const body = await sseError(kind).text();
-      expect(validate(JSON.parse(body.slice(6)))).toBe(true);
-    }
-  });
-});
-
-describe("clientIp", () => {
-  it("takes only the first forwarded hop", () => {
-    expect(clientIp(new Headers({ "x-forwarded-for": "203.0.113.9, 10.0.0.1" }))).toBe("203.0.113.9");
-    expect(clientIp(new Headers({ "x-vercel-forwarded-for": "2001:db8::1", "x-forwarded-for": "1.1.1.1" }))).toBe("2001:db8::1");
-    expect(clientIp(new Headers())).toBe("0.0.0.0");
   });
 });

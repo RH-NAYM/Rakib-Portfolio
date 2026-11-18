@@ -72,7 +72,14 @@ export function useTwinChat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message, history: historyFor(snapshot, twinId), reply_to: null, lang: "auto" }),
       });
-      if (!res.body) throw new Error("no body");
+      // The twin function answers with SSE (incl. typed errors); anything else is a platform
+      // failure (crash, 5xx, timeout page) and becomes the outage state (eng D3).
+      if (res.status === 400) {
+        finished = true;
+        dispatch({ type: "error", twinId, kind: "bad_request" });
+        return;
+      }
+      if (!res.ok || !res.body || !(res.headers.get("content-type") ?? "").includes("text/event-stream")) throw new Error(`twin ${res.status}`);
       const reader = res.body.getReader();
       const dec = new TextDecoder();
       for (;;) {

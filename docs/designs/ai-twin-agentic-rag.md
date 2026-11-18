@@ -51,6 +51,8 @@ Rejected along with A.
 
 ## Recommended Approach (B)
 
+> **Architecture update, D17 (2026-11-18, user decision): all-Vercel.** The agent keeps its Python LangGraph code but runs as a Vercel **Service** (`twin`, FastAPI at `/api/twin/*`) next to the Next.js `web` service in one project, instead of on Cloud Run. Superseded below: Cloud Run/Cloud Build/Artifact Registry, the Next.js proxy and its WIF ID-token auth (D10), Firestore (now Upstash Redis), the Cloud Build eval step (D8 → GitHub Actions + Vercel Deployment Checks), max-instances (D11 → Vercel Spend Management) and the 4-SA table (now one `aiplatform.user` key in Vercel env). Unchanged: graph, prompts, critic, gate rules (D12/D14/D15), SSE contract (D4/D9), chat shell, tests, evals. Current setup: `twin-agent/infra/README.md`.
+
 ### Topology
 
 ```
@@ -913,6 +915,15 @@ No TODOs proposed. All deferred work is tracked in phases 1b-4 or NOT in scope w
 
 ### Suppressed findings
 None.
+
+### R14: Hosting: all-Vercel (D17)
+Finding: user request after Phase 1a ("cant it all be build in vercel?").
+Plan baseline: Approach B, Python LangGraph on Cloud Run + Next.js proxy (office-hours D4).
+Runtime evidence: Vercel docs (Aug 2026): Services run a Python FastAPI backend next to Next.js in one project (Beta); the backend receives the original path; Python bundles are limited to 500 MB; streaming is supported; Deployment Checks hold production until selected GitHub Actions pass (and race with GitHub branch protection).
+State: approved
+Actual answer: "ok next build do it this way" (2026-11-18), on the recommendation to move everything to Vercel.
+Accepted scope: `vercel.json` services `web` + `twin`; `twin-agent` as the FastAPI service with routes at `/api/twin/*`; Vertex creds via `GOOGLE_SERVICE_ACCOUNT_B64` (or `GEMINI_API_KEY`); Upstash Redis replaces Firestore; the client IP comes from Vercel edge headers only (the proxy header is gone, so it would be spoofable); the corpus is committed with a CI freshness check; the eval gate is the GitHub Actions `agent` job selected in Vercel Deployment Checks; Dockerfile, cloudbuild.yaml, the Next proxy, the WIF auth and the old `/api/chat` bot are removed in the same change (one atomic deploy, so no cutover ordering).
+History: supersedes the infra parts of D2 (proxy route), D8, D10, D11 and the Firestore part of D12.
 
 ## Design Review Completion Summary
 

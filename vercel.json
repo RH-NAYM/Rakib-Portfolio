@@ -1,7 +1,27 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "next build",
-  "installCommand": "npm install",
-  "outputDirectory": ".next"
+  "services": {
+    "web": {
+      "root": "./",
+      "framework": "nextjs",
+      "installCommand": "npm install",
+      "buildCommand": "next build",
+      "outputDirectory": ".next"
+    },
+    "twin": {
+      "root": "twin-agent/",
+      "framework": "fastapi",
+      "entrypoint": "app.api:app",
+      "functions": {
+        "app/api.py": {
+          "maxDuration": 60,
+          "excludeFiles": "{tests/**,evals/**,ingest/**,.venv/**,**/__pycache__/**}"
+        }
+      }
+    }
+  },
+  "rewrites": [
+    { "source": "/api/twin/(.*)", "destination": { "service": "twin" } },
+    { "source": "/(.*)", "destination": { "service": "web" } }
+  ]
 }

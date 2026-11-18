@@ -11,7 +11,7 @@ Sources (repo-relative):
   Rakibul_Hasan_Naym_Project_Portfolio.docx
   content/blog/*.mdx                 (files starting with "_" are skipped)
   content/twin/notes.md              first-person Q&A written by Rakib
-  content/twin/media.yaml            screenshot catalog (used by show_media, not prompt text)
+  content/twin/media.yaml            screenshot catalog (embedded in corpus.json "media"; used by show_media)
   GitHub READMEs                     only when TWIN_FETCH_READMES=1 (needs network; GITHUB_TOKEN optional)
 
 Run: python -m ingest.build_corpus   (from twin-agent/)
@@ -213,7 +213,11 @@ def build() -> list[dict]:
 def main() -> None:
     docs = build()
     out = DATA_DIR / "corpus.json"
-    out.write_text(json.dumps({"version": 1, "docs": docs}, ensure_ascii=False, indent=1), encoding="utf-8")
+    import yaml
+
+    media_file = REPO_ROOT / "content" / "twin" / "media.yaml"
+    media = (yaml.safe_load(media_file.read_text(encoding="utf-8")) or []) if media_file.exists() else []
+    out.write_text(json.dumps({"version": 1, "docs": docs, "media": media}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     chars = sum(len(d["text"]) for d in docs)
     print(f"wrote {out}: {len(docs)} docs, {chars} chars (~{chars // 4} tokens)")
 

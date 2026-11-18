@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu, X, Github, Linkedin } from "lucide-react";
 import { HFIcon } from "@/components/hf-icon";
-import { profile, socials } from "@/content/site";
+import { socials } from "@/content/site";
 
 const nav = [
   { href: "/#about", label: "About" },

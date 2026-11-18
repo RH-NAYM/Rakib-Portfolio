@@ -14,10 +14,11 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "gen:twin-types": "json2ts -i contracts/sse-events.schema.json -o src/lib/twin-events.generated.ts --bannerComment \"/* Generated from contracts/sse-events.schema.json by npm run gen:twin-types. Do not edit. */\"",
-    "export-content": "tsx scripts/export-content.ts"
+    "export-content": "tsx scripts/export-content.ts",
+    "twin:corpus": "tsx scripts/export-content.ts && cd twin-agent && python3 -m ingest.build_corpus",
+    "twin:dev": "cd twin-agent && TWIN_ENV=test TWIN_LIMITS_BACKEND=memory .venv/bin/uvicorn app.api:app --port 8080 --reload"
   },
   "dependencies": {
-    "google-auth-library": "^9.15.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.469.0",
     "next": "15.1.11",
@@ -25,8 +26,7 @@
     "react-dom": "19.0.0",
     "react-markdown": "^9.0.1",
     "remark-gfm": "^4.0.0",
-    "resend": "^4.0.1",
-    "server-only": "^0.0.1"
+    "resend": "^4.0.1"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

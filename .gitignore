@@ -40,7 +40,6 @@ env/
 
 # AI twin
 twin-agent/.venv/
-twin-agent/data/*.json
 twin-agent/eval-report.json
 __pycache__/
 .pytest_cache/

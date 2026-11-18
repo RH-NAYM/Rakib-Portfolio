@@ -25,17 +25,39 @@ class LLMParseError(RuntimeError):
     pass
 
 
+def make_genai_client():
+    """Gemini client from Vercel env (all-Vercel decision, D17).
+
+    Order: GOOGLE_SERVICE_ACCOUNT_B64 (Vertex, recommended) → GOOGLE_APPLICATION_CREDENTIALS
+    (Vertex, local key file / CI) → GEMINI_API_KEY (Gemini Developer API).
+    """
+    import base64
+
+    from google import genai
+
+    project = os.environ.get("GCP_PROJECT_ID")
+    location = os.environ.get("GCP_LOCATION", "global")
+    b64 = os.environ.get("GOOGLE_SERVICE_ACCOUNT_B64")
+    if b64:
+        from google.oauth2 import service_account
+
+        info = json.loads(base64.b64decode(b64).decode("utf-8"))
+        creds = service_account.Credentials.from_service_account_info(
+            info, scopes=["https://www.googleapis.com/auth/cloud-platform"]
+        )
+        return genai.Client(vertexai=True, project=project or info.get("project_id"), location=location, credentials=creds)
+    if os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
+        return genai.Client(vertexai=True, project=project, location=location)
+    if os.environ.get("GEMINI_API_KEY"):
+        return genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    raise RuntimeError("No Gemini credentials: set GOOGLE_SERVICE_ACCOUNT_B64 (Vertex) or GEMINI_API_KEY.")
+
+
 class GeminiLLM:
-    """google-genai client in Vertex mode (auth = Cloud Run runtime service account)."""
+    """google-genai client; Vertex when service-account creds are present, else Developer API."""
 
     def __init__(self, fast_model: str, main_model: str) -> None:
-        from google import genai
-
-        self._client = genai.Client(
-            vertexai=True,
-            project=os.environ.get("GCP_PROJECT_ID"),
-            location=os.environ.get("GCP_LOCATION", "us-central1"),
-        )
+        self._client = make_genai_client()
         self.models = {"fast": fast_model, "main": main_model}
 
     def model_for(self, role: str) -> str:

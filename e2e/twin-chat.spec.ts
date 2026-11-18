@@ -112,3 +112,12 @@ test("/chat page shares the thread and has no floating launcher", async ({ page 
   await expect(page.getByTestId("twin-bubble").getByText("Shared thread.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Chat with my AI twin" })).toHaveCount(0);
 });
+
+test("platform failure (plain 500, not SSE) still shows the outage bubble", async ({ page }) => {
+  await page.route("**/api/twin/chat", (route) => route.fulfill({ status: 500, contentType: "text/html", body: "<h1>Internal Server Error</h1>" }));
+  await openChat(page);
+  const dlg = page.getByRole("dialog");
+  await dlg.getByRole("button", { name: "How can I hire you?" }).click();
+  await expect(dlg.getByText(/having trouble thinking/)).toBeVisible();
+  await expect(dlg.getByTestId("handoff-card")).toBeVisible();
+});

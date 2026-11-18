@@ -39,7 +39,7 @@ def test_stream_events_match_contract(knowledge):
 def test_rate_limited_returns_typed_error(knowledge, monkeypatch):
     monkeypatch.setattr("app.gate.PER_HOUR", 0)
     c, _ = client(knowledge)
-    evs = events(c.post("/chat", json={"message": "hi"}, headers={"X-Twin-Client-IP": "9.9.9.9"}))
+    evs = events(c.post("/api/twin/chat", json={"message": "hi"}, headers={"x-forwarded-for": "9.9.9.9"}))
     assert evs == [{"v": 1, "type": "error", "kind": "rate_limited", "retry_after_s": evs[0]["retry_after_s"]}]
     jsonschema.validate(evs[0], SCHEMA)
 
@@ -68,3 +68,17 @@ def test_history_roles_validated(knowledge):
 def test_chunk_text_keeps_markers_and_content():
     t = "I built it.[[1]] It serves 2M+ outlets.[[2]]"
     assert "".join(chunk_text(t)) == t
+
+
+def test_routes_served_under_vercel_prefix_and_root(knowledge):
+    c, _ = client(knowledge)
+    assert c.get("/api/twin/healthz").json()["ok"] and c.get("/healthz").json()["ok"]
+
+
+def test_rate_limit_keys_on_vercel_ip_not_spoofable_header(knowledge, monkeypatch):
+    monkeypatch.setattr("app.gate.PER_HOUR", 1)
+    c, _ = client(knowledge, script={k: v * 3 for k, v in SCRIPT.items()})
+    h = {"x-vercel-forwarded-for": "203.0.113.7", "X-Twin-Client-IP": "1.1.1.1"}
+    assert events(c.post("/api/twin/chat", json={"message": "a"}, headers=h))[-1]["type"] == "final"
+    h2 = {"x-vercel-forwarded-for": "203.0.113.7", "X-Twin-Client-IP": "2.2.2.2"}  # rotating the old header must not help
+    assert events(c.post("/api/twin/chat", json={"message": "b"}, headers=h2))[-1]["kind"] == "rate_limited"

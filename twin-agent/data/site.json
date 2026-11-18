@@ -1,0 +1,1665 @@
+{
+  "siteUrl": "https://rakib-portfolio-lilac.vercel.app",
+  "profile": {
+    "name": "MD Rakibul Hasan Naym",
+    "shortName": "Rakib",
+    "title": "Applied AI Engineer & AI Team Lead",
+    "tagline": "Production Computer Vision · Generative AI (RAG & AI Agents) · GPU-Optimized MLOps",
+    "positioning": "I design, build, and own production AI at national scale — computer-vision systems serving 2M+ retail outlets, plus current-generation RAG, multi-agent, and real-time voice systems, all on GPU-optimized, self-hosted infrastructure.",
+    "location": "Dhaka, Bangladesh",
+    "email": "naym.mj@gmail.com",
+    "phone": "+880 163 883 0165",
+    "company": "HawkEyes Digital Monitoring Ltd.",
+    "availability": "Open to BD & international / remote AI roles and freelance projects"
+  },
+  "socials": {
+    "github": {
+      "label": "GitHub",
+      "handle": "@RH-NAYM",
+      "url": "https://github.com/RH-NAYM"
+    },
+    "huggingface": {
+      "label": "Hugging Face",
+      "handle": "@rakib72642",
+      "url": "https://huggingface.co/rakib72642"
+    },
+    "huggingfaceOrg": {
+      "label": "HF · HawkEyesAI",
+      "handle": "HawkEyesAI",
+      "url": "https://huggingface.co/HawkEyesAI"
+    },
+    "linkedin": {
+      "label": "LinkedIn",
+      "handle": "in/rakib",
+      "url": "https://www.linkedin.com/in/md-rakibul-hasan-naym-625263229"
+    },
+    "whatsapp": {
+      "label": "WhatsApp",
+      "handle": "+880 1638 830165",
+      "url": "https://wa.me/8801638830165"
+    },
+    "email": {
+      "label": "Email",
+      "handle": "naym.mj@gmail.com",
+      "url": "mailto:naym.mj@gmail.com"
+    },
+    "upwork": {
+      "label": "Upwork",
+      "handle": "@mdrakibulhasannaym",
+      "url": "https://www.upwork.com/freelancers/~015c849967a428cc5d?mp_source=share"
+    },
+    "fiverr": {
+      "label": "Fiverr",
+      "handle": "@rakib72642",
+      "url": "https://www.fiverr.com/rakib72642"
+    }
+  },
+  "metrics": [
+    {
+      "value": "2M+",
+      "label": "Retail outlets served"
+    },
+    {
+      "value": "~99%",
+      "label": "Detection accuracy"
+    },
+    {
+      "value": "59",
+      "label": "Repos across 9 AI domains"
+    },
+    {
+      "value": "50+",
+      "label": "Hugging Face models"
+    },
+    {
+      "value": "5.0",
+      "label": "Upwork rating"
+    }
+  ],
+  "about": [
+    "I'm an Applied AI Engineer with 3+ years designing, building, and deploying production AI at national scale. At HawkEyes Digital Monitoring I own applied-AI delivery end to end — from research and model design through deployment and monitoring — across retail-execution, manufacturing, and surveillance product lines, and I mentor a growing AI team.",
+    "My core is deep computer vision (YOLO detection/segmentation, OpenCV) shipping at ~99% accuracy across 2M+ outlets for enterprise FMCG and mobile-financial-services clients — BAT, Unilever, and Nagad among them. I pair that with current generative-AI delivery: production RAG with vector search and LangGraph, self-correcting multi-agent systems, and real-time voice agents — all backed by GPU-optimized async inference and containerized MLOps.",
+    "I build and run my own infrastructure: two on-premises Ubuntu GPU servers I provisioned and administer host most of the team's AI services and training jobs, cutting reliance on rented cloud GPUs. I'm currently building a custom Bangladeshi-accent Bangla text-to-speech model (VITS + grapheme frontend) to power production AI voice agents for inbound/outbound call automation. I care equally about model accuracy and clean, observable production engineering."
+  ],
+  "skillGroups": [
+    {
+      "title": "Computer Vision & Retail Intelligence",
+      "note": "Detection, segmentation & analytics shipped at retail scale",
+      "items": [
+        "Ultralytics YOLO (v5/v8) — detection & segmentation",
+        "OpenCV & classical CV",
+        "POSM / planogram / share-of-shelf",
+        "Object detection & counting",
+        "Face recognition (dlib / face_recognition)",
+        "MediaPipe, LightGlue"
+      ]
+    },
+    {
+      "title": "Generative AI — RAG, Agents & LLMs",
+      "note": "Grounded, self-correcting LLM systems in production",
+      "items": [
+        "Retrieval-Augmented Generation (RAG)",
+        "LangChain · LangGraph (Planner→Executor→Critic)",
+        "Vector search — MongoDB Atlas, FAISS",
+        "Embeddings — sentence-transformers / E5",
+        "Tool-calling (MCP), prompt engineering",
+        "Ollama · OpenAI · Google Gemini · HF Transformers"
+      ]
+    },
+    {
+      "title": "Speech, Audio & OCR",
+      "note": "Low-resource Bangla speech & document intelligence",
+      "items": [
+        "TTS — Coqui VITS, edge-tts (Bangla TTS)",
+        "STT — faster-whisper, AssemblyAI",
+        "Bangla OCR / ICR (custom CRNN + CTC)",
+        "Google Cloud Vision & Speech, Tesseract",
+        "Grapheme text frontend, NLTK",
+        "WebRTC / WebSocket audio streaming"
+      ]
+    },
+    {
+      "title": "Backend, Serving & GPU Inference",
+      "note": "Async-first services engineered for throughput",
+      "items": [
+        "FastAPI · asyncio · Hypercorn / Uvicorn",
+        "WebRTC / WebSockets, REST APIs",
+        "httpx / aiohttp, structured logging",
+        "GPU optimization & async batching",
+        "PyTorch, TensorFlow, torchaudio",
+        "Redis · MongoDB · PostgreSQL"
+      ]
+    },
+    {
+      "title": "MLOps & Self-Hosted Infrastructure",
+      "note": "In-house GPU infra and reproducible deployment",
+      "items": [
+        "On-prem Ubuntu GPU server build & admin",
+        "Docker & Docker Compose",
+        "Vast.ai GPU orchestration & cost optimization",
+        "Git / Git LFS, Hugging Face deploy",
+        "GCP (Vision / Speech / GenAI), Vercel",
+        "Label Studio · Roboflow data pipelines"
+      ]
+    },
+    {
+      "title": "Languages, Core ML & Systems",
+      "note": "Foundations and the Linux environment it all runs on",
+      "items": [
+        "Python · C++ · SQL · Bash",
+        "PyTorch, scikit-learn, NumPy, pandas",
+        "CNNs, fine-tuning, model evaluation",
+        "Linux power user — Arch (daily driver 3+ yrs)",
+        "Ubuntu / Fedora / Pop!_OS server admin",
+        "AI roadmap ownership & team mentoring"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "org": "HawkEyes Digital Monitoring Ltd.",
+      "location": "Dhaka, Bangladesh",
+      "period": "Mar 2023 – Present",
+      "duration": "3 yrs 9 mos",
+      "roles": [
+        {
+          "title": "Applied AI Engineer & AI Team Lead",
+          "period": "Aug 2024 – Present",
+          "bullets": [
+            "Lead AI strategy and delivery, from research to deployment and monitoring, across retail-execution, manufacturing and surveillance products, and mentor a growing AI team.",
+            "Built production RAG and multi-agent systems with self-correcting planner, executor and critic loops, plus strictly grounded RAG over Bangla PDFs.",
+            "Built a real-time conversational voice agent with tuned latency, then took it to real outbound phone calls with local voice cloning.",
+            "Designed, built and run two on-premises GPU servers that host most of the team's AI services and training, in place of rented cloud GPUs."
+          ],
+          "stack": [
+            "LangGraph",
+            "MongoDB Atlas Vector Search",
+            "WebRTC",
+            "LiveKit",
+            "Twilio SIP",
+            "XTTS v2",
+            "MCP",
+            "Ubuntu GPU servers"
+          ]
+        },
+        {
+          "title": "Artificial Intelligence Engineer",
+          "period": "Feb 2024 – Aug 2024",
+          "bullets": [
+            "Shipped computer vision, OCR and NLP solutions for enterprise retail analytics and automation.",
+            "Extended production detection to Unilever (10+ versioned models), Malaysia, Square and Nagad, covering POSM, planogram, share-of-shelf and competitor detection.",
+            "Started the team's first RAG systems and a custom Bangla OCR/ICR pipeline."
+          ],
+          "stack": [
+            "YOLO",
+            "OCR / ICR",
+            "RAG",
+            "FastAPI"
+          ]
+        },
+        {
+          "title": "Junior Artificial Intelligence Engineer",
+          "period": "Mar 2023 – Feb 2024",
+          "bullets": [
+            "Built and scaled the flagship retail-execution platform: 2M+ outlets at ~99% accuracy, with each outlet image routed to campaign-specific YOLO models behind async APIs.",
+            "Delivered the team's first multi-client production deployment for BAT (397 commits over 18 months); its architecture now runs every client program."
+          ],
+          "stack": [
+            "YOLO",
+            "FastAPI",
+            "async Python"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "Quantanite",
+      "location": "Dhaka, Bangladesh",
+      "period": "Jan 2023 – Mar 2023",
+      "duration": "3 mos",
+      "roles": [
+        {
+          "title": "Data Analyst",
+          "period": "Jan 2023 – Mar 2023",
+          "bullets": [
+            "Ran large-scale data analysis, quality assurance and operational reporting for business-intelligence work across client accounts."
+          ]
+        }
+      ]
+    },
+    {
+      "org": "Upwork",
+      "location": "Remote",
+      "period": "Jan 2022 – Dec 2022",
+      "duration": "1 yr",
+      "link": {
+        "label": "Real-time custom object detection service",
+        "url": "https://www.upwork.com/services/product/development-it-a-real-time-custom-object-detection-machine-learning-model-1550132751383220224?ref=project_share"
+      },
+      "roles": [
+        {
+          "title": "Freelance ML / Computer Vision Engineer",
+          "period": "Jan 2022 – Dec 2022",
+          "bullets": [
+            "Delivered computer-vision projects and project supervision for international clients, with a 5.0/5.0 rating across completed contracts."
+          ],
+          "stack": [
+            "YOLOv5",
+            "Python",
+            "C++",
+            "Image processing"
+          ]
+        }
+      ]
+    }
+  ],
+  "education": {
+    "degree": "B.Sc. in Electrical & Electronic Engineering",
+    "institution": "Bangladesh University of Business and Technology (BUBT)",
+    "year": "2021",
+    "cgpa": "CGPA 3.75 / 4.00"
+  },
+  "recognition": [
+    "Maintainer of 50+ personal and 11+ organizational Hugging Face model repositories spanning computer vision, OCR, LLM fine-tuning, and deployment workflows.",
+    "Author of an open-source OpenCV computer-vision tutorial series and production-ready model cards / inference scripts adopted by the wider ML community.",
+    "Upwork: 5.0/5.0 client rating on delivered ML and computer-vision contracts."
+  ],
+  "languages": "Bangla (native) · English (professional working proficiency)",
+  "services": [
+    {
+      "title": "Custom YOLO object detection",
+      "blurb": "Detection & segmentation trained on your data — retail, safety, vehicles, defects — with metrics and an inference API.",
+      "from": "$90",
+      "image": "/images/services/g01-yolo.jpg"
+    },
+    {
+      "title": "RAG chatbot over your documents",
+      "blurb": "Answers only from your PDFs, sites or database, with citations and groundedness checks. OpenAI, Gemini, Claude or local.",
+      "from": "$150",
+      "image": "/images/services/g02-rag.jpg"
+    },
+    {
+      "title": "AI voice agent with real phone calls",
+      "blurb": "LiveKit + Twilio SIP agents for booking, sales and support — streaming STT, tool calling, low-latency TTS, human hand-off.",
+      "from": "$300",
+      "image": "/images/services/g03-voice.jpg"
+    },
+    {
+      "title": "AI agents & automation (LangGraph)",
+      "blurb": "Tool-using and multi-agent systems with memory, MCP, a self-check step and traces — hard rules enforced in code.",
+      "from": "$120",
+      "image": "/images/services/g04-agents.jpg"
+    },
+    {
+      "title": "OCR & document data extraction",
+      "blurb": "Invoices, IDs, forms and handwriting to clean JSON/Excel — including custom OCR for low-resource scripts like Bangla.",
+      "from": "$100",
+      "image": "/images/services/g06-ocr.jpg"
+    },
+    {
+      "title": "Model deployment & GPU MLOps",
+      "blurb": "Your model as a fast async FastAPI service on Docker — batching, ONNX/FP16 speedups, CI/CD and monitoring.",
+      "from": "$60",
+      "image": "/images/services/g05-deploy.jpg"
+    }
+  ],
+  "caseStudies": [
+    {
+      "slug": "retail-execution-intelligence",
+      "cover": "/images/work/retail-execution-intelligence.jpg",
+      "title": "Retail-Execution Intelligence Platform",
+      "subtitle": "Campaign-specific computer vision for POSM, planogram, share-of-shelf & competitor detection at national scale.",
+      "context": "HawkEyes · BAT · Unilever · Nagad · Malaysia · Square · 2023–present",
+      "domain": "Computer Vision & Retail Intelligence",
+      "featured": true,
+      "tags": [
+        "FastAPI",
+        "Ultralytics YOLO",
+        "PyTorch",
+        "async httpx",
+        "Hypercorn",
+        "Hugging Face"
+      ],
+      "metrics": [
+        {
+          "value": "2M+",
+          "label": "outlets served",
+          "source": "cv"
+        },
+        {
+          "value": "~99%",
+          "label": "detection accuracy",
+          "source": "cv"
+        },
+        {
+          "value": "397",
+          "label": "commits · flagship, 18 mo",
+          "source": "repo"
+        },
+        {
+          "value": "10+",
+          "label": "versioned models (Unilever)",
+          "source": "repo"
+        }
+      ],
+      "problem": "Enterprise FMCG and mobile-financial-services clients needed automated, at-scale verification of point-of-sale material (POSM) placement, planogram compliance, share-of-shelf, and competitor presence across huge outlet networks — work that was previously manual, slow, inconsistent, and impossible to audit at national scale.",
+      "approach": [
+        "Built a central FastAPI inference service that routes each outlet image to campaign-specific YOLO detection/segmentation models (PJ Strike, Autograph, Euphoria, Frost, Luckies, Derby and more for BAT) rather than one monolithic model.",
+        "Scored planogram compliance, blanks, and competitor placement, and added face-recognition and NLP modules for field-agent verification and audio brand-mention checks.",
+        "Wrote per-client converters mapping AI class names to each client's product IDs and data schemas, plus cross-model reconciliation for Unilever's overlapping detectors (Display Audit, QPDS, SOS, MTSOS).",
+        "Deployed from Hugging Face model repos under Hypercorn with async I/O, structured JSON logging, and HTTP-Basic-secured docs for GPU/container hosting."
+      ],
+      "architecture": {
+        "pipeline": [
+          "Outlet image ingest (async API)",
+          "Campaign router → correct YOLO model set",
+          "Detection / segmentation + counting",
+          "Planogram / SOS / competitor scoring",
+          "Per-client converter → product IDs & schema",
+          "Structured JSON response + logging"
+        ],
+        "stack": [
+          "Python",
+          "FastAPI",
+          "PyTorch",
+          "Ultralytics YOLO",
+          "async httpx / asyncio",
+          "Hypercorn",
+          "Git LFS",
+          "Hugging Face deploy",
+          "OpenCV"
+        ]
+      },
+      "results": [
+        {
+          "text": "~99% detection accuracy across a network cited at 2M+ outlets for enterprise FMCG & MFS clients.",
+          "source": "cv"
+        },
+        {
+          "text": "BAT_Master flagship sustained 397 commits over 18 months across 7 branches — a mature, continuously-shipped production system.",
+          "source": "repo"
+        },
+        {
+          "text": "Unilever counterpart runs 10+ versioned YOLO models with cross-model reconciliation; parallel live deployments for Malaysia, Square, and Nagad (MFS branding).",
+          "source": "repo"
+        }
+      ],
+      "links": [
+        {
+          "label": "BAT-Master-Live (Hugging Face)",
+          "url": "https://huggingface.co/rakib72642/BAT-Master-Live"
+        },
+        {
+          "label": "UNILEVER-Master-Live (Hugging Face)",
+          "url": "https://huggingface.co/rakib72642/UNILEVER-Master-Live"
+        }
+      ],
+      "related": [
+        "BAT-Master-Live",
+        "UNILEVER-Master-Live",
+        "Malay-DAIA",
+        "Squere_Demo",
+        "Nagad"
+      ]
+    },
+    {
+      "slug": "real-time-voice-agent",
+      "cover": "/images/work/real-time-voice-agent.jpg",
+      "title": "Real-Time Conversational Voice Agent",
+      "subtitle": "Browser-based, low-latency spoken AI — WebRTC audio into a streaming STT → agent → TTS loop with tool-calling.",
+      "context": "HawkEyes · Voice-AI-Agent · most active repo · 2026",
+      "domain": "LLM, RAG & Conversational AI",
+      "featured": true,
+      "tags": [
+        "WebRTC",
+        "LangGraph",
+        "faster-whisper",
+        "edge-tts",
+        "MCP",
+        "FastAPI"
+      ],
+      "metrics": [
+        {
+          "value": "122",
+          "label": "commits · 6 branches",
+          "source": "repo"
+        },
+        {
+          "value": "<latency",
+          "label": "parallel TTS + GPU-batched STT",
+          "source": "repo"
+        },
+        {
+          "value": "4+",
+          "label": "LLM providers",
+          "source": "repo"
+        }
+      ],
+      "problem": "Enable natural, low-latency spoken conversation with an LLM assistant directly from the browser — the foundation for production AI agent-driven inbound/outbound telephony (hospital appointment automation, sales, and support agents).",
+      "approach": [
+        "WebRTC-first (WebSocket fallback) audio streaming into a VAD → STT → LangGraph agent → TTS loop.",
+        "Per-session checkpointed memory and MCP tool-calling (Twilio, email, dates) so the agent can take real actions.",
+        "Multi-provider LLM backends (Ollama / OpenAI / Gemini / Hugging Face) behind one interface.",
+        "Explicit latency engineering: parallel TTS, GPU-batched STT, and concurrent LLM+TTS to cut perceived response time.",
+        "Took the agent from the browser to the phone network: a LiveKit Cloud agent with Twilio Elastic SIP trunking for real outbound calls and local Coqui XTTS v2 voice cloning."
+      ],
+      "architecture": {
+        "pipeline": [
+          "Browser mic → WebRTC / WebSocket",
+          "Voice Activity Detection (VAD)",
+          "STT — faster-whisper / ElevenLabs",
+          "LangGraph agent + per-session memory",
+          "MCP tool-calls (Twilio, email…)",
+          "TTS (edge-tts) → streamed audio back"
+        ],
+        "stack": [
+          "Python",
+          "FastAPI",
+          "WebRTC / WebSockets",
+          "LangChain + LangGraph",
+          "faster-whisper",
+          "edge-tts",
+          "Ollama / OpenAI / Gemini / HF",
+          "aiosqlite",
+          "MCP",
+          "Twilio",
+          "LiveKit Agents / Cloud",
+          "Twilio Elastic SIP",
+          "Coqui XTTS v2"
+        ]
+      },
+      "results": [
+        {
+          "text": "The single most active repository in the portfolio: 122 commits across 6 branches (rakib +88 ElevenLabs STT; dev +82 TTS providers; WebRTC fixes).",
+          "source": "repo"
+        },
+        {
+          "text": "Latency work (parallel TTS, GPU-batched STT, concurrent LLM+TTS) targets real-time telephony use.",
+          "source": "repo"
+        },
+        {
+          "text": "Bangla speech to be supplied by the in-house custom Bangladeshi-accent TTS (see the TTS case study).",
+          "source": "repo"
+        }
+      ],
+      "links": [
+        {
+          "label": "Voice-AI-Agent (Hugging Face)",
+          "url": "https://huggingface.co/HawkEyesAI/Voice-AI-Agent"
+        }
+      ],
+      "related": [
+        "Voice-AI-Agent",
+        "Hospital-AI-Agent",
+        "AI-ChatBot",
+        "Custom-TTS-Bangla-Accent-VITS-XTTSv2"
+      ]
+    },
+    {
+      "slug": "agentic-grounded-rag",
+      "cover": "/images/work/agentic-grounded-rag.jpg",
+      "title": "Agentic & Strictly-Grounded RAG",
+      "subtitle": "A self-correcting Planner→Executor→Critic agent over MongoDB, plus strict-grounding RAG over Bangla PDFs.",
+      "context": "HawkEyes · AI-Agent_MongoDB · HE-Sherlock · 2026",
+      "domain": "LLM, RAG & Conversational AI",
+      "featured": true,
+      "tags": [
+        "LangGraph",
+        "MongoDB Atlas Vector Search",
+        "FAISS",
+        "sentence-transformers",
+        "SSE"
+      ],
+      "metrics": [
+        {
+          "value": "P→E→C",
+          "label": "self-correcting agent loop",
+          "source": "repo"
+        },
+        {
+          "value": "SSE",
+          "label": "streaming + full observability",
+          "source": "repo"
+        },
+        {
+          "value": "bn+en",
+          "label": "low-resource grounding",
+          "source": "repo"
+        }
+      ],
+      "problem": "Answer enterprise data questions grounded in a real database — reliably, without hallucination — and do the same over Bangla PDF documents where the model must refuse when the answer isn't in context.",
+      "approach": [
+        "Built a Planner→Executor→Critic→Memory agent loop that generates MongoDB queries / vector searches, evaluates groundedness, and retries within bounds.",
+        "Added SSE streaming, pluggable embeddings, and full observability (structured logs + feedback capture).",
+        "Companion HE-Sherlock pipeline: PyMuPDF + Tesseract (ben+eng) OCR → FAISS index → Gemini answering under a strict 'answer only from context' prompt that refuses (in Bangla) when the answer is absent.",
+        "Simpler sibling (mongoRAG) provides a clean, readable E5-embedding + vector-retrieval baseline."
+      ],
+      "architecture": {
+        "pipeline": [
+          "Question → Planner (query/search plan)",
+          "Executor → MongoDB query / vector search",
+          "Retrieve context (Atlas Vector / FAISS)",
+          "Critic → groundedness check + retry",
+          "Memory + SSE-streamed grounded answer"
+        ],
+        "stack": [
+          "Python",
+          "FastAPI",
+          "Motor / PyMongo",
+          "MongoDB Atlas Vector Search",
+          "sentence-transformers (E5)",
+          "LangGraph",
+          "FAISS",
+          "PyMuPDF",
+          "Tesseract",
+          "Google Gemini"
+        ]
+      },
+      "results": [
+        {
+          "text": "A complete agentic-RAG reference: query generation, groundedness verification, bounded retries, and observability.",
+          "source": "repo"
+        },
+        {
+          "text": "HE-Sherlock delivers production RAG on a low-resource language end to end, with explicit refusal behavior (22 commits).",
+          "source": "repo"
+        }
+      ],
+      "links": [
+        {
+          "label": "AI-Agent_MongoDB (GitHub)",
+          "url": "https://github.com/RH-NAYM/AI-Agent_MongoDB"
+        },
+        {
+          "label": "HE-Sherlock (Hugging Face)",
+          "url": "https://huggingface.co/HawkEyesAI/HE-Sherlock"
+        },
+        {
+          "label": "mongoRAG (GitHub)",
+          "url": "https://github.com/RH-NAYM/mongoRAG"
+        }
+      ],
+      "related": [
+        "AI-Agent_MongoDB",
+        "HE-Sherlock",
+        "mongoRAG",
+        "Langgraph"
+      ]
+    },
+    {
+      "slug": "bangla-tts",
+      "cover": "/images/work/bangla-tts.jpg",
+      "title": "Custom Bangladeshi-Accent Bangla TTS",
+      "subtitle": "A VITS text-to-speech model with a grapheme frontend, built to give production voice agents a natural Bangladeshi accent.",
+      "context": "HawkEyes · Custom-TTS-Bangla-Accent-VITS-XTTSv2 · current focus · 2026",
+      "domain": "Speech, Audio & NLP",
+      "featured": true,
+      "tags": [
+        "Coqui VITS",
+        "PyTorch",
+        "torchaudio",
+        "librosa",
+        "Bangla NLP"
+      ],
+      "metrics": [
+        {
+          "value": "90",
+          "label": "commits · very active",
+          "source": "repo"
+        },
+        {
+          "value": "VITS",
+          "label": "+ grapheme frontend",
+          "source": "repo"
+        },
+        {
+          "value": "current",
+          "label": "primary focus",
+          "source": "cv"
+        }
+      ],
+      "problem": "Natural Bangla speech synthesis is a low-resource challenge, and off-the-shelf voices lack a genuine Bangladeshi accent — a blocker for deploying trustworthy AI call agents for hospital appointment automation, sales, and support.",
+      "approach": [
+        "Fine-tune VITS with a purpose-built Bangla text frontend: Unicode NFC normalization, zero-width handling, danda/digit normalization via a grapheme-based approach.",
+        "Build the supporting speech-dataset pipeline (genMaxTxt): transcribe with Google Cloud Speech, normalize transcripts with Gemini, and align audio to spreadsheet entries.",
+        "Target deployment inside the real-time voice agent for inbound/outbound call automation."
+      ],
+      "architecture": {
+        "pipeline": [
+          "Raw Bangla audio + text",
+          "Grapheme frontend normalization",
+          "Dataset preprocessing (genMaxTxt)",
+          "VITS fine-tuning (PyTorch/torchaudio)",
+          "TensorBoard monitoring",
+          "Serve into Voice-AI-Agent TTS stage"
+        ],
+        "stack": [
+          "Python",
+          "Coqui TTS (VITS)",
+          "PyTorch / torchaudio",
+          "librosa",
+          "bnnumerizer / bnunicodenormalizer",
+          "TensorBoard"
+        ]
+      },
+      "results": [
+        {
+          "text": "An end-to-end Bangla TTS recipe under very active development (90 commits) — the author's current primary focus.",
+          "source": "repo"
+        },
+        {
+          "text": "Designed to plug directly into the production voice agent to unlock Bangla telephony automation.",
+          "source": "cv"
+        }
+      ],
+      "links": [
+        {
+          "label": "Custom-TTS-Bangla-Accent-VITS-XTTSv2 (Hugging Face)",
+          "url": "https://huggingface.co/rakib72642/Custom-TTS-Bangla-Accent-VITS-XTTSv2"
+        },
+        {
+          "label": "genMaxTxt (GitHub)",
+          "url": "https://github.com/RH-NAYM/genMaxTxt"
+        }
+      ],
+      "related": [
+        "Custom-TTS-Bangla-Accent-VITS-XTTSv2",
+        "genMaxTxt",
+        "Voice-AI-Agent"
+      ]
+    },
+    {
+      "slug": "on-prem-gpu-infra",
+      "cover": "/images/work/on-prem-gpu-infra.jpg",
+      "title": "On-Prem AI Server Infrastructure",
+      "subtitle": "Two self-hosted Ubuntu GPU servers, designed and built in-house — an alternative to renting cloud GPUs.",
+      "context": "HawkEyes · internal infrastructure + vastai-automate · 2025–present",
+      "domain": "MLOps, Infrastructure & Tooling",
+      "featured": true,
+      "tags": [
+        "Ubuntu Server",
+        "Linux (Arch)",
+        "NVIDIA GPU",
+        "Docker",
+        "Bash",
+        "Vast.ai"
+      ],
+      "metrics": [
+        {
+          "value": "2",
+          "label": "on-prem GPU servers",
+          "source": "cv"
+        },
+        {
+          "value": "3+ yrs",
+          "label": "Arch Linux daily driver",
+          "source": "cv"
+        },
+        {
+          "value": "in-house",
+          "label": "vs rented cloud GPU",
+          "source": "cv"
+        }
+      ],
+      "problem": "Relying on rented cloud GPUs for hosting AI services and training models is costly and adds an external dependency the team can't fully control.",
+      "approach": [
+        "Designed, built, and administer two dedicated on-premises Ubuntu servers — hardware provisioning, Linux server setup, containerized deployment, and ongoing maintenance.",
+        "Host most of the team's production AI workloads and run model-training jobs in-house.",
+        "Complement on-prem capacity with vastai-automate: scripts that search Vast.ai offers under hardware/network/reliability constraints, rank by price/throughput/reliability, auto-select the best instances, and bootstrap the environment."
+      ],
+      "architecture": {
+        "pipeline": [
+          "Bare-metal provisioning + Ubuntu server setup",
+          "NVIDIA GPU drivers + Docker runtime",
+          "Containerized AI services + training jobs",
+          "Structured logging & maintenance",
+          "Burst to Vast.ai via ranked auto-provisioning"
+        ],
+        "stack": [
+          "Ubuntu Server",
+          "Linux (Arch)",
+          "NVIDIA GPU",
+          "Docker & Compose",
+          "Bash",
+          "Python",
+          "Vast.ai CLI"
+        ]
+      },
+      "results": [
+        {
+          "text": "Reduced dependence on rented cloud GPUs and gave the team full control over training and inference infrastructure.",
+          "source": "cv"
+        },
+        {
+          "text": "Built and maintained by a long-time Linux power user (Arch daily driver 3+ years; hands-on across Ubuntu, Fedora, Mint, Pop!_OS).",
+          "source": "cv"
+        }
+      ],
+      "links": [
+        {
+          "label": "vastai-automate (GitHub)",
+          "url": "https://github.com/RH-NAYM/vastai-automate"
+        }
+      ],
+      "related": [
+        "vastai-automate",
+        "DockerLessons",
+        "important_files",
+        "custom-fastfetch"
+      ]
+    },
+    {
+      "slug": "bangla-ocr-icr",
+      "cover": "/images/work/bangla-ocr-icr.jpg",
+      "title": "Bangla OCR / ICR Engine",
+      "subtitle": "End-to-end custom PyTorch intelligent character recognition for the low-resource Bangla script.",
+      "context": "HawkEyes · Bangla-ICR · 2025",
+      "domain": "OCR & Document Intelligence",
+      "featured": true,
+      "tags": [
+        "PyTorch",
+        "CNN + CTC",
+        "OpenCV",
+        "scikit-learn",
+        "synthetic data"
+      ],
+      "metrics": [
+        {
+          "value": "CRNN",
+          "label": "CNN feature + CTC decode",
+          "source": "repo"
+        },
+        {
+          "value": "Bangla",
+          "label": "low-resource script",
+          "source": "repo"
+        },
+        {
+          "value": "REST",
+          "label": "API-served",
+          "source": "cv"
+        }
+      ],
+      "problem": "Reading Bangla text is under-served by mainstream OCR engines, blocking automated understanding of Bangla documents and forms.",
+      "approach": [
+        "Built an end-to-end PyTorch OCR/ICR model: a CNN feature extractor with sequence decoding under a CTC-style objective and Levenshtein-based evaluation.",
+        "Generated synthetic training data and assembled a custom dataset to overcome the low-resource gap.",
+        "Complemented by a detection-driven field-extraction demo (DemoOCRBangla) and a hybrid Cloud Vision + Gemini OCR pipeline (OCR_CloudVision_Gemeni) for noisy real-world images."
+      ],
+      "architecture": {
+        "pipeline": [
+          "Document image → preprocessing (OpenCV)",
+          "Optional YOLO field localization",
+          "CNN feature extractor",
+          "Sequence decoding (CTC)",
+          "Levenshtein evaluation → text output (REST)"
+        ],
+        "stack": [
+          "Python",
+          "PyTorch",
+          "OpenCV",
+          "scikit-learn",
+          "Pillow",
+          "python-Levenshtein"
+        ]
+      },
+      "results": [
+        {
+          "text": "Directly addresses the low-resource-language OCR challenge with a custom, from-scratch CRNN+CTC pipeline and synthetic data.",
+          "source": "repo"
+        },
+        {
+          "text": "Served as a REST API and paired with hybrid classical-OCR + LLM extraction for messy inputs.",
+          "source": "cv"
+        }
+      ],
+      "links": [
+        {
+          "label": "Bangla-ICR (GitHub)",
+          "url": "https://github.com/RH-NAYM/Bangla-ICR"
+        },
+        {
+          "label": "OCR_CloudVision_Gemeni (HF)",
+          "url": "https://huggingface.co/HawkEyesAI/OCR_CloudVision_Gemeni"
+        }
+      ],
+      "related": [
+        "Bangla-ICR",
+        "DemoOCRBangla",
+        "OCR_CloudVision_Gemeni"
+      ]
+    },
+    {
+      "slug": "hospital-ai-agent",
+      "cover": "/images/work/hospital-ai-agent.jpg",
+      "title": "Hospital Appointment AI Agent",
+      "subtitle": "A Gemini-Live voice & chat assistant that carries a real multi-turn conversation to book, confirm, and manage hospital appointments.",
+      "context": "HawkEyes · Hospital-AI-Agent · Gemini Live + LangGraph · 2026",
+      "domain": "LLM, RAG & Conversational AI",
+      "featured": true,
+      "tags": [
+        "Gemini Live",
+        "LangGraph",
+        "WebRTC",
+        "Twilio",
+        "RVC",
+        "FastAPI"
+      ],
+      "metrics": [
+        {
+          "value": "LangGraph",
+          "label": "stateful appointment-booking core",
+          "source": "repo"
+        },
+        {
+          "value": "2",
+          "label": "interchangeable voice backends",
+          "source": "repo"
+        },
+        {
+          "value": "Twilio+Email",
+          "label": "real confirmation actions",
+          "source": "repo"
+        }
+      ],
+      "problem": "Hospital front-desk appointment booking over phone or chat is repetitive, staff-intensive, and error-prone — it needs an agent that can hold a genuine multi-turn conversation, track slot-filling (doctor, date, time), stay strictly on-topic, and take real actions rather than just talk.",
+      "approach": [
+        "Built a LangGraph state-machine agent (persona 'তানিয়া ইসলাম') that tracks slot memory across turns — doctor selection, natural-language date/time parsing (dateparser), and domain-strict guardrails that keep the conversation on-topic.",
+        "Added a dedicated Gemini Live bridge alongside the existing STT→LLM→TTS pipeline so the same appointment tools, prompts, and conversation state can drive either native Gemini Live audio or the classic loop — an interchangeable-backend design.",
+        "Delivered both a WebRTC voice transport and a text/chat transport from one FastAPI backend, with Twilio call/SMS and email tool-calling for appointment confirmations.",
+        "Added an internal RVC (voice-conversion) module and a lightweight DB-view/admin API for operational visibility into bookings."
+      ],
+      "architecture": {
+        "pipeline": [
+          "Caller/browser audio or chat → FastAPI transport (WebRTC / WebSocket / REST)",
+          "VAD → STT, or native Gemini Live audio",
+          "LangGraph agent — slot memory + domain-strict guardrails",
+          "Tool-calls: doctor/date lookup, Twilio call/SMS, email confirmation",
+          "TTS or Gemini Live audio response streamed back",
+          "aiosqlite-checkpointed conversation state + DB-view admin API"
+        ],
+        "stack": [
+          "Python",
+          "FastAPI",
+          "LangChain + LangGraph",
+          "langchain-google-genai (Gemini Live)",
+          "Twilio",
+          "aiosqlite",
+          "dateparser",
+          "RVC",
+          "WebRTC"
+        ]
+      },
+      "results": [
+        {
+          "text": "Runs two interchangeable generation backends — native Gemini Live audio and a classic STT→LLM→TTS loop — behind one appointment-booking agent core.",
+          "source": "repo"
+        },
+        {
+          "text": "Takes real-world action (Twilio call/SMS and email confirmations), not just conversation, on top of a domain-strict, slot-memory LangGraph core.",
+          "source": "repo"
+        }
+      ],
+      "links": [
+        {
+          "label": "Hospital-AI-Agent (Hugging Face)",
+          "url": "https://huggingface.co/rakib72642/Hospital-AI-Agent"
+        }
+      ],
+      "related": [
+        "Hospital-AI-Agent",
+        "Voice-AI-Agent",
+        "Custom-TTS-Bangla-Accent-VITS-XTTSv2"
+      ]
+    },
+    {
+      "slug": "he-universe-model-store",
+      "cover": "/images/work/he-universe-model-store.jpg",
+      "title": "HE-Universe Multi-Domain AI Model Store",
+      "subtitle": "One FastAPI service unifying 15+ production AI modules — retail CV, face recognition, OCR, and conversational NLP — behind a single deployable Hugging Face Space.",
+      "context": "HawkEyes · Universe-Model-Store (formerly v2_HE_Universe) · 2025–present",
+      "domain": "Computer Vision & Retail Intelligence",
+      "featured": true,
+      "tags": [
+        "FastAPI",
+        "YOLO",
+        "OCR",
+        "NLP",
+        "face_recognition",
+        "Hugging Face",
+        "multi-module"
+      ],
+      "metrics": [
+        {
+          "value": "15+",
+          "label": "production modules in one service",
+          "source": "repo"
+        },
+        {
+          "value": "BAT+UBL",
+          "label": "+ OCR, face, NLP, speech modules",
+          "source": "repo"
+        },
+        {
+          "value": "1",
+          "label": "unified deploy (Hugging Face)",
+          "source": "repo"
+        }
+      ],
+      "problem": "As the number of client programs grew (BAT, Unilever, OCR, face verification, speech), running each as a fully separate service became an operational burden — duplicated boilerplate, scattered deployments, and no single place to reason about the whole model estate.",
+      "approach": [
+        "Consolidated BAT, Unilever (UBL), face detection/recognition, Bangla & 'MT House' OCR, material detection, beverage-industry detection, hotspot calculation, eKYC, and five NLP/conversational modules (general NLP, Zerocal, Maya, conversational guidance, speak-metric merge) behind one FastAPI app (Universe_API.py).",
+        "Kept each domain in its own class/module boundary (modules/<name>/<name>_main.py) while sharing a common tools/model-handler layer for loading and serving models.",
+        "Deployed as a single Hugging Face Space so every client-facing capability the team ships can be reached from one live endpoint instead of a dozen scattered ones."
+      ],
+      "architecture": {
+        "pipeline": [
+          "Request → Universe_API.py router",
+          "Domain class dispatch (BAT / UBL / OCR / Face / NLP / Speech …)",
+          "Shared model-handler loads the right model set",
+          "Per-module inference + response shaping",
+          "Structured JSON response + per-module logs"
+        ],
+        "stack": [
+          "Python",
+          "FastAPI",
+          "PyTorch",
+          "Ultralytics YOLO",
+          "OpenCV",
+          "Tesseract / OCR",
+          "face_recognition",
+          "NLTK",
+          "Hugging Face deploy",
+          "Git LFS"
+        ]
+      },
+      "results": [
+        {
+          "text": "One live Hugging Face Space now fronts 15+ previously-separate production modules spanning retail CV, OCR, identity, and conversational NLP.",
+          "source": "repo"
+        },
+        {
+          "text": "Gives the team a single place to add, version, and monitor new AI capabilities instead of standing up a new service per client.",
+          "source": "cv"
+        }
+      ],
+      "links": [
+        {
+          "label": "Universe-Model-Store (Hugging Face)",
+          "url": "https://huggingface.co/rakib72642/Universe-Model-Store"
+        }
+      ],
+      "related": [
+        "Universe-Model-Store",
+        "BAT-Master-Live",
+        "UNILEVER-Master-Live"
+      ]
+    }
+  ],
+  "repos": [
+    {
+      "name": "BAT-Master-Live",
+      "description": "Central production CV+analytics API for a British American Tobacco retail-execution program — live Hugging Face deployment (merges the BAT_Master flagship and its earliest prototype lineage).",
+      "url": "https://huggingface.co/rakib72642/BAT-Master-Live",
+      "tags": [
+        "FastAPI",
+        "YOLO",
+        "PyTorch",
+        "Hypercorn",
+        "Hugging Face"
+      ],
+      "domain": "Computer Vision & Retail Intelligence",
+      "caseStudy": "retail-execution-intelligence"
+    },
+    {
+      "name": "UNILEVER-Master-Live",
+      "description": "Unilever Bangladesh retail-execution API — 10+ versioned YOLO models with cross-model reconciliation (Display Audit, QPDS, SOS, MTSOS), live Hugging Face deployment.",
+      "url": "https://huggingface.co/rakib72642/UNILEVER-Master-Live",
+      "tags": [
+        "FastAPI",
+        "YOLO",
+        "dlib",
+        "Docker",
+        "Hugging Face"
+      ],
+      "domain": "Computer Vision & Retail Intelligence",
+      "caseStudy": "retail-execution-intelligence"
+    },
+    {
+      "name": "Malay-DAIA",
+      "description": "Retail item-detection + agent face-verification API for a Malaysian deployment.",
+      "url": "https://huggingface.co/HawkEyesAI/Malay-DAIA",
+      "tags": [
+        "FastAPI",
+        "YOLO",
+        "face_recognition"
+      ],
+      "domain": "Computer Vision & Retail Intelligence",
+      "caseStudy": "retail-execution-intelligence"
+    },
+    {
+      "name": "Squere_Demo",
+      "description": "Multi-module retail-audit API: Display Audit, POSM, Sachet, and Share-of-Shelf.",
+      "url": "https://huggingface.co/HawkEyesAI/Squere_Demo",
+      "tags": [
+        "FastAPI",
+        "YOLO",
+        "OpenCV",
+        "async"
+      ],
+      "domain": "Computer Vision & Retail Intelligence",
+      "caseStudy": "retail-execution-intelligence"
+    },
+    {
+      "name": "Nagad",
+      "description": "Mobile-financial-services (Nagad/bKash/Rocket/Tap) branding detection API.",
+      "url": "https://github.com/RH-NAYM/Nagad",
+      "tags": [
+        "FastAPI",
+        "YOLO",
+        "pandas"
+      ],
+      "domain": "Computer Vision & Retail Intelligence",
+      "caseStudy": "retail-execution-intelligence"
+    },
+    {
+      "name": "nagad_version_12",
+      "description": "Versioned (v12) snapshot of the Nagad detection API.",
+      "url": "https://github.com/RH-NAYM/nagad_version_12",
+      "tags": [
+        "FastAPI",
+        "YOLO"
+      ],
+      "domain": "Computer Vision & Retail Intelligence"
+    },
+    {
+      "name": "GP_HawkEyes",
+      "description": "Async object-detection & counting microservice (reusable detection pattern).",
+      "url": "https://github.com/RH-NAYM/GP_HawkEyes",
+      "tags": [
+        "FastAPI",
+        "YOLOv5",
+        "asyncio"
+      ],
+      "domain": "Computer Vision & Retail Intelligence"
+    },
+    {
+      "name": "distance-calculate",
+      "description": "Object distance/spacing estimation from detections (pixel-to-metric).",
+      "url": "https://huggingface.co/HawkEyesAI/distance-calculate",
+      "tags": [
+        "FastAPI",
+        "YOLO",
+        "NumPy"
+      ],
+      "domain": "Computer Vision & Retail Intelligence"
+    },
+    {
+      "name": "Hypothesis-for-detect-common-competitor-products",
+      "description": "Competitor-product detection experiment (YOLO + Gemini vision).",
+      "url": "https://huggingface.co/HawkEyesAI/Hypothesis-for-detect-common-competitor-products",
+      "tags": [
+        "FastAPI",
+        "YOLO",
+        "Gemini"
+      ],
+      "domain": "Computer Vision & Retail Intelligence"
+    },
+    {
+      "name": "Himel_Face_Detection",
+      "description": "Team recognition + directory-lookup API.",
+      "url": "https://github.com/RH-NAYM/Himel_Face_Detection",
+      "tags": [
+        "FastAPI",
+        "YOLOv5",
+        "pandas"
+      ],
+      "domain": "Computer Vision & Retail Intelligence"
+    },
+    {
+      "name": "Demo_AR",
+      "description": "Browser AR camera demo (WebSocket + OpenCV) — maps to the AR validation tool.",
+      "url": "https://github.com/RH-NAYM/Demo_AR",
+      "tags": [
+        "FastAPI",
+        "WebSockets",
+        "OpenCV"
+      ],
+      "domain": "Computer Vision & Retail Intelligence"
+    },
+    {
+      "name": "Universe-Model-Store",
+      "description": "Multi-module AI model store/API unifying BAT, Unilever, face recognition, OCR, and conversational-NLP services behind one Hugging Face deployment.",
+      "url": "https://huggingface.co/rakib72642/Universe-Model-Store",
+      "tags": [
+        "FastAPI",
+        "YOLO",
+        "OCR",
+        "NLP",
+        "multi-module",
+        "Hugging Face"
+      ],
+      "domain": "Computer Vision & Retail Intelligence",
+      "caseStudy": "he-universe-model-store"
+    },
+    {
+      "name": "NID-Face-Validation-with-AI",
+      "description": "Identity verification by matching a selfie against an NID photo (face embeddings).",
+      "url": "https://github.com/RH-NAYM/NID-Face-Validation-with-AI",
+      "tags": [
+        "FastAPI",
+        "face_recognition",
+        "dlib"
+      ],
+      "domain": "Identity & Face Verification"
+    },
+    {
+      "name": "Face_Matching_with_Python",
+      "description": "Two-image face verification API (dlib encodings).",
+      "url": "https://github.com/RH-NAYM/Face_Matching_with_Python",
+      "tags": [
+        "FastAPI",
+        "face_recognition",
+        "dlib"
+      ],
+      "domain": "Identity & Face Verification"
+    },
+    {
+      "name": "Face-Detection",
+      "description": "Real-time face & landmark detection (OpenCV + MediaPipe Holistic).",
+      "url": "https://github.com/RH-NAYM/Face-Detection",
+      "tags": [
+        "OpenCV",
+        "MediaPipe"
+      ],
+      "domain": "Identity & Face Verification"
+    },
+    {
+      "name": "Bangla-ICR",
+      "description": "Custom PyTorch Bangla intelligent character recognition (CNN + CTC).",
+      "url": "https://github.com/RH-NAYM/Bangla-ICR",
+      "tags": [
+        "PyTorch",
+        "OpenCV",
+        "CTC"
+      ],
+      "domain": "OCR & Document Intelligence",
+      "caseStudy": "bangla-ocr-icr"
+    },
+    {
+      "name": "DemoOCRBangla",
+      "description": "Detection-driven OCR field-extraction demo (detect-then-read).",
+      "url": "https://github.com/RH-NAYM/DemoOCRBangla",
+      "tags": [
+        "FastAPI",
+        "YOLO",
+        "OCR"
+      ],
+      "domain": "OCR & Document Intelligence",
+      "caseStudy": "bangla-ocr-icr"
+    },
+    {
+      "name": "OCR_CloudVision_Gemeni",
+      "description": "Hybrid OCR: Google Cloud Vision + Gemini 1.5 Flash + NLTK.",
+      "url": "https://huggingface.co/HawkEyesAI/OCR_CloudVision_Gemeni",
+      "tags": [
+        "Cloud Vision",
+        "Gemini",
+        "NLTK"
+      ],
+      "domain": "OCR & Document Intelligence",
+      "caseStudy": "bangla-ocr-icr"
+    },
+    {
+      "name": "Voice-AI-Agent",
+      "description": "Production real-time conversational voice agent (WebRTC → STT → LangGraph → TTS).",
+      "url": "https://huggingface.co/HawkEyesAI/Voice-AI-Agent",
+      "tags": [
+        "WebRTC",
+        "LangGraph",
+        "faster-whisper",
+        "MCP"
+      ],
+      "domain": "LLM, RAG & Conversational AI",
+      "caseStudy": "real-time-voice-agent"
+    },
+    {
+      "name": "Hospital-AI-Agent",
+      "description": "Hospital appointment-booking voice & chat agent — LangGraph slot-memory core with a Gemini Live audio bridge, Twilio/email tool-calling, and WebRTC transport.",
+      "url": "https://huggingface.co/rakib72642/Hospital-AI-Agent",
+      "tags": [
+        "Gemini Live",
+        "LangGraph",
+        "Twilio",
+        "WebRTC",
+        "FastAPI"
+      ],
+      "domain": "LLM, RAG & Conversational AI",
+      "caseStudy": "hospital-ai-agent"
+    },
+    {
+      "name": "AI-Agent_MongoDB",
+      "description": "Multi-agent, self-correcting RAG over MongoDB (Planner→Executor→Critic).",
+      "url": "https://github.com/RH-NAYM/AI-Agent_MongoDB",
+      "tags": [
+        "LangGraph",
+        "MongoDB",
+        "SSE"
+      ],
+      "domain": "LLM, RAG & Conversational AI",
+      "caseStudy": "agentic-grounded-rag"
+    },
+    {
+      "name": "mongoRAG",
+      "description": "Clean MongoDB retrieval-augmented-generation pipeline (E5 embeddings).",
+      "url": "https://github.com/RH-NAYM/mongoRAG",
+      "tags": [
+        "FastAPI",
+        "MongoDB",
+        "sentence-transformers"
+      ],
+      "domain": "LLM, RAG & Conversational AI",
+      "caseStudy": "agentic-grounded-rag"
+    },
+    {
+      "name": "HE-Sherlock",
+      "description": "Bangla document RAG Q&A with strict grounding (FAISS + Gemini).",
+      "url": "https://huggingface.co/HawkEyesAI/HE-Sherlock",
+      "tags": [
+        "LangChain",
+        "FAISS",
+        "Gemini",
+        "Tesseract"
+      ],
+      "domain": "LLM, RAG & Conversational AI",
+      "caseStudy": "agentic-grounded-rag"
+    },
+    {
+      "name": "Langgraph",
+      "description": "LangGraph learning notebooks & agent-workflow experiments.",
+      "url": "https://github.com/RH-NAYM/Langgraph",
+      "tags": [
+        "LangGraph",
+        "Jupyter"
+      ],
+      "domain": "LLM, RAG & Conversational AI"
+    },
+    {
+      "name": "imiBotAI",
+      "description": "Intent chatbot dispatching to operational data functions (UBL variants).",
+      "url": "https://github.com/RH-NAYM/imiBotAI",
+      "tags": [
+        "PyTorch",
+        "NLTK",
+        "FastAPI"
+      ],
+      "domain": "LLM, RAG & Conversational AI"
+    },
+    {
+      "name": "ChatBot_for_Excel",
+      "description": "Intent-classification chatbot over spreadsheet data (bag-of-words).",
+      "url": "https://github.com/RH-NAYM/ChatBot_for_Excel",
+      "tags": [
+        "PyTorch",
+        "NLTK"
+      ],
+      "domain": "LLM, RAG & Conversational AI"
+    },
+    {
+      "name": "Rule_Based_Bot",
+      "description": "Rule-based & TF-IDF retrieval chatbots (pre-LLM techniques).",
+      "url": "https://github.com/RH-NAYM/Rule_Based_Bot",
+      "tags": [
+        "NLTK",
+        "scikit-learn"
+      ],
+      "domain": "LLM, RAG & Conversational AI"
+    },
+    {
+      "name": "TeleBotAI",
+      "description": "Async Telegram service bot with inline menus & encrypted config.",
+      "url": "https://github.com/RH-NAYM/TeleBotAI",
+      "tags": [
+        "Telegram",
+        "httpx",
+        "cryptography"
+      ],
+      "domain": "LLM, RAG & Conversational AI"
+    },
+    {
+      "name": "AI-ChatBot",
+      "description": "Local, GPU-accelerated voice assistant loop (whisper → local LLM → TTS).",
+      "url": "https://github.com/RH-NAYM/AI-ChatBot",
+      "tags": [
+        "faster-whisper",
+        "Transformers",
+        "llama.cpp"
+      ],
+      "domain": "LLM, RAG & Conversational AI"
+    },
+    {
+      "name": "Custom-TTS-Bangla-Accent-VITS-XTTSv2",
+      "description": "Bangla text-to-speech fine-tuning (Coqui VITS + grapheme frontend, expanding toward XTTSv2).",
+      "url": "https://huggingface.co/rakib72642/Custom-TTS-Bangla-Accent-VITS-XTTSv2",
+      "tags": [
+        "Coqui VITS",
+        "PyTorch",
+        "librosa",
+        "XTTSv2"
+      ],
+      "domain": "Speech, Audio & NLP",
+      "caseStudy": "bangla-tts"
+    },
+    {
+      "name": "genMaxTxt",
+      "description": "Speech-to-text dataset builder (Cloud Speech + Gemini normalization).",
+      "url": "https://github.com/RH-NAYM/genMaxTxt",
+      "tags": [
+        "Cloud Speech",
+        "Gemini",
+        "openpyxl"
+      ],
+      "domain": "Speech, Audio & NLP",
+      "caseStudy": "bangla-tts"
+    },
+    {
+      "name": "BAT_Audio_NLP",
+      "description": "Audio brand-mention detection for BAT (AssemblyAI + fuzzy regex).",
+      "url": "https://github.com/RH-NAYM/BAT_Audio_NLP",
+      "tags": [
+        "AssemblyAI",
+        "regex"
+      ],
+      "domain": "Speech, Audio & NLP"
+    },
+    {
+      "name": "BAT_NLP_Campaign",
+      "description": "Campaign-phrase compliance detection from field audio (NLTK + fuzzy match).",
+      "url": "https://github.com/RH-NAYM/BAT_NLP_Campaign",
+      "tags": [
+        "AssemblyAI",
+        "NLTK",
+        "regex"
+      ],
+      "domain": "Speech, Audio & NLP"
+    },
+    {
+      "name": "On-Prem AI Server Infrastructure",
+      "description": "Two self-hosted Ubuntu GPU servers hosting production AI + training (internal).",
+      "url": "https://github.com/RH-NAYM",
+      "tags": [
+        "Ubuntu",
+        "NVIDIA GPU",
+        "Docker",
+        "Bash"
+      ],
+      "domain": "MLOps, Infrastructure & Tooling",
+      "caseStudy": "on-prem-gpu-infra"
+    },
+    {
+      "name": "vastai-automate",
+      "description": "GPU instance selection & provisioning automation (Vast.ai cost optimization).",
+      "url": "https://github.com/RH-NAYM/vastai-automate",
+      "tags": [
+        "Bash",
+        "Python",
+        "Vast.ai"
+      ],
+      "domain": "MLOps, Infrastructure & Tooling",
+      "caseStudy": "on-prem-gpu-infra"
+    },
+    {
+      "name": "DockerLessons",
+      "description": "Docker & containerization practice (Compose, cheat sheet).",
+      "url": "https://github.com/RH-NAYM/DockerLessons",
+      "tags": [
+        "Docker",
+        "FastAPI"
+      ],
+      "domain": "MLOps, Infrastructure & Tooling"
+    },
+    {
+      "name": "important_files",
+      "description": "ML/CV engineering toolbox — dataset prep, YOLO annotation, training utils.",
+      "url": "https://github.com/RH-NAYM/important_files",
+      "tags": [
+        "PyTorch",
+        "OpenCV",
+        "Label Studio"
+      ],
+      "domain": "MLOps, Infrastructure & Tooling"
+    },
+    {
+      "name": "custom-fastfetch",
+      "description": "Fastfetch config presets & ASCII art (Arch / Hyprland dotfiles).",
+      "url": "https://github.com/RH-NAYM/custom-fastfetch",
+      "tags": [
+        "Arch Linux",
+        "Hyprland",
+        "JSONC"
+      ],
+      "domain": "MLOps, Infrastructure & Tooling"
+    },
+    {
+      "name": "AttendanceHE",
+      "description": "Hybrid IP-gated attendance system (internal production) — Fernet-encrypted creds.",
+      "url": "https://github.com/RH-NAYM/AttendanceHE",
+      "tags": [
+        "FastAPI",
+        "Google Sheets",
+        "Docker"
+      ],
+      "domain": "Web, Backend & Systems"
+    },
+    {
+      "name": "demoDjangoRestAPI",
+      "description": "Django REST API demo + Python client.",
+      "url": "https://github.com/RH-NAYM/demoDjangoRestAPI",
+      "tags": [
+        "Django",
+        "DRF"
+      ],
+      "domain": "Web, Backend & Systems"
+    },
+    {
+      "name": "Ldjango",
+      "description": "First Django project (StudyBud discussion-rooms clone).",
+      "url": "https://github.com/RH-NAYM/Ldjango",
+      "tags": [
+        "Django",
+        "SQLite"
+      ],
+      "domain": "Web, Backend & Systems"
+    },
+    {
+      "name": "testDjango",
+      "description": "Django practice sandbox (models/views/URLs/templates).",
+      "url": "https://github.com/RH-NAYM/testDjango",
+      "tags": [
+        "Django",
+        "SQLite"
+      ],
+      "domain": "Web, Backend & Systems"
+    },
+    {
+      "name": "Learn_HTML",
+      "description": "HTML/CSS learning lessons (numbered, per-page stylesheets).",
+      "url": "https://github.com/RH-NAYM/Learn_HTML",
+      "tags": [
+        "HTML5",
+        "CSS"
+      ],
+      "domain": "Web, Backend & Systems"
+    },
+    {
+      "name": "Getting_Started_with_MongoDB",
+      "description": "MongoDB setup & usage notes underpinning the DB-backed projects.",
+      "url": "https://github.com/RH-NAYM/Getting_Started_with_MongoDB",
+      "tags": [
+        "MongoDB"
+      ],
+      "domain": "Web, Backend & Systems"
+    },
+    {
+      "name": "LeetCode_Probs",
+      "description": "Algorithm practice — LeetCode solutions in notebooks.",
+      "url": "https://github.com/RH-NAYM/LeetCode_Probs",
+      "tags": [
+        "Python",
+        "Jupyter"
+      ],
+      "domain": "Web, Backend & Systems"
+    },
+    {
+      "name": "Personal-Content",
+      "description": "Personal configuration store (reusable setup bundle).",
+      "url": "https://github.com/RH-NAYM/Personal-Content",
+      "tags": [
+        "Config"
+      ],
+      "domain": "Web, Backend & Systems"
+    },
+    {
+      "name": "OpenCV-Convolution",
+      "description": "Image filtering via convolution — blur, sharpen, edge detection.",
+      "url": "https://github.com/RH-NAYM/OpenCV-Convolution",
+      "tags": [
+        "OpenCV",
+        "NumPy"
+      ],
+      "domain": "OpenCV Fundamentals"
+    },
+    {
+      "name": "OpenCV-Image-Thresholding",
+      "description": "Global, adaptive & Otsu thresholding for binarization/segmentation.",
+      "url": "https://github.com/RH-NAYM/OpenCV-Image-Thresholding",
+      "tags": [
+        "OpenCV",
+        "NumPy"
+      ],
+      "domain": "OpenCV Fundamentals"
+    },
+    {
+      "name": "OpenCV-Morphological-Transformations",
+      "description": "Erosion, dilation, opening, closing, gradient & hat operations.",
+      "url": "https://github.com/RH-NAYM/OpenCV-Morphological-Transformations",
+      "tags": [
+        "OpenCV",
+        "NumPy"
+      ],
+      "domain": "OpenCV Fundamentals"
+    },
+    {
+      "name": "OpenCV-Histogram-Equalization",
+      "description": "Contrast enhancement — global equalization & adaptive CLAHE.",
+      "url": "https://github.com/RH-NAYM/OpenCV-Histogram-Equalization",
+      "tags": [
+        "OpenCV",
+        "NumPy"
+      ],
+      "domain": "OpenCV Fundamentals"
+    },
+    {
+      "name": "OpenCV-Vanishing-Point-Detection",
+      "description": "Vanishing-point detection (Canny + Hough + RANSAC).",
+      "url": "https://github.com/RH-NAYM/OpenCV-Vanishing-Point-Detection",
+      "tags": [
+        "OpenCV",
+        "RANSAC"
+      ],
+      "domain": "OpenCV Fundamentals"
+    },
+    {
+      "name": "OpenCV-Homography-Perspective-Transform",
+      "description": "Homography & perspective warping with interactive click-to-warp.",
+      "url": "https://github.com/RH-NAYM/OpenCV-Homography-Perspective-Transform",
+      "tags": [
+        "OpenCV",
+        "NumPy"
+      ],
+      "domain": "OpenCV Fundamentals"
+    },
+    {
+      "name": "OpenCV-Camera-Calibration---Lens-Distortion",
+      "description": "Chessboard calibration & lens-distortion correction (intrinsics).",
+      "url": "https://github.com/RH-NAYM/OpenCV-Camera-Calibration---Lens-Distortion",
+      "tags": [
+        "OpenCV",
+        "calibration"
+      ],
+      "domain": "OpenCV Fundamentals"
+    },
+    {
+      "name": "OpenCV-Affine-Transformation",
+      "description": "Affine transforms — translation, rotation, scale, shear.",
+      "url": "https://github.com/RH-NAYM/OpenCV-Affine-Transformation",
+      "tags": [
+        "OpenCV",
+        "NumPy"
+      ],
+      "domain": "OpenCV Fundamentals"
+    },
+    {
+      "name": "OpenCV-Feature-Detection-and-Matching",
+      "description": "Feature matching from classical keypoints up to GPU LightGlue.",
+      "url": "https://github.com/RH-NAYM/OpenCV-Feature-Detection-and-Matching",
+      "tags": [
+        "OpenCV",
+        "LightGlue",
+        "CUDA"
+      ],
+      "domain": "OpenCV Fundamentals"
+    },
+    {
+      "name": "OrderJadu",
+      "description": "AI sales agent for Bangladeshi Facebook shops — answers inbox messages and \"price?\" comments in Banglish, Bangla or English (voice notes and photos too), bargains but never below a floor price enforced in code, takes bKash/SSLCommerz advance or COD, and books Pathao/Steadfast after a human approves.",
+      "url": "https://github.com/BikolpoAI",
+      "tags": [
+        "LangGraph",
+        "FastAPI",
+        "Next.js",
+        "OpenAI / Gemini / Claude",
+        "SQLAlchemy"
+      ],
+      "domain": "AI Products (Bikolpo AI)"
+    },
+    {
+      "name": "EkInbox",
+      "description": "One live team inbox for Messenger, Instagram and WhatsApp that answers repetitive Bangla/Banglish/English questions only from the shop's own FAQ and stock sheet, hands off with a draft when it can't cite a source, links the same buyer across channels, and turns \"I want to buy\" into a one-tap draft order.",
+      "url": "https://github.com/BikolpoAI",
+      "tags": [
+        "LangGraph",
+        "FastAPI",
+        "Next.js",
+        "faster-whisper",
+        "SQLAlchemy"
+      ],
+      "domain": "AI Products (Bikolpo AI)"
+    },
+    {
+      "name": "Nishchit",
+      "description": "Cash-on-delivery verification agent — scores every COD order for risk (BD phone checks, courier history, rules + LightGBM), runs a short automated Bangla confirmation call, and books the courier only after the customer confirms twice.",
+      "url": "https://github.com/BikolpoAI",
+      "tags": [
+        "LightGBM",
+        "LiveKit",
+        "faster-whisper",
+        "FastAPI",
+        "Next.js"
+      ],
+      "domain": "AI Products (Bikolpo AI)"
+    },
+    {
+      "name": "HishabKhata",
+      "description": "Point of sale and khata (ledger) for Bangladeshi shops — keyboard-first billing, 58/80 mm Bangla or English memos, automatic customer dues and supplier credit, daily profit, bKash-approved subscriptions, and offline billing when the internet drops.",
+      "url": "https://github.com/BikolpoAI",
+      "tags": [
+        "Django",
+        "PostgreSQL",
+        "Bangla UI",
+        "Offline-first"
+      ],
+      "domain": "AI Products (Bikolpo AI)"
+    }
+  ]
+}

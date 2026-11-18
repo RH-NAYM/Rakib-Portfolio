@@ -53,8 +53,13 @@ class Knowledge:
         raw = json.loads(corpus_path.read_text(encoding="utf-8"))
         docs = [Doc(**{k: d[k] for k in ("id", "title", "url", "kind", "text")}) for d in raw["docs"]]
         media: list[MediaItem] = []
-        if media_path.exists():
-            for m in yaml.safe_load(media_path.read_text(encoding="utf-8")) or []:
+        # The catalog is embedded in corpus.json at build time: on Vercel the twin service only
+        # ships twin-agent/, so content/twin/media.yaml isn't there at runtime.
+        entries = raw.get("media")
+        if entries is None and media_path.exists():
+            entries = yaml.safe_load(media_path.read_text(encoding="utf-8")) or []
+        if entries:
+            for m in entries:
                 media.append(
                     MediaItem(
                         id=str(m["id"]),

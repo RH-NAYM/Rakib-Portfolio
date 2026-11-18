@@ -70,25 +70,41 @@ class MemoryBackend:
         return self._d.get(key, 0.0)
 
 
-class FirestoreBackend:
-    """One document per counter key; `Increment` is atomic server-side."""
+class UpstashBackend:
+    """Upstash Redis over its REST API (Vercel Marketplace integration; all-Vercel D17).
 
-    def __init__(self) -> None:
-        from google.cloud import firestore
+    INCRBYFLOAT is atomic server-side; every key gets a TTL so counters clean themselves up.
+    Env: KV_REST_API_URL / KV_REST_API_TOKEN (names the Vercel integration injects) or
+    UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN.
+    """
 
-        self._fs = firestore
-        self._db = firestore.Client(project=os.environ.get("GCP_PROJECT_ID"))
-        self._col = self._db.collection("twin_counters")
+    TTL_S = 3 * 24 * 3600
+
+    def __init__(self, url: str | None = None, token: str | None = None, transport=None) -> None:
+        import httpx
+
+        url = url or os.environ.get("KV_REST_API_URL") or os.environ.get("UPSTASH_REDIS_REST_URL")
+        token = token or os.environ.get("KV_REST_API_TOKEN") or os.environ.get("UPSTASH_REDIS_REST_TOKEN")
+        if not url or not token:
+            raise RuntimeError("Upstash Redis env missing (KV_REST_API_URL / KV_REST_API_TOKEN).")
+        self._http = httpx.Client(base_url=url.rstrip("/"), headers={"Authorization": f"Bearer {token}"}, timeout=3.0, transport=transport)
+
+    def _pipeline(self, *cmds: list) -> list:
+        r = self._http.post("/pipeline", json=list(cmds))
+        r.raise_for_status()
+        out = r.json()
+        for item in out:
+            if "error" in item:
+                raise RuntimeError(f"upstash: {item['error']}")
+        return [item.get("result") for item in out]
 
     def incr(self, key: str, amount: float) -> float:
-        ref = self._col.document(key)
-        ref.set({"v": self._fs.Increment(amount), "updated": self._fs.SERVER_TIMESTAMP}, merge=True)
-        snap = ref.get()
-        return float((snap.to_dict() or {}).get("v", 0.0))
+        res = self._pipeline(["INCRBYFLOAT", key, str(amount)], ["EXPIRE", key, str(self.TTL_S)])
+        return float(res[0])
 
     def get(self, key: str) -> float:
-        snap = self._col.document(key).get()
-        return float((snap.to_dict() or {}).get("v", 0.0)) if snap.exists else 0.0
+        (val,) = self._pipeline(["GET", key])
+        return float(val) if val is not None else 0.0
 
 
 @dataclass
@@ -124,15 +140,21 @@ class Gate:
             self.backend.incr(f"spend_{dhaka_day(now)}", meter.usd)
 
 
+def client_ip(headers) -> str:
+    """Visitor IP as set by Vercel's edge. First hop only: later x-forwarded-for entries are client-controlled."""
+    raw = headers.get("x-vercel-forwarded-for") or headers.get("x-forwarded-for") or headers.get("x-real-ip") or ""
+    return raw.split(",")[0].strip() or "0.0.0.0"
+
+
 def check_startup(models: list[str]) -> None:
     assert_priced(*models)
-    if os.environ.get("TWIN_LIMITS_BACKEND", "firestore") == "memory" and os.environ.get("TWIN_ENV") != "test":
+    if os.environ.get("TWIN_LIMITS_BACKEND", "upstash") == "memory" and os.environ.get("TWIN_ENV") != "test":
         raise RuntimeError("TWIN_LIMITS_BACKEND=memory is only allowed with TWIN_ENV=test")
     if os.environ.get("TWIN_ENV") != "test" and not os.environ.get("IP_HASH_SECRET"):
         raise RuntimeError("IP_HASH_SECRET must be set outside tests")
 
 
 def gate_from_env() -> Gate:
-    backend: LimitsBackend = MemoryBackend() if os.environ.get("TWIN_LIMITS_BACKEND") == "memory" else FirestoreBackend()
+    backend: LimitsBackend = MemoryBackend() if os.environ.get("TWIN_LIMITS_BACKEND") == "memory" else UpstashBackend()
     secret = os.environ.get("IP_HASH_SECRET", "test-secret").encode()
     return Gate(backend, secret, float(os.environ.get("TWIN_DAILY_USD_CAP", "2.0")))
