@@ -524,6 +524,61 @@ button:hover > .nudge {
   color: var(--color-text);
 }
 
+/* answer layout: lead, group labels, points with a detection-box marker, sub-points with a hairline */
+.twin-prose > * + * {
+  margin-top: 0.75rem;
+}
+.twin-prose > .twin-answer-h {
+  margin-top: 1.125rem;
+}
+.twin-prose > .twin-answer-h + .twin-points {
+  margin-top: 0.375rem;
+}
+.twin-answer-h {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  color: var(--color-text);
+}
+.twin-points {
+  display: grid;
+  gap: 0.5rem;
+}
+.twin-points > li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+.twin-points > li::before {
+  content: "";
+  position: absolute;
+  left: 0.125rem;
+  top: 0.62em;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border: 1.5px solid var(--color-accent);
+  border-radius: 1px;
+}
+.twin-details {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.3rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+.twin-details > li {
+  position: relative;
+  padding-left: 1rem;
+}
+.twin-details > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.78em;
+  width: 0.5rem;
+  border-top: 1px solid var(--color-text-faint);
+}
+
 /* the visitor's turn: a quiet bubble, readable at a glance */
 .visitor-bubble {
   max-width: min(80%, 34rem);

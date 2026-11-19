@@ -246,9 +246,13 @@ def make_draft(deps: Deps):
         known = deps.knowledge.by_id
         sentences = [
             # At most 2 citations per sentence: superscript runs like ¹²³⁴⁵ read as noise (seen live).
-            {"text": str(s.get("text", "")).strip(), "cites": [c for c in s.get("cites", []) if c in known][:MAX_CITES]}
+            {
+                "kind": s.get("kind") if s.get("kind") in KINDS else "lead",
+                "text": _clean(str(s.get("text", ""))),
+                "cites": [c for c in s.get("cites", []) if c in known][:MAX_CITES],
+            }
             for s in r.get("sentences", [])
-            if str(s.get("text", "")).strip()
+            if _clean(str(s.get("text", "")))
         ]
         _emit("reading", "done")
         return {"sentences": sentences}
@@ -266,7 +270,7 @@ def make_critic(deps: Deps):
         docs = "\n\n".join(
             f'<doc id="{c}">\n{deps.knowledge.by_id[c].text}\n</doc>' for c in cited
         ) or "(no documents cited)"
-        numbered = "\n".join(f"{i}. {s['text']} (cites: {', '.join(s['cites']) or 'none'})" for i, s in enumerate(sentences))
+        numbered = "\n".join(f"{i}. {'[heading] ' if s.get('kind') == 'heading' else ''}{s['text']} (cites: {', '.join(s['cites']) or 'none'})" for i, s in enumerate(sentences))
         try:
             r = await deps.llm.json(
                 "critic",
@@ -304,22 +308,62 @@ async def revise(state: State) -> dict:
 
 
 # ── respond ──────────────────────────────────────────────────────────────────
+KINDS = ("lead", "heading", "point", "detail")
+_MARKER = re.compile(r"^\s*(?:[-*•‣▪]|\d+[.)]|#{1,6})\s+")
+
+
+def _clean(text: str) -> str:
+    """One line of plain text: the model sometimes adds its own bullet or heading marker."""
+    return _MARKER.sub("", " ".join(text.split()))
+
+
 def render(sentences: list[dict], knowledge: Knowledge) -> tuple[str, list[dict]]:
-    """Join sentences, number cited docs in first-use order, write markers as [[n]]."""
+    """Lay out the answer as lines, number cited docs in first-use order, write markers as [[n]].
+
+    Line grammar read by the chat UI: "## " heading, "- " point, "  - " detail,
+    anything else is prose; a blank line separates blocks. Consecutive leads
+    join into one paragraph, so legacy drafts without "kind" render as before.
+    """
     order: list[str] = []
-    out = []
+    lines: list[str] = []
+    prev = None
     for s in sentences:
         nums = []
         for c in s["cites"]:
             if c not in order:
                 order.append(c)
             nums.append(order.index(c) + 1)
-        out.append(s["text"] + "".join(f"[[{n}]]" for n in sorted(set(nums))))
+        body = s["text"] + "".join(f"[[{n}]]" for n in sorted(set(nums)))
+        kind = s.get("kind", "lead")
+        if kind == "detail" and prev not in ("point", "detail"):
+            kind = "point"  # a sub-bullet with no parent reads as a main bullet
+        if kind == "lead":
+            if prev == "lead":
+                lines[-1] += " " + body
+                continue
+            if lines:
+                lines.append("")
+            lines.append(body)
+        elif kind == "heading":
+            if lines:
+                lines.append("")
+            lines.append("## " + s["text"].rstrip(".:"))
+            if nums:
+                lines[-1] += "".join(f"[[{n}]]" for n in sorted(set(nums)))
+        else:
+            if prev in ("lead", None) and lines:
+                lines.append("")
+            text = s["text"]
+            if text.endswith(".") and not text.endswith("..") and text.count(". ") == 0:
+                text = text[:-1]  # bullets are fragments: no full stop (office style)
+            body = text + body[len(s["text"]):]
+            lines.append(("  - " if kind == "detail" else "- ") + body)
+        prev = kind
     sources = []
     for i, c in enumerate(order):
         d = knowledge.by_id[c]
         sources.append({"n": i + 1, "title": d.title, "url": d.url or knowledge.site_url})
-    return " ".join(out), sources
+    return "\n".join(lines), sources
 
 
 def make_respond(deps: Deps):

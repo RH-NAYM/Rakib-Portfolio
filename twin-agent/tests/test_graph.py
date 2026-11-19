@@ -120,6 +120,29 @@ def test_render_dedupes_and_orders_by_first_use(knowledge):
     assert [s["title"] for s in sources] == ["CV (PDF)", "Profile & about"]
 
 
+def test_render_lays_out_structured_answer(knowledge):
+    text, _ = render(
+        [
+            {"kind": "lead", "text": "I lead applied AI at HawkEyes.", "cites": ["profile"]},
+            {"kind": "heading", "text": "Retail CV.", "cites": []},
+            {"kind": "point", "text": "Built the shelf-audit platform.", "cites": ["case-retail"]},
+            {"kind": "detail", "text": "Serves 2M+ outlets", "cites": ["case-retail"]},
+            {"kind": "detail", "text": "Runs on YOLO", "cites": []},
+            {"kind": "lead", "text": "Happy to share more.", "cites": []},
+        ],
+        knowledge,
+    )
+    assert text == (
+        "I lead applied AI at HawkEyes.[[1]]\n\n## Retail CV\n- Built the shelf-audit platform[[2]]\n"
+        "  - Serves 2M+ outlets[[2]]\n  - Runs on YOLO\n\nHappy to share more."
+    )
+
+
+def test_render_orphan_detail_becomes_point(knowledge):
+    text, _ = render([{"kind": "detail", "text": "Alone", "cites": []}], knowledge)
+    assert text == "- Alone"
+
+
 @pytest.mark.asyncio
 async def test_citations_capped_at_two_per_sentence(knowledge):
     draft = {"sentences": [{"text": "Big.", "cites": ["case-retail", "profile", "cv"]}]}

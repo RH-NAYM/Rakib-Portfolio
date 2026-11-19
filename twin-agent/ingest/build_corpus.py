@@ -118,7 +118,13 @@ def site_docs(site: dict) -> list[dict]:
             *[f"- {r['text']}" for r in cs["results"]],
         ]
         docs.append(_doc(f"case-{cs['slug']}", f"Case study · {cs['title']}", f"{base}/work/{cs['slug']}", "case_study", "\n".join(lines)))
-    repo_lines = [f"- {r['name']} [{r['domain']}]: {r['description']} ({', '.join(r['tags'])}) {r['url']}" for r in site["repos"]]
+    repos = site["repos"]
+    domains = sorted({r["domain"] for r in repos})
+    repo_lines = [
+        # The live count, so the twin never quotes an older figure from the portfolio doc.
+        f"Current GitHub portfolio: {len(repos)} repositories across {len(domains)} AI domains ({', '.join(domains)}).",
+        *(f"- {r['name']} [{r['domain']}]: {r['description']} ({', '.join(r['tags'])}) {r['url']}" for r in repos),
+    ]
     docs.append(_doc("repos", "Repository index", f"{base}/projects", "site", "\n".join(repo_lines)))
     return docs
 
@@ -142,7 +148,8 @@ def docx_doc(path: Path, doc_id: str, title: str) -> dict | None:
     for t in d.tables:
         for row in t.rows:
             parts.append(" | ".join(c.text.strip() for c in row.cells))
-    return _doc(doc_id, title, "", "doc", "\n".join(parts))
+    note = "Note: earlier snapshot. Where its counts differ from the website (profile, repository index), the website figures are current."
+    return _doc(doc_id, title, "", "doc", "\n".join([note, *parts]))
 
 
 def blog_docs(base_url: str) -> list[dict]:

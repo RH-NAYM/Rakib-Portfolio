@@ -25,6 +25,59 @@ export function Avatar({ size }: { size: 28 | 32 | 36 | 56 | 72 }) {
   );
 }
 
+/* ── answer layout ─────────────────────────────────────────────────────────
+   The twin writes a small line grammar (twin-agent/app/nodes.py render):
+   "## " heading, "- " point, "  - " detail, other lines prose, blank line = new block. */
+type Point = { text: string; details: string[] };
+type Block = { kind: "prose"; text: string } | { kind: "heading"; text: string } | { kind: "list"; points: Point[] };
+
+export function parseAnswer(text: string): Block[] {
+  const blocks: Block[] = [];
+  for (const raw of text.split("\n")) {
+    if (!raw.trim()) continue;
+    const detail = /^[ \t]{2,}-[ \t]+(.*)$/.exec(raw);
+    const point = /^-[ \t]+(.*)$/.exec(raw);
+    const heading = /^##[ \t]+(.*)$/.exec(raw);
+    const last = blocks[blocks.length - 1];
+    if (detail || point) {
+      const list = last?.kind === "list" ? last : (blocks.push({ kind: "list", points: [] }), blocks[blocks.length - 1] as Extract<Block, { kind: "list" }>);
+      const lastPoint = list.points[list.points.length - 1];
+      if (detail && lastPoint) lastPoint.details.push(detail[1]);
+      else list.points.push({ text: (detail ?? point)![1], details: [] });
+    } else if (heading) blocks.push({ kind: "heading", text: heading[1] });
+    else blocks.push({ kind: "prose", text: raw.trim() });
+  }
+  return blocks;
+}
+
+export function Answer({ text, sources, muted }: { text: string; sources?: Source[]; muted?: boolean }) {
+  const blocks = useMemo(() => parseAnswer(text), [text]);
+  return (
+    <div className={`twin-prose ${muted ? "text-[--color-text-muted]" : ""}`} lang={langAttr(text)}>
+      {blocks.map((b, i) =>
+        b.kind === "prose" ? (
+          <p key={i}><Citations text={b.text} sources={sources} /></p>
+        ) : b.kind === "heading" ? (
+          <p key={i} className="twin-answer-h"><Citations text={b.text} sources={sources} /></p>
+        ) : (
+          <ul key={i} className="twin-points">
+            {b.points.map((p, j) => (
+              <li key={j}>
+                <Citations text={p.text} sources={sources} />
+                {p.details.length > 0 && (
+                  <ul className="twin-details">
+                    {p.details.map((d, k) => <li key={k}><Citations text={d} sources={sources} /></li>)}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+        ),
+      )}
+    </div>
+  );
+}
+
 /* ── citations (design 5B) ─────────────────────────────────────────────────── */
 export function Citations({ text, sources }: { text: string; sources?: Source[] }) {
   const [open, setOpen] = useState<number | null>(null);

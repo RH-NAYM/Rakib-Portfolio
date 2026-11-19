@@ -171,7 +171,12 @@ function markSent(t: Thread, twinId: string): Thread {
 
 /** Plain text of a message for quoting/history: citation markers removed, image/voice described. */
 export function plainText(m: Msg): string {
-  const base = m.text.replace(/\[\[\d+\]\]/g, "").trim();
+  // Drop citation markers and the answer's line markers ("## ", "- ", "  - ") so quotes and speech read as prose.
+  const base = m.text
+    .replace(/\[\[\d+\]\]/g, "")
+    .replace(/^[ \t]*(?:#{2}|-)[ \t]+/gm, "")
+    .replace(/\n{2,}/g, "\n")
+    .trim();
   if (m.attachment?.kind === "image") return `[image${m.attachment.description ? `: ${m.attachment.description}` : ""}] ${base}`.trim();
   return base;
 }

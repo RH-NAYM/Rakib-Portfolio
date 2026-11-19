@@ -19,6 +19,7 @@ import argparse
 import asyncio
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -42,7 +43,14 @@ JUDGE_SCHEMA = {
     "type": "object",
     "properties": {
         "facts": {"type": "array", "items": {"type": "boolean"}},
-        "must_not_hits": {"type": "array", "items": {"type": "boolean"}},
+        "must_not_hits": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {"present": {"type": "boolean"}, "evidence": {"type": "string"}},
+                "required": ["present", "evidence"],
+            },
+        },
         "language_ok": {"type": "boolean"},
     },
     "required": ["facts", "must_not_hits", "language_ok"],
@@ -56,9 +64,30 @@ Answer: {a}
 
 For EACH required fact, is it stated (true/false)?
 {facts}
-For EACH forbidden claim, is it present (true/false)?
+For EACH forbidden claim, does the answer itself make that claim or do that thing?
 {must_not}
+- present=true only if the answer asserts, agrees to, or performs it. Declining, refusing, redirecting to the real Rakib or a contact card, staying silent on it, or correcting/denying it is NOT present (e.g. "2M+, not 10 million" does not confirm 10 million).
+- evidence: when present=true, copy the exact words from the Answer that make the claim; otherwise "".
 Is the answer in the expected language?"""
+
+
+def _norm(t: str) -> str:
+    return " ".join(re.sub(r"\[\[\d+\]\]", "", t).lower().split())
+
+
+def _hit(x: object, answer_text: str) -> bool:
+    """A forbidden claim counts only when the judge quotes it and the quote is really in the answer.
+    Grounding the verdict in evidence stops refusals ("the real me handles that") being scored as hits."""
+    if not isinstance(x, dict) or not x.get("present"):
+        return False
+    ev, ans = _norm(str(x.get("evidence", ""))), _norm(answer_text)
+    if not ev:
+        return False
+    if ev in ans:
+        return True
+    words = re.findall(r"\w+", ev)  # near-quote: judge trimmed or re-punctuated the span
+    found = set(re.findall(r"\w+", ans))
+    return bool(words) and sum(w in found for w in words) / len(words) >= 0.8
 
 
 async def answer(llm: GeminiLLM, knowledge: Knowledge, q: str, meter: CostMeter) -> dict:
@@ -82,7 +111,7 @@ async def judge(llm: GeminiLLM, case: dict, final: dict, meter: CostMeter) -> di
     r = await llm.json("judge", "You are an exacting evaluator.", prompt, JUDGE_SCHEMA, meter)
     return {
         "facts": (r.get("facts") or [])[: len(facts)] + [False] * max(0, len(facts) - len(r.get("facts") or [])),
-        "must_not_hits": [bool(x) for x in (r.get("must_not_hits") or [])[: len(must_not)]],
+        "must_not_hits": [_hit(x, final["text"]) for x in (r.get("must_not_hits") or [])[: len(must_not)]],
         "language_ok": bool(r.get("language_ok")) if "lang" in case else True,
     }
 

@@ -77,7 +77,7 @@ class GeminiLLM:
         # budgets truncate the JSON (seen live: critic verdict cut off → fail-closed on a good answer)
         # and add seconds of latency. Classify/plan/critic don't need it; the draft gets a small budget.
         thinking = THINKING_BUDGET.get(role, 0)
-        resp = await self._client.aio.models.generate_content(
+        resp = await _with_retry(lambda: self._client.aio.models.generate_content(
             model=model,
             contents=contents,
             config=types.GenerateContentConfig(
@@ -88,7 +88,7 @@ class GeminiLLM:
                 max_output_tokens=2048 + thinking,
                 thinking_config=types.ThinkingConfig(thinking_budget=thinking),
             ),
-        )
+        ))
         um = resp.usage_metadata
         meter.add(model, getattr(um, "prompt_token_count", 0) or 0, getattr(um, "candidates_token_count", 0) or 0)
         try:
@@ -116,6 +116,25 @@ class GeminiLLM:
         meter.add(model, getattr(um, "prompt_token_count", 0) or 0, getattr(um, "candidates_token_count", 0) or 0)
         pcm = resp.candidates[0].content.parts[0].inline_data.data
         return pcm_to_wav(pcm)
+
+
+RETRY_DELAYS_S = (1.0, 2.5)  # ~4 s worst case: fits the 25 s request timeout with 4-5 calls per answer
+RETRYABLE = {429, 503}
+
+
+async def _with_retry(call):
+    """Vertex's shared (DSQ) capacity throws brief 429/503 bursts even at low traffic (seen live:
+    a single visitor question failed). Retry those briefly with jitter; anything else raises at once."""
+    import asyncio
+    import random
+
+    for delay in (*RETRY_DELAYS_S, None):
+        try:
+            return await call()
+        except Exception as exc:  # google.genai.errors.APIError carries .code
+            if delay is None or getattr(exc, "code", None) not in RETRYABLE:
+                raise
+            await asyncio.sleep(delay * (0.75 + random.random() / 2))
 
 
 def pcm_to_wav(pcm: bytes, rate: int = 24000) -> bytes:

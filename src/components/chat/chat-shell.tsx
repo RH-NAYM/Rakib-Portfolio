@@ -6,7 +6,7 @@ import { Check, ChevronDown, Copy, Loader2, Mail, Maximize2, MoreHorizontal, Pla
 import { profile } from "@/content/site";
 import type { Media } from "@/lib/twin-events";
 import {
-  Avatar, Citations, HandoffCard, langAttr, Lightbox, MediaGroup, RetryButton, SpeakButton, TraceBody, VisitorVoice,
+  Answer, Avatar, HandoffCard, langAttr, Lightbox, MediaGroup, RetryButton, SpeakButton, TraceBody, VisitorVoice,
 } from "./chat-parts";
 import { Composer } from "./composer";
 import { PROMPT_TAGS, PROMPTS, t, type UiLang } from "./strings";
@@ -86,7 +86,7 @@ function TwinBody({ msg, lang, thread, question, onRetry, onOpenMedia }: TwinBod
       case "partial":
         return (
           <>
-            <p className="text-[--color-text-muted]" lang={langAttr(msg.text)}><Citations text={msg.text} sources={msg.sources} /></p>
+            <Answer text={msg.text} sources={msg.sources} muted />
             <p className="mt-2 text-[13px] text-[--color-text-muted]">{t("partial", lang)}</p>
             <RetryButton lang={lang} onClick={() => onRetry(msg.id)} />
           </>
@@ -107,7 +107,7 @@ function TwinBody({ msg, lang, thread, question, onRetry, onOpenMedia }: TwinBod
   }
   return (
     <>
-      <p className="whitespace-pre-wrap" lang={langAttr(msg.text)}><Citations text={msg.text} sources={msg.sources} /></p>
+      <Answer text={msg.text} sources={msg.sources} />
       {msg.media && msg.media.length > 0 && <MediaGroup media={msg.media} lang={lang} onOpen={(i) => onOpenMedia(msg.media!, i)} />}
       {msg.card === "contact" && <HandoffCard lang={lang} thread={thread} question={question} />}
     </>
