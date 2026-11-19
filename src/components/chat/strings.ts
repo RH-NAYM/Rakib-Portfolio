@@ -121,6 +121,27 @@ const S = {
   leadError: { en: "Couldn't send. Please email me directly.", bn: "পাঠানো যায়নি। সরাসরি ইমেইল করুন।", banglish: "Pathano jayni. Shorashori email korun." },
   messageActions: { en: "Message actions", bn: "মেসেজ অপশন", banglish: "Message options" },
   aiTag: { en: "AI", bn: "AI", banglish: "AI" },
+  // /chat side panel (desktop): what the twin is for and how it answers
+  railLead: {
+    en: "Ask what you'd ask in a first interview. I answer from my CV, case studies and notes, and link the source behind each claim.",
+    bn: "প্রথম ইন্টারভিউতে যা জিজ্ঞেস করতেন, তা-ই করুন। আমার CV, কেস স্টাডি আর নোট থেকে উত্তর দিই, আর প্রতিটি তথ্যের সূত্র দেখাই।",
+    banglish: "First interview e ja jiggesh korten, tai korun. Amar CV, case study ar notes theke answer dei, ar protiti claim er source dekhai.",
+  },
+  railHow: { en: "How each answer is made", bn: "প্রতিটি উত্তর যেভাবে তৈরি হয়", banglish: "Protiti answer kivabe toiri hoy" },
+  railPlan: { en: "Plan what to look up", bn: "কী খুঁজতে হবে ঠিক করি", banglish: "Ki khujte hobe plan kori" },
+  railRead: { en: "Read the matching notes", bn: "মিলে যাওয়া নোট পড়ি", banglish: "Mile jawa notes pori" },
+  railCheck: { en: "Fact-check every sentence", bn: "প্রতিটি বাক্য যাচাই করি", banglish: "Protiti sentence check kori" },
+  railLangs: {
+    en: "Write in English, বাংলা or Banglish. Voice notes and screenshots work too.",
+    bn: "English, বাংলা বা Banglish-এ লিখুন। ভয়েস নোট আর স্ক্রিনশটও চলবে।",
+    banglish: "English, বাংলা ba Banglish e likhun. Voice note ar screenshot o cholbe.",
+  },
+  railHuman: { en: "Prefer a person?", bn: "মানুষের সাথে কথা বলতে চান?", banglish: "Manusher sathe kotha bolte chan?" },
+  railEmail: { en: "Email the real me", bn: "আসল আমাকে ইমেইল করুন", banglish: "Real amake email korun" },
+  tag_work: { en: "experience", bn: "অভিজ্ঞতা", banglish: "experience" },
+  tag_cv: { en: "computer vision", bn: "computer vision", banglish: "computer vision" },
+  tag_lang: { en: "language", bn: "ভাষা", banglish: "language" },
+  tag_hire: { en: "hiring", bn: "নিয়োগ", banglish: "hiring" },
 } as const satisfies Record<string, Record<UiLang, string>>;
 
 export type StringKey = keyof typeof S;
@@ -136,6 +157,14 @@ export const PROMPTS: Record<UiLang, string[]> = {
   bn: ["আপনার শেষ চাকরিতে কী বানিয়েছেন?", "একটা computer-vision প্রজেক্ট দেখান", "In English please", "আপনাকে কীভাবে hire করব?"],
   banglish: ["Last job e ki build korecho?", "Ekta computer-vision project dekhao", "In English please", "Tomake kivabe hire korbo?"],
 };
+
+/** Topic tag + annotation color for each starter prompt, in PROMPTS order. */
+export const PROMPT_TAGS: { key: StringKey; color: string }[] = [
+  { key: "tag_work", color: "var(--c-llm)" },
+  { key: "tag_cv", color: "var(--c-cv)" },
+  { key: "tag_lang", color: "var(--c-speech)" },
+  { key: "tag_hire", color: "var(--c-infra)" },
+];
 
 export const STRING_KEYS = Object.keys(S) as StringKey[];
 export const ALL = S;

@@ -14,7 +14,7 @@ export const AVATAR = "/twin-avatar.webp"; // 256px face crop of profile-photos/
 const BENGALI = /[ঀ-৿]/;
 export const langAttr = (text: string): "bn" | undefined => (BENGALI.test(text) ? "bn" : undefined);
 
-export function Avatar({ size }: { size: 28 | 36 | 56 }) {
+export function Avatar({ size }: { size: 28 | 32 | 36 | 56 | 72 }) {
   return (
     <span className="relative inline-block shrink-0" style={{ width: size, height: size }}>
       <Image src={AVATAR} alt="" width={size} height={size} className="h-full w-full rounded-full object-cover" />
@@ -39,7 +39,7 @@ export function Citations({ text, sources }: { text: string; sources?: Source[] 
           <span key={i} className="relative">
             <button
               type="button"
-              className="mx-[1px] align-super text-[0.7em] font-semibold text-[--color-accent] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-1 focus-visible:outline-[--color-accent]"
+              className="twin-cite"
               aria-label={`Source ${p.cite}${src(p.cite) ? `: ${src(p.cite)!.title}` : ""}`}
               aria-expanded={open === p.cite}
               onClick={() => setOpen(open === p.cite ? null : p.cite)}
@@ -48,7 +48,7 @@ export function Citations({ text, sources }: { text: string; sources?: Source[] 
               {p.cite}
             </button>
             {open === p.cite && src(p.cite) && (
-              <span role="dialog" className="absolute bottom-full left-0 z-10 mb-1 block w-56 rounded-[--radius] border border-[--color-border-strong] bg-[--color-bg-elevated] p-2 text-xs">
+              <span role="dialog" className="absolute bottom-full left-0 z-10 mb-1.5 block w-60 rounded-[--radius] border border-[--color-border-strong] bg-[--color-surface-2] p-2.5 text-[13px] leading-snug shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
                 <span className="block font-semibold text-[--color-text]">{src(p.cite)!.title}</span>
                 {src(p.cite)!.url && (
                   <a className="mt-1 block truncate text-[--color-accent] underline" href={src(p.cite)!.url}>
@@ -67,11 +67,11 @@ export function Citations({ text, sources }: { text: string; sources?: Source[] 
 /* ── "How I answered" trace (1b) ──────────────────────────────────────────── */
 export function TraceBody({ trace, sources, lang }: { trace: Trace; sources?: Source[]; lang: UiLang }) {
   return (
-    <div className="space-y-2 text-xs text-[--color-text-muted]" data-testid="trace">
+    <div className="space-y-3 text-[13px] leading-snug text-[--color-text-muted]" data-testid="trace">
       {trace.plan.length > 0 && (
         <div>
-          <p className="font-semibold uppercase tracking-wide text-[--color-text-muted]">{t("plan", lang)}</p>
-          <ol className="mt-1 list-decimal space-y-0.5 pl-4 font-[family-name:var(--font-code)]">
+          <p className="font-semibold text-[--color-text]">{t("plan", lang)}</p>
+          <ol className="mt-1.5 list-decimal space-y-1 pl-4 marker:text-[--color-text-faint]">
             {trace.plan.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
@@ -80,11 +80,11 @@ export function TraceBody({ trace, sources, lang }: { trace: Trace; sources?: So
       )}
       {sources && sources.length > 0 && (
         <div>
-          <p className="font-semibold uppercase tracking-wide">{t("sources", lang)}</p>
-          <ul className="mt-1 space-y-0.5">
+          <p className="font-semibold text-[--color-text] first-letter:uppercase">{t("sources", lang)}</p>
+          <ul className="mt-1.5 space-y-1.5">
             {sources.map((s) => (
-              <li key={s.n}>
-                <span className="text-[--color-accent]">{s.n}</span>{" "}
+              <li key={s.n} className="flex items-baseline gap-1.5">
+                <span className="twin-cite !ml-0 shrink-0" aria-hidden>{s.n}</span>
                 {s.url ? (
                   <a href={s.url} className="underline underline-offset-2 hover:text-[--color-text]">
                     {s.title}
@@ -98,7 +98,7 @@ export function TraceBody({ trace, sources, lang }: { trace: Trace; sources?: So
         </div>
       )}
       <div>
-        <p className="font-semibold uppercase tracking-wide">{t("factCheck", lang)}</p>
+        <p className="font-semibold text-[--color-text]">{t("factCheck", lang)}</p>
         <p className="mt-1">
           {trace.critic.passed ? (
             <span className="text-[--color-success]">✓ {t("allSupported", lang)}</span>
@@ -226,7 +226,7 @@ export function Waveform({ bars, progress = 0 }: { bars: number[]; progress?: nu
   return (
     <span className="flex h-6 items-center gap-[2px]" aria-hidden>
       {bars.map((b, i) => (
-        <span key={i} className={`w-[3px] rounded-full ${i / bars.length < progress ? "bg-[--color-bg]" : "bg-[--color-bg]/45"}`} style={{ height: `${Math.max(12, b * 100)}%` }} />
+        <span key={i} className="w-[3px] rounded-full" style={{ height: `${Math.max(12, b * 100)}%`, background: i / bars.length < progress ? "var(--color-accent)" : "var(--color-text-faint)" }} />
       ))}
     </span>
   );
@@ -258,11 +258,11 @@ export function VisitorVoice({ msg, lang, localUrl, onReAsk }: { msg: Msg; lang:
   return (
     <div>
       <div className="flex items-center gap-2">
-        <button type="button" onClick={toggle} disabled={!localUrl} aria-label={playing ? t("pause", lang) : t("play", lang)} className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[--color-bg]/15 disabled:opacity-50">
+        <button type="button" onClick={toggle} disabled={!localUrl} aria-label={playing ? t("pause", lang) : t("play", lang)} className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[--color-accent] text-[--color-bg] disabled:opacity-50">
           {playing ? <Pause size={16} aria-hidden /> : <Play size={16} aria-hidden />}
         </button>
         <Waveform bars={a.waveform} progress={progress} />
-        <span className="text-xs tabular-nums">{mmss}</span>
+        <span className="twin-meta text-xs text-[--color-text-muted]">{mmss}</span>
       </div>
       {a.transcript !== undefined &&
         (editing ? (
@@ -275,13 +275,13 @@ export function VisitorVoice({ msg, lang, localUrl, onReAsk }: { msg: Msg; lang:
             }}
           >
             <label className="sr-only" htmlFor={`edit-${msg.id}`}>{t("edit", lang)}</label>
-            <input id={`edit-${msg.id}`} value={draft} onChange={(e) => setDraft(e.target.value)} lang={langAttr(draft)} className="min-h-11 min-w-0 flex-1 rounded bg-[--color-bg] px-2 text-sm text-[--color-text]" autoFocus />
-            <button type="submit" className="min-h-11 rounded bg-[--color-bg] px-2 text-xs font-semibold text-[--color-accent]">{t("reAsk", lang)}</button>
+            <input id={`edit-${msg.id}`} value={draft} onChange={(e) => setDraft(e.target.value)} lang={langAttr(draft)} className="min-h-11 min-w-0 flex-1 rounded border border-[--color-border-strong] bg-[--color-bg] px-2 text-[16px] text-[--color-text]" autoFocus />
+            <button type="submit" className="min-h-11 rounded bg-[--color-accent] px-3 text-xs font-semibold text-[--color-bg]">{t("reAsk", lang)}</button>
           </form>
         ) : (
-          <p className="mt-1 text-xs opacity-80" lang={langAttr(a.transcript)}>
+          <p className="mt-1.5 text-[13px] text-[--color-text-muted]" lang={langAttr(a.transcript)}>
             {t("heard", lang)} “{a.transcript || "…"}”{" "}
-            <button type="button" onClick={() => { setDraft(a.transcript ?? ""); setEditing(true); }} className="min-h-6 font-semibold underline">
+            <button type="button" onClick={() => { setDraft(a.transcript ?? ""); setEditing(true); }} className="min-h-6 font-semibold text-[--color-accent] underline underline-offset-2">
               {t("edit", lang)}
             </button>
           </p>
@@ -293,17 +293,15 @@ export function VisitorVoice({ msg, lang, localUrl, onReAsk }: { msg: Msg; lang:
 export function SpeakButton({ state, lang, onClick }: { state: SpeechState | undefined; lang: UiLang; onClick: () => void }) {
   const s = state ?? "idle";
   return (
-    <span className="inline-flex items-center gap-1">
-      <button
-        type="button"
-        onClick={onClick}
-        aria-label={s === "playing" ? t("pause", lang) : t("play", lang)}
-        className={`inline-flex h-11 w-11 items-center justify-center rounded-full border border-[--color-border-strong] text-[--color-text-muted] hover:text-[--color-text] ${s === "blocked" ? "border-[--color-accent] text-[--color-accent]" : ""}`}
-      >
-        {s === "loading" ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" aria-hidden /> : s === "playing" ? <Pause size={14} aria-hidden /> : <Play size={14} aria-hidden />}
-      </button>
-      {s === "blocked" && <span className="text-xs text-[--color-accent]">{t("tapToHear", lang)}</span>}
-    </span>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={s === "blocked" ? t("tapToHear", lang) : s === "playing" ? t("pause", lang) : t("play", lang)}
+      className={`inline-flex min-h-8 items-center gap-1.5 rounded px-1.5 text-xs hover:text-[--color-text] ${s === "blocked" || s === "playing" ? "text-[--color-accent]" : "text-[--color-text-muted]"}`}
+    >
+      {s === "loading" ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" aria-hidden /> : s === "playing" ? <Pause size={13} aria-hidden /> : <Play size={13} aria-hidden />}
+      <span aria-hidden>{s === "blocked" ? t("tapToHear", lang) : s === "playing" ? t("pause", lang) : t("play", lang)}</span>
+    </button>
   );
 }
 

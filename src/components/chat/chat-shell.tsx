@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent, type TouchEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode, type TouchEvent } from "react";
 import Link from "next/link";
-import { Check, ChevronDown, Copy, Loader2, Maximize2, MoreHorizontal, Play, Reply, X } from "lucide-react";
+import { Check, ChevronDown, Copy, Loader2, Mail, Maximize2, MoreHorizontal, Play, Reply, X } from "lucide-react";
+import { profile } from "@/content/site";
 import type { Media } from "@/lib/twin-events";
 import {
   Avatar, Citations, HandoffCard, langAttr, Lightbox, MediaGroup, RetryButton, SpeakButton, TraceBody, VisitorVoice,
 } from "./chat-parts";
 import { Composer } from "./composer";
-import { PROMPTS, t, type UiLang } from "./strings";
+import { PROMPT_TAGS, PROMPTS, t, type UiLang } from "./strings";
 import { plainText, quoteOf, type LangChoice, type Msg, type Quote } from "./thread-store";
 import { useSpeech } from "./use-speech";
 import { useTwinChat } from "./use-twin-chat";
@@ -19,37 +20,45 @@ const LOGGING_ON = process.env.NEXT_PUBLIC_TWIN_LOGGING === "true"; // mirror of
 const VOICE_ON = process.env.NEXT_PUBLIC_TWIN_VOICE !== "false";
 const LANG_CHOICES: LangChoice[] = ["auto", "en", "bn", "banglish"];
 const LANG_LABEL: Record<LangChoice, string> = { auto: "Auto", en: "English", bn: "বাংলা", banglish: "Banglish" };
+const LANG_SHORT: Record<UiLang, string> = { en: "EN", bn: "বাং", banglish: "Banglish" };
+/** Each pipeline step wears its annotation color (see .twin-step in globals.css). */
+const STEP_TONE: Record<string, "plan" | "read" | "check"> = { planning: "plan", reading: "read", checking: "check", rechecking: "check" };
+
+const lenses = (lang: UiLang) => (lang === "bn" ? "bn" : undefined);
 
 function TimeDivider({ at }: { at: number }) {
   const d = new Date(at);
   return (
-    <p className="my-2 text-center text-[11px] text-[--color-text-muted]">
+    <p className="twin-meta my-3 text-center text-xs text-[--color-text-faint]">
       {d.toLocaleDateString(undefined, { weekday: "short" })} {d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
     </p>
   );
 }
 
-function QuoteStrip({ quote, lang, onJump, onDark }: { quote: Quote; lang: UiLang; onJump: () => void; onDark: boolean }) {
+function QuoteStrip({ quote, lang, onJump }: { quote: Quote; lang: UiLang; onJump: () => void }) {
   return (
-    <button type="button" onClick={onJump} className={`mb-1.5 flex w-full items-center gap-2 rounded-md border-l-2 px-2 py-1 text-left text-xs ${onDark ? "border-[--color-bg] bg-[--color-bg]/15" : "border-[--color-accent] bg-[--color-bg]"}`}>
+    <button type="button" onClick={onJump} className="mb-2 flex w-full items-center gap-2 rounded-md border-l-2 border-[--color-accent] bg-[--color-bg] px-2 py-1.5 text-left text-[13px] leading-snug">
       {quote.thumb && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={quote.thumb} alt="" className="h-10 w-10 shrink-0 rounded object-cover" />
       )}
       <span className="min-w-0">
-        <span className="block font-semibold">{quote.role === "twin" ? t("name", lang) : t("you", lang)}</span>
-        <span className="line-clamp-2 opacity-80" lang={langAttr(quote.text)}>{quote.text}</span>
+        <span className="block font-semibold text-[--color-accent]">{quote.role === "twin" ? t("name", lang) : t("you", lang)}</span>
+        <span className="line-clamp-2 text-[--color-text-muted]" lang={langAttr(quote.text)}>{quote.text}</span>
       </span>
     </button>
   );
 }
 
-function Chips({ msg, lang }: { msg: Msg; lang: UiLang }) {
+/** The twin's working state: plan → read → check as detection tags (the chat's one loud device). */
+function Steps({ msg, lang }: { msg: Msg; lang: UiLang }) {
+  const steps = msg.steps ?? [];
   return (
-    <div className="flex flex-wrap gap-1.5" aria-live="polite">
-      {(msg.steps ?? []).map((s) => (
-        <span key={s.step} className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs transition-colors duration-150 ${s.status === "active" ? "border-[--color-border-strong] text-[--color-text]" : "border-[--color-border] text-[--color-text-muted]"}`}>
-          {s.status === "active" ? <Loader2 size={11} className="animate-spin motion-reduce:animate-none" aria-hidden /> : <Check size={11} aria-hidden />}
+    <div className="flex min-h-7 flex-wrap items-center gap-1.5 py-0.5" aria-live="polite">
+      {steps.length === 0 && <span className="twin-step" data-state="active" data-tone="plan"><span className="twin-step-swatch" aria-hidden />{t("step_planning", lang)}</span>}
+      {steps.map((s) => (
+        <span key={s.step} className="twin-step" data-state={s.status} data-tone={STEP_TONE[s.step] ?? "plan"} lang={lenses(lang)}>
+          {s.status === "done" ? <Check size={11} strokeWidth={3} aria-hidden /> : <span className="twin-step-swatch" aria-hidden />}
           {t(`step_${s.step}` as const, lang)}
           {s.status === "active" ? "…" : ""}
         </span>
@@ -65,15 +74,12 @@ type TwinBodyProps = {
   question?: string;
   onRetry: (id: string) => void;
   onOpenMedia: (media: Media[], i: number) => void;
-  traceOpen: boolean;
-  onToggleTrace: () => void;
-  drawer: boolean;
 };
 
-function TwinBody({ msg, lang, thread, question, onRetry, onOpenMedia, traceOpen, onToggleTrace, drawer }: TwinBodyProps) {
-  if (msg.status === "waiting") return <Chips msg={msg} lang={lang} />;
+function TwinBody({ msg, lang, thread, question, onRetry, onOpenMedia }: TwinBodyProps) {
+  if (msg.status === "waiting") return <Steps msg={msg} lang={lang} />;
   const notice = (key: Parameters<typeof t>[0], vars?: Record<string, number>) => (
-    <p className="text-[--color-text]" lang={lang === "bn" ? "bn" : undefined}>{t(key, lang, vars)}</p>
+    <p className="text-[--color-text]" lang={lenses(lang)}>{t(key, lang, vars)}</p>
   );
   if (msg.status === "error") {
     switch (msg.errorKind) {
@@ -81,7 +87,7 @@ function TwinBody({ msg, lang, thread, question, onRetry, onOpenMedia, traceOpen
         return (
           <>
             <p className="text-[--color-text-muted]" lang={langAttr(msg.text)}><Citations text={msg.text} sources={msg.sources} /></p>
-            <p className="mt-2 text-xs text-[--color-text-muted]">{t("partial", lang)}</p>
+            <p className="mt-2 text-[13px] text-[--color-text-muted]">{t("partial", lang)}</p>
             <RetryButton lang={lang} onClick={() => onRetry(msg.id)} />
           </>
         );
@@ -101,20 +107,48 @@ function TwinBody({ msg, lang, thread, question, onRetry, onOpenMedia, traceOpen
   }
   return (
     <>
-      <p className="whitespace-pre-wrap text-[--color-text]" lang={langAttr(msg.text)}><Citations text={msg.text} sources={msg.sources} /></p>
+      <p className="whitespace-pre-wrap" lang={langAttr(msg.text)}><Citations text={msg.text} sources={msg.sources} /></p>
       {msg.media && msg.media.length > 0 && <MediaGroup media={msg.media} lang={lang} onOpen={(i) => onOpenMedia(msg.media!, i)} />}
       {msg.card === "contact" && <HandoffCard lang={lang} thread={thread} question={question} />}
-      {/* Templated replies (greeting, handoff, off-topic) have no plan or sources: nothing to explain. */}
-      {msg.status === "done" && msg.trace && (msg.trace.source_count > 0 || msg.trace.plan.length > 0) && (
-        <div className="mt-2 border-t border-[--color-border] pt-1.5">
-          <button type="button" onClick={onToggleTrace} aria-expanded={traceOpen} className="inline-flex min-h-8 items-center gap-1 text-xs text-[--color-text-muted] hover:text-[--color-text]">
-            {t("howIAnswered", lang)} · {msg.trace.source_count} {t("sources", lang)} · {(msg.trace.elapsed_ms / 1000).toFixed(1)}s
-            <ChevronDown size={12} className={traceOpen ? "rotate-180" : ""} aria-hidden />
-          </button>
-          {traceOpen && !drawer && <div className="mt-2"><TraceBody trace={msg.trace} sources={msg.sources} lang={lang} /></div>}
-        </div>
-      )}
     </>
+  );
+}
+
+/* ── /chat side panel: who this is, what it knows, how it answers ─────────── */
+
+function Rail({ lang }: { lang: UiLang }) {
+  const steps: { key: Parameters<typeof t>[0]; tone: "plan" | "read" | "check" }[] = [
+    { key: "railPlan", tone: "plan" },
+    { key: "railRead", tone: "read" },
+    { key: "railCheck", tone: "check" },
+  ];
+  return (
+    <aside className="hidden w-[300px] shrink-0 flex-col gap-8 overflow-y-auto border-r border-[--color-border] px-7 py-8 min-[1100px]:flex" lang={lenses(lang)}>
+      <div>
+        <Avatar size={72} />
+        <p className="twin-name mt-4 text-[1.75rem] leading-tight text-[--color-text]">{profile.shortName}<span className="text-[--color-text-faint]">, as an AI</span></p>
+        <p className="mt-1 text-sm text-[--color-text-muted]">{profile.title}</p>
+        <p className="mt-4 text-[15px] leading-relaxed text-[--color-text-muted]">{t("railLead", lang)}</p>
+      </div>
+      <div>
+        <p className="text-sm font-semibold text-[--color-text]">{t("railHow", lang)}</p>
+        <ol className="mt-3 space-y-2.5">
+          {steps.map((s) => (
+            <li key={s.key} className="flex items-start gap-3 text-sm text-[--color-text-muted]">
+              <span className="twin-step mt-px shrink-0" data-state="done" data-tone={s.tone} aria-hidden>{s.tone}</span>
+              <span>{t(s.key, lang)}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <p className="text-sm leading-relaxed text-[--color-text-muted]">{t("railLangs", lang)}</p>
+      <div className="mt-auto border-t border-[--color-border] pt-5">
+        <p className="text-sm text-[--color-text]">{t("railHuman", lang)}</p>
+        <a href={`mailto:${profile.email}`} className="mt-2 inline-flex min-h-10 items-center gap-2 text-sm font-medium text-[--color-accent] underline-offset-4 hover:underline">
+          <Mail size={15} aria-hidden /> {t("railEmail", lang)}
+        </a>
+      </div>
+    </aside>
   );
 }
 
@@ -206,6 +240,8 @@ function Conversation({ variant, onClose }: { variant: "panel" | "page"; onClose
   const disabled = !chat.online || chat.pending || locked || chat.resting || chat.verifying;
   const empty = chat.loaded && thread.messages.length === 0;
   const drawer = variant === "page" && wide;
+  const page = variant === "page";
+  const column = page ? "mx-auto w-full max-w-[44rem]" : "";
 
   const startReply = (m: Msg) => {
     setQuote(quoteOf(m));
@@ -271,51 +307,62 @@ function Conversation({ variant, onClose }: { variant: "panel" | "page"; onClose
 
   const questionFor = (m: Msg) => thread.messages.find((x) => x.id === m.replyToVisitorId)?.text;
   const traceMsg = drawer && traceFor ? thread.messages.find((m) => m.id === traceFor) : undefined;
-  const pillText = thread.langChoice === "auto" ? `${t("auto", lang)} · ${LANG_LABEL[lang]}` : LANG_LABEL[thread.langChoice];
+  const pillText = thread.langChoice === "auto" ? `${t("auto", lang)} · ${LANG_SHORT[lang]}` : LANG_LABEL[thread.langChoice];
   const closeMenus = () => {
     setLangMenu(false);
     if (menu !== "closed") setMenu("closed");
   };
+  const iconBtn = "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[--color-text-muted] transition-colors hover:bg-[--color-surface-2] hover:text-[--color-text]";
+  const menuItem = "flex h-11 w-full items-center justify-between gap-2 rounded px-2.5 text-left text-[--color-text] hover:bg-[--color-surface-2]";
 
   return (
     <div className="flex h-full min-h-0">
+      {page && <Rail lang={lang} />}
       <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
         {/* header */}
-        <div className="flex items-center gap-3 border-b border-[--color-border] bg-[--color-bg-elevated] px-4 py-3">
-          <Avatar size={36} />
+        <div className={`flex items-center gap-2.5 border-b border-[--color-border] bg-[--color-bg-elevated] py-2.5 pl-4 pr-2 ${page ? "sm:pl-6 sm:pr-4" : ""}`}>
+          <span className={drawer ? "min-[1100px]:hidden" : ""}><Avatar size={36} /></span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[15px] font-semibold text-[--color-text]">{t("name", lang)}</p>
-            <p className="truncate text-[13px] text-[--color-text-muted]" lang={lang === "bn" ? "bn" : undefined}>{t("status", lang)}</p>
+            <p className="twin-name truncate text-[15px] leading-5 text-[--color-text]">{t("name", lang)}</p>
+            <p className="truncate text-[13px] leading-5 text-[--color-text-muted]" lang={lenses(lang)}>{t("status", lang)}</p>
           </div>
           <div className="relative">
             {/* Accessible name = visible text + purpose, so voice-control users can say what they see (axe label-content-name-mismatch). */}
-            <button type="button" aria-label={`${pillText}, ${t("language", lang)}`} aria-haspopup="menu" aria-expanded={langMenu} onClick={() => { setLangMenu((v) => !v); setMenu("closed"); }} className="inline-flex h-8 items-center whitespace-nowrap rounded-full border border-[--color-border-strong] px-2.5 text-xs text-[--color-text-muted] hover:text-[--color-text]">
-              {pillText}
+            <button type="button" aria-label={`${pillText}, ${t("language", lang)}`} aria-haspopup="menu" aria-expanded={langMenu} onClick={() => { setLangMenu((v) => !v); setMenu("closed"); }} className={`twin-meta inline-flex h-8 items-center gap-1 whitespace-nowrap rounded-full border border-[--color-border-strong] px-2.5 text-xs text-[--color-text-muted] transition-colors hover:border-[--color-text-faint] hover:text-[--color-text] ${page ? "sm:pr-2" : ""}`}>
+              {thread.langChoice === "auto" ? (
+                <>
+                  <span className={page ? "hidden sm:inline" : "hidden"}>{t("auto", lang)} · </span>
+                  {LANG_SHORT[lang]}
+                </>
+              ) : (
+                LANG_LABEL[thread.langChoice]
+              )}
+              <ChevronDown size={12} className={`hidden transition-transform ${page ? "sm:block" : ""} ${langMenu ? "rotate-180" : ""}`} aria-hidden />
             </button>
             {langMenu && (
-              <div role="menu" className="absolute right-0 top-full z-20 mt-1 w-40 rounded-[--radius] border border-[--color-border-strong] bg-[--color-bg-elevated] p-1 text-sm">
+              <div role="menu" className="page-in absolute right-0 top-full z-20 mt-1.5 w-44 rounded-[--radius] border border-[--color-border-strong] bg-[--color-surface] p-1 text-sm shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
                 {LANG_CHOICES.map((c) => (
-                  <button key={c} role="menuitemradio" aria-checked={thread.langChoice === c} type="button" onClick={() => { chat.setLangChoice(c); setLangMenu(false); }} className="flex h-11 w-full items-center justify-between rounded px-2 text-left text-[--color-text] hover:bg-[--color-surface]" lang={c === "bn" ? "bn" : undefined}>
-                    {c === "auto" ? t("auto", lang) : LANG_LABEL[c]} {thread.langChoice === c && <Check size={14} aria-hidden />}
+                  <button key={c} role="menuitemradio" aria-checked={thread.langChoice === c} type="button" onClick={() => { chat.setLangChoice(c); setLangMenu(false); }} className={menuItem} lang={c === "bn" ? "bn" : undefined}>
+                    {c === "auto" ? t("auto", lang) : LANG_LABEL[c]} {thread.langChoice === c && <Check size={14} className="text-[--color-accent]" aria-hidden />}
                   </button>
                 ))}
               </div>
             )}
           </div>
           <div className="relative">
-            <button type="button" aria-label={t("newChat", lang)} aria-haspopup="menu" onClick={() => { setMenu(menu === "closed" ? "open" : "closed"); setLangMenu(false); }} className="inline-flex h-11 w-11 items-center justify-center text-[--color-text-muted] hover:text-[--color-text]">
+            <button type="button" aria-label={t("newChat", lang)} aria-haspopup="menu" onClick={() => { setMenu(menu === "closed" ? "open" : "closed"); setLangMenu(false); }} className={iconBtn}>
               <MoreHorizontal size={18} aria-hidden />
             </button>
             {menu !== "closed" && (
-              <div role="menu" className="absolute right-0 top-full z-20 w-56 rounded-[--radius] border border-[--color-border-strong] bg-[--color-bg-elevated] p-2 text-sm">
+              <div role="menu" className="page-in absolute right-0 top-full z-20 mt-1.5 w-60 rounded-[--radius] border border-[--color-border-strong] bg-[--color-surface] p-1 text-sm shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
                 {menu === "open" ? (
-                  <button role="menuitem" type="button" className="h-11 w-full rounded px-2 text-left text-[--color-text] hover:bg-[--color-surface]" onClick={() => setMenu("confirm")}>{t("newChat", lang)}</button>
+                  <button role="menuitem" type="button" className={menuItem} onClick={() => setMenu("confirm")}>{t("newChat", lang)}</button>
                 ) : (
-                  <div className="p-1">
-                    <p className="mb-2 text-[--color-text]">{t("clearConfirm", lang)}</p>
+                  <div className="p-2">
+                    <p className="mb-2.5 text-[--color-text]" lang={lenses(lang)}>{t("clearConfirm", lang)}</p>
                     <div className="flex gap-2">
-                      <button type="button" className="h-11 flex-1 rounded border border-[--color-border-strong] text-[--color-text]" onClick={() => { chat.clear(); setQuote(null); setMenu("closed"); }}>{t("clear", lang)}</button>
-                      <button type="button" className="h-11 flex-1 rounded text-[--color-text-muted]" onClick={() => setMenu("closed")}>{t("cancel", lang)}</button>
+                      <button type="button" className="h-10 flex-1 rounded bg-[--color-text] font-medium text-[--color-bg]" onClick={() => { chat.clear(); setQuote(null); setMenu("closed"); }}>{t("clear", lang)}</button>
+                      <button type="button" className="h-10 flex-1 rounded border border-[--color-border-strong] text-[--color-text-muted] hover:text-[--color-text]" onClick={() => setMenu("closed")}>{t("cancel", lang)}</button>
                     </div>
                   </div>
                 )}
@@ -324,60 +371,77 @@ function Conversation({ variant, onClose }: { variant: "panel" | "page"; onClose
           </div>
           {variant === "panel" && (
             <>
-              <Link href="/chat" aria-label={t("expand", lang)} className="hidden h-11 w-11 items-center justify-center text-[--color-text-muted] hover:text-[--color-text] sm:inline-flex"><Maximize2 size={16} aria-hidden /></Link>
-              <button type="button" aria-label={t("close", lang)} onClick={onClose} className="inline-flex h-11 w-11 items-center justify-center text-[--color-text-muted] hover:text-[--color-text]"><X size={18} aria-hidden /></button>
+              <Link href="/chat" aria-label={t("expand", lang)} className={`${iconBtn.replace("inline-flex ", "")} hidden sm:inline-flex`}><Maximize2 size={16} aria-hidden /></Link>
+              <button type="button" aria-label={t("close", lang)} onClick={onClose} className={iconBtn}><X size={19} aria-hidden /></button>
             </>
           )}
         </div>
 
         {!thread.disclosureDismissed && (
-          <div className="flex items-center gap-2 border-b border-[--color-border] px-4 py-1.5 text-xs text-[--color-text-muted]">
-            <p className="flex-1" lang={lang === "bn" ? "bn" : undefined}>
+          <div className="flex items-center gap-2 border-b border-[--color-border] bg-[--color-bg] px-4 py-1 text-xs leading-snug text-[--color-text-muted]">
+            <p className={`flex-1 ${page ? "sm:px-2" : ""}`} lang={lenses(lang)}>
               {t("disclosure", lang)} <Link href="/#contact" className="text-[--color-accent] underline underline-offset-2">{t("contact", lang)}</Link>
               {LOGGING_ON && <> · {t("storedNotice", lang)}</>}
             </p>
-            <button type="button" aria-label="Dismiss" onClick={chat.dismissDisclosure} className="inline-flex h-8 w-8 items-center justify-center hover:text-[--color-text]"><X size={12} aria-hidden /></button>
+            <button type="button" aria-label="Dismiss" onClick={chat.dismissDisclosure} className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:text-[--color-text]"><X size={13} aria-hidden /></button>
           </div>
         )}
 
         {/* thread */}
-        <div ref={scrollRef} role="log" aria-label="Conversation" className="min-h-0 flex-1 overflow-y-auto px-4 py-4" onClick={closeMenus}>
+        <div ref={scrollRef} role="log" aria-label="Conversation" className={`min-h-0 flex-1 overflow-y-auto px-4 py-5 ${page ? "sm:px-6 sm:py-8" : ""}`} onClick={closeMenus}>
           {empty && (
-            <div className="deal-in space-y-3">
-              <div className="flex items-end gap-2">
-                <Avatar size={28} />
-                <div className="max-w-[85%] rounded-[18px] rounded-bl-md border border-[--color-border] bg-[--color-surface] px-3.5 py-2.5 text-[16px] leading-relaxed text-[--color-text]" lang={lang === "bn" ? "bn" : undefined}>{t("greeting", lang)}</div>
+            <div className={`deal-in ${column} ${page ? "sm:pt-[10vh]" : ""}`}>
+              <div className="flex items-start gap-3">
+                <Avatar size={32} />
+                <p className="twin-answer pt-1" lang={lenses(lang)}>{t("greeting", lang)}</p>
               </div>
-              <div className="flex flex-wrap gap-2 pl-9">
-                {PROMPTS[lang].map((p) => (
-                  <button key={p} type="button" onClick={() => chat.send({ text: p })} disabled={disabled} className="min-h-11 rounded-full border border-[--color-border-strong] px-3 py-1.5 text-left text-sm text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-text] disabled:opacity-50" lang={langAttr(p)}>{p}</button>
+              <div className="mt-5 grid gap-2 sm:pl-11">
+                {PROMPTS[lang].map((p, i) => (
+                  <button key={p} type="button" onClick={() => chat.send({ text: p })} disabled={disabled} className="twin-prompt" lang={langAttr(p)}>
+                    <span className="flex-1">{p}</span>
+                    <span className="twin-step shrink-0" data-state="done" style={{ "--tone": PROMPT_TAGS[i].color } as CSSProperties} aria-hidden>{t(PROMPT_TAGS[i].key, lang)}</span>
+                  </button>
                 ))}
               </div>
             </div>
           )}
-          <div className="space-y-2">
+          <div className={column}>
             {thread.messages.map((m, i) => {
               const prev = thread.messages[i - 1];
               const gap = !prev || m.createdAt - prev.createdAt > GAP_MS;
               const groupStart = !prev || prev.role !== m.role || gap;
               const visitor = m.role === "visitor";
+              const done = m.status === "done";
               const actions = actionsFor === m.id && (
-                <div role="menu" aria-label={t("messageActions", lang)} className={`mt-1 flex gap-1 rounded-[--radius] border border-[--color-border-strong] bg-[--color-bg-elevated] p-1 text-sm ${visitor ? "self-end" : ""}`}>
-                  <button role="menuitem" type="button" onClick={() => startReply(m)} className="flex h-11 items-center gap-1 rounded px-2 text-[--color-text] hover:bg-[--color-surface]"><Reply size={14} aria-hidden /> {t("reply", lang)}</button>
-                  <button role="menuitem" type="button" onClick={() => void copyText(m)} className="flex h-11 items-center gap-1 rounded px-2 text-[--color-text] hover:bg-[--color-surface]"><Copy size={14} aria-hidden /> {t("copy", lang)}</button>
-                  {VOICE_ON && !visitor && m.status === "done" && (
-                    <button role="menuitem" type="button" onClick={() => { setActionsFor(null); void speech.play(m.id, plainText(m), (m.lang ?? lang) as UiLang); }} className="flex h-11 items-center gap-1 rounded px-2 text-[--color-text] hover:bg-[--color-surface]"><Play size={14} aria-hidden /> {t("play", lang)}</button>
+                <div role="menu" aria-label={t("messageActions", lang)} className={`page-in mt-1.5 flex gap-1 rounded-[--radius] border border-[--color-border-strong] bg-[--color-surface] p-1 text-sm shadow-[0_8px_24px_rgba(0,0,0,0.45)] ${visitor ? "self-end" : "ml-11 self-start"}`}>
+                  <button role="menuitem" type="button" onClick={() => startReply(m)} className="flex h-11 items-center gap-1.5 rounded px-2.5 text-[--color-text] hover:bg-[--color-surface-2]"><Reply size={14} aria-hidden /> {t("reply", lang)}</button>
+                  <button role="menuitem" type="button" onClick={() => void copyText(m)} className="flex h-11 items-center gap-1.5 rounded px-2.5 text-[--color-text] hover:bg-[--color-surface-2]"><Copy size={14} aria-hidden /> {t("copy", lang)}</button>
+                  {VOICE_ON && !visitor && done && (
+                    <button role="menuitem" type="button" onClick={() => { setActionsFor(null); void speech.play(m.id, plainText(m), (m.lang ?? lang) as UiLang); }} className="flex h-11 items-center gap-1.5 rounded px-2.5 text-[--color-text] hover:bg-[--color-surface-2]"><Play size={14} aria-hidden /> {t("play", lang)}</button>
                   )}
                 </div>
               );
-              const replyBtn = m.status !== "waiting" && (
-                <button type="button" aria-label={t("reply", lang)} onClick={() => startReply(m)} className="hidden h-8 w-8 shrink-0 items-center justify-center self-center rounded-full text-[--color-text-muted] opacity-0 hover:text-[--color-text] focus-visible:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 sm:inline-flex">
-                  <Reply size={14} aria-hidden />
+              const replyBtn = (extra = "") => m.status !== "waiting" && (
+                <button type="button" aria-label={t("reply", lang)} onClick={() => startReply(m)} className={`inline-flex min-h-8 items-center gap-1.5 rounded px-1.5 text-xs text-[--color-text-muted] hover:text-[--color-text] ${extra}`}>
+                  <Reply size={13} aria-hidden /><span aria-hidden className={visitor ? "sr-only" : "hidden sm:inline"}>{t("reply", lang)}</span>
                 </button>
               );
+              const hasTrace = done && m.trace && (m.trace.source_count > 0 || m.trace.plan.length > 0);
+              const footer: ReactNode[] = [];
+              if (!visitor && hasTrace) {
+                footer.push(
+                  <button key="trace" type="button" onClick={() => setTraceFor(traceFor === m.id ? null : m.id)} aria-expanded={traceFor === m.id} className="twin-meta inline-flex min-h-8 items-center gap-1 rounded px-1.5 text-xs text-[--color-text-muted] hover:text-[--color-text]">
+                    {t("howIAnswered", lang)} · {m.trace!.source_count} {t("sources", lang)} · {(m.trace!.elapsed_ms / 1000).toFixed(1)}s
+                    <ChevronDown size={12} className={`transition-transform ${traceFor === m.id ? "rotate-180" : ""}`} aria-hidden />
+                  </button>,
+                );
+              }
+              if (!visitor && VOICE_ON && done && m.text) {
+                footer.push(<SpeakButton key="speak" state={speech.states[m.id]} lang={lang} onClick={() => void speech.play(m.id, plainText(m), (m.lang ?? lang) as UiLang)} />);
+              }
               return (
-                <div key={m.id} className={groupStart && i > 0 ? "pt-2" : ""}>
-                  {gap && <TimeDivider at={m.createdAt} />}
+                <div key={m.id} className={i === 0 ? "" : groupStart ? "pt-6" : "pt-2"}>
+                  {gap && i > 0 && <TimeDivider at={m.createdAt} />}
                   <div
                     id={`msg-${m.id}`}
                     data-msg
@@ -388,50 +452,54 @@ function Conversation({ variant, onClose }: { variant: "panel" | "page"; onClose
                     onTouchMove={onTouchMove}
                     onTouchEnd={() => onTouchEnd(m)}
                     onContextMenu={(e) => { e.preventDefault(); setActionsFor(m.id); }}
-                    className={`group deal-in flex flex-col rounded-lg outline-none focus-visible:ring-1 focus-visible:ring-[--color-accent] ${visitor ? "items-end" : ""}`}
+                    className={`group deal-in flex flex-col rounded-lg outline-none focus-visible:ring-1 focus-visible:ring-[--color-accent] focus-visible:ring-offset-4 focus-visible:ring-offset-[--color-bg-elevated] ${visitor ? "items-end" : ""}`}
                   >
                     {visitor ? (
-                      <>
-                        <div className="flex max-w-full items-center gap-1">
-                          {replyBtn}
-                          <div className="max-w-[85%] whitespace-pre-wrap rounded-[18px] rounded-br-md bg-[--color-accent] px-3.5 py-2.5 text-[16px] leading-relaxed text-[--color-bg]" lang={langAttr(m.text)} data-testid="visitor-bubble">
-                            {m.quote && <QuoteStrip quote={m.quote} lang={lang} onDark onJump={() => jumpTo(m.quote!.id)} />}
-                            {m.attachment?.kind === "image" && (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img src={m.attachment.thumb} alt={m.attachment.description ?? ""} className="mb-1.5 max-h-48 rounded-lg" />
-                            )}
-                            {m.attachment?.kind === "audio" ? (
-                              <VisitorVoice msg={m} lang={lang} localUrl={localAudio.current.get(m.id)} onReAsk={(text) => chat.reAsk(text, quoteOf(m))} />
-                            ) : (
-                              m.text
-                            )}
-                          </div>
+                      <div className="flex w-full items-center justify-end gap-1">
+                        <span className="hidden opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 sm:inline-flex">{replyBtn()}</span>
+                        <div className="visitor-bubble" lang={langAttr(m.text)} data-testid="visitor-bubble">
+                          {m.quote && <QuoteStrip quote={m.quote} lang={lang} onJump={() => jumpTo(m.quote!.id)} />}
+                          {m.attachment?.kind === "image" && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={m.attachment.thumb} alt={m.attachment.description ?? ""} className="mb-2 max-h-56 rounded-xl" />
+                          )}
+                          {m.attachment?.kind === "audio" ? (
+                            <VisitorVoice msg={m} lang={lang} localUrl={localAudio.current.get(m.id)} onReAsk={(text) => chat.reAsk(text, quoteOf(m))} />
+                          ) : (
+                            m.text
+                          )}
                         </div>
-                        <span className="mt-0.5 text-[--color-text-muted]">
+                        <span className="self-end pb-1 text-[--color-text-faint]">
                           {m.status === "sending" ? <Loader2 size={11} className="animate-spin motion-reduce:animate-none" aria-hidden /> : <Check size={11} aria-hidden />}
                           <span className="sr-only">{m.status === "sending" ? "sending" : "sent"}</span>
                         </span>
-                      </>
+                      </div>
                     ) : (
-                      <div className="flex items-end gap-2">
-                        {groupStart ? <Avatar size={28} /> : <span className="w-7 shrink-0" />}
-                        <div className="max-w-[85%] rounded-[18px] rounded-bl-md border border-[--color-border] bg-[--color-surface] px-3.5 py-2.5 text-[16px] leading-relaxed" data-testid="twin-bubble">
-                          <TwinBody
-                            msg={m}
-                            lang={lang}
-                            thread={thread.messages}
-                            question={questionFor(m)}
-                            onRetry={chat.retry}
-                            onOpenMedia={(media, idx) => setLightbox({ media, i: idx })}
-                            traceOpen={traceFor === m.id}
-                            onToggleTrace={() => setTraceFor(traceFor === m.id ? null : m.id)}
-                            drawer={drawer}
-                          />
+                      <div className="flex items-start gap-3">
+                        {groupStart ? <Avatar size={32} /> : <span className="w-8 shrink-0" />}
+                        <div className="min-w-0 flex-1 pt-1" data-testid="twin-bubble">
+                          <div className="twin-answer">
+                            <TwinBody
+                              msg={m}
+                              lang={lang}
+                              thread={thread.messages}
+                              question={questionFor(m)}
+                              onRetry={chat.retry}
+                              onOpenMedia={(media, idx) => setLightbox({ media, i: idx })}
+                            />
+                          </div>
+                          {m.status !== "waiting" && (
+                            <div className="-ml-1.5 mt-1.5 flex flex-wrap items-center gap-x-1 gap-y-0">
+                              {footer}
+                              {replyBtn("sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100 sm:group-focus-within:opacity-100")}
+                            </div>
+                          )}
+                          {traceFor === m.id && !drawer && m.trace && (
+                            <div className="page-in mt-2 max-w-[62ch] rounded-[--radius] border border-[--color-border] bg-[--color-bg] p-3.5">
+                              <TraceBody trace={m.trace} sources={m.sources} lang={lang} />
+                            </div>
+                          )}
                         </div>
-                        {VOICE_ON && m.status === "done" && m.text && (
-                          <SpeakButton state={speech.states[m.id]} lang={lang} onClick={() => void speech.play(m.id, plainText(m), (m.lang ?? lang) as UiLang)} />
-                        )}
-                        {replyBtn}
                       </div>
                     )}
                     {actions}
@@ -464,10 +532,10 @@ function Conversation({ variant, onClose }: { variant: "panel" | "page"; onClose
       </div>
 
       {drawer && traceMsg?.trace && (
-        <aside aria-label={t("howIAnswered", lang)} className="w-[340px] shrink-0 overflow-y-auto border-l border-[--color-border] bg-[--color-bg-elevated] p-4">
-          <div className="mb-3 flex items-center justify-between">
+        <aside aria-label={t("howIAnswered", lang)} className="page-in w-[320px] shrink-0 overflow-y-auto border-l border-[--color-border] bg-[--color-bg] p-5">
+          <div className="mb-4 flex items-center justify-between">
             <p className="text-sm font-semibold text-[--color-text]">{t("howIAnswered", lang)}</p>
-            <button type="button" aria-label={t("close", lang)} onClick={() => setTraceFor(null)} className="inline-flex h-11 w-11 items-center justify-center text-[--color-text-muted]"><X size={16} aria-hidden /></button>
+            <button type="button" aria-label={t("close", lang)} onClick={() => setTraceFor(null)} className={iconBtn}><X size={16} aria-hidden /></button>
           </div>
           <TraceBody trace={traceMsg.trace} sources={traceMsg.sources} lang={lang} />
         </aside>
@@ -517,14 +585,14 @@ export function ChatLauncher() {
     <>
       {!open && (
         <div className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] z-50 flex items-center gap-3">
-          {label && <span className="page-in hidden rounded-[--radius] border border-[--color-border-strong] bg-[--color-bg-elevated] px-3 py-1.5 text-sm text-[--color-text] sm:block">{t("open", "en")}</span>}
-          <button type="button" onClick={toggle} aria-label={t("open", "en")} className="rounded-full ring-2 ring-[--color-accent] ring-offset-2 ring-offset-[--color-bg] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[--color-accent]">
+          {label && <span className="page-in hidden rounded-full border border-[--color-border-strong] bg-[--color-surface] px-3.5 py-1.5 text-sm text-[--color-text] shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:block">{t("open", "en")}</span>}
+          <button type="button" onClick={toggle} aria-label={t("open", "en")} className="press rounded-full ring-2 ring-[--color-accent] ring-offset-2 ring-offset-[--color-bg] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[--color-accent]">
             <Avatar size={56} />
           </button>
         </div>
       )}
       {open && (
-        <div data-chat-root role="dialog" aria-label={t("name", "en")} className="twin-panel fixed inset-0 z-50 flex h-[100dvh] flex-col overflow-hidden bg-[--color-bg-elevated] sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[640px] sm:max-h-[calc(100dvh-3rem)] sm:w-[400px] sm:rounded-xl sm:border sm:border-[--color-border-strong]">
+        <div data-chat-root role="dialog" aria-label={t("name", "en")} className="twin-panel fixed inset-0 z-50 flex h-[100dvh] flex-col overflow-hidden bg-[--color-bg-elevated] sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[680px] sm:max-h-[calc(100dvh-3rem)] sm:w-[420px] sm:rounded-2xl sm:border sm:border-[--color-border-strong] sm:shadow-[0_24px_64px_rgba(0,0,0,0.6)]">
           <Conversation variant="panel" onClose={() => setOpen(false)} />
         </div>
       )}
@@ -536,7 +604,7 @@ export function ChatLauncher() {
 
 export function ChatPage() {
   return (
-    <div className="mx-auto flex h-[calc(100dvh-4rem)] w-full max-w-[680px] flex-col border-x border-[--color-border] bg-[--color-bg-elevated] min-[1100px]:max-w-[1020px]" data-chat-root>
+    <div className="mx-auto flex h-[calc(100dvh-4rem)] w-full max-w-[1280px] flex-col bg-[--color-bg-elevated] sm:border-x sm:border-[--color-border]" data-chat-root>
       <Conversation variant="page" />
     </div>
   );
